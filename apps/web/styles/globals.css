@@ -1,0 +1,10 @@
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+@layer base {
+  a:hover,
+  button:hover {
+    cursor: pointer;
+    text-decoration: none;
+  }
+}

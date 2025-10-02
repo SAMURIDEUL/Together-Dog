@@ -1,0 +1,4 @@
+# root/pnpm-workspace.yaml
+packages:
+  - "apps/*" # Next.js 애플리케이션 (apps/web 포함)
+  - "packages/*" # 공유 라이브러리

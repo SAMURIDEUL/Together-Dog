@@ -1,0 +1,75 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ----------------------------------------
+# CORE DEPENDENCIES (핵심 의존성)
+# ----------------------------------------
+# pnpm 환경에서 설치된 모든 의존성 폴더 (모노레포 전체)
+/node_modules
+# pnpm 전용 스토어 (매우 중요)
+.pnpm-store
+
+# Yarn/NPM/PNP-related (기존 항목 유지)
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ----------------------------------------
+# BUILD ARTIFACTS & CACHES (빌드 결과물 및 캐시)
+# ----------------------------------------
+# Next.js
+/.next/
+/out/
+
+# Storybook & Vitest (공유 패키지)
+/dist                 # packages/ui/dist (TS 컴파일 결과)
+/packages/*/dist      # 모든 하위 패키지의 dist 폴더
+
+# Next.js/Turbopack 캐시
+.next/cache
+/.next/cache
+
+# Storybook 캐시 (추가)
+.storybook/cache
+/packages/*/.storybook/cache
+
+# Turborepo 캐시 (나중에 도입 시)
+.turbo
+
+# ----------------------------------------
+# TESTING (테스트)
+# ----------------------------------------
+/coverage
+
+# ----------------------------------------
+# PRODUCTION / MISC
+# ----------------------------------------
+/build
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+# 민감 정보는 절대 커밋되지 않도록 명확히 분리
+.env
+.env.*
+.env*.local
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# ESLint cache
+.eslintcache
