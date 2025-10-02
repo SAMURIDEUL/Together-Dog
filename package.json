@@ -20,8 +20,11 @@
     "typescript": "^5.9.3"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,json,css,md}": [
-      "biome lint --fix",
+    "*.{ts,tsx,js,jsx}": [
+      "biome lint --fix --no-warn-on-changes",
+      "biome format --write"
+    ],
+    "*.{json,jsonc,md,css}": [
       "biome format --write"
     ]
   }
