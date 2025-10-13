@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "storybook dev -p 6006",
-    "lint": "biome lint.",
+    "lint": "eslint .",
     "test": "vitest run",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -24,6 +24,7 @@
     "@testing-library/react": "latest",
     "@vitejs/plugin-react": "^5.0.4",
     "autoprefixer": "latest",
+    "eslint": "^9.37.0",
     "postcss": "latest",
     "storybook": "^9.1.10",
     "tailwindcss": "latest",
