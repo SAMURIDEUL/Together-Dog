@@ -75,7 +75,7 @@ jobs:
       - name: Deploy to Vercel (Preview)
         id: deploy-vercel
         run: |
-          DEPLOY_URL=$(vercel deploy --prebuilt --token=${{ env.VERCEL_TOKEN }} --confirm)
+          DEPLOY_URL=$(vercel deploy --token=${{ env.VERCEL_TOKEN }} --yes)
           echo "preview_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Get current time
