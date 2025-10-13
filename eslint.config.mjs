@@ -13,9 +13,6 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
-  eslintConfigPrettier,
-
   { ignores: ['public/**'] }, // public 폴더 전체 무시
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   eslintConfigPrettier,

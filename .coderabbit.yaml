@@ -29,10 +29,8 @@ reviews:
       enabled: true
     eslint:
       enabled: true
-    prettier:
-      enabled: true
     biome:
-      enabled: true
+      enabled: false
     github-checks:
       enabled: true
       timeout_ms: 90000
@@ -45,10 +43,10 @@ reviews:
       rule_dirs: []
       util_dirs: []
       essential_rules: true
-  chat:
-    auto_reply: true
-  knowledge_base:
-    learnings:
-      scope: auto
-    issues:
-      scope: auto
+chat:
+  auto_reply: true
+knowledge_base:
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
