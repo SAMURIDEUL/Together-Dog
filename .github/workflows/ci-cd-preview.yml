@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: 18
           cache: 'pnpm'
-          cache-dependency-path: global-nomad/pnpm-lock.yaml
+          cache-dependency-path: together-dog/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install
@@ -48,7 +48,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: global-nomad/
+          path: together-dog/
 
   deploy-preview:
     runs-on: ubuntu-latest
