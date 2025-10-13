@@ -1,7 +1,7 @@
 {
   "name": "together-dog-monorepo",
   "private": true,
-  "packageManager": "pnpm@10.13.1",
+  "packageManager": "pnpm@10.18.2",
   "scripts": {
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
@@ -11,21 +11,26 @@
     "prepare": "husky install"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.0",
     "@types/node": "^20.19.19",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
     "husky": "^8.0.0",
     "lint-staged": "^16.2.3",
+    "prettier": "^3.6.2",
+    "prettier-plugin-tailwindcss": "^0.6.14",
     "typescript": "^5.9.3"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "biome lint --fix --no-warn-on-changes",
-      "biome format --write"
+    "*.{js,jsx,ts,tsx}": [
+      "next lint --fix --dir src",
+      "prettier --write"
     ],
-    "*.{json,jsonc,md,css}": [
-      "biome format --write"
+    "*.{json,css,md}": [
+      "prettier --write"
     ]
   }
 }
