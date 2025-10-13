@@ -29,7 +29,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          run_install: true  # ✅ version 제거!
+          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
