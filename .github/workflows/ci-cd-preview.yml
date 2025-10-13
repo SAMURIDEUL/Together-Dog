@@ -16,6 +16,9 @@ jobs:
     env:
       NEXT_PUBLIC_OAUTH_APP_KEY: ${{ secrets.NEXT_PUBLIC_OAUTH_APP_KEY }}
       NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+    defaults:
+      run:
+        working-directory: ./together-dog
 
     steps:
       - name: Checkout code
@@ -43,14 +46,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: .
+          path: together-dog/
 
   deploy-preview:
     runs-on: ubuntu-latest
     needs: build-and-test
     permissions:
       pull-requests: write
-
+    defaults:
+      run:
+        working-directory: ./together-dog
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -72,14 +77,10 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Pull Vercel Project Settings
-        run: vercel pull --yes --environment=preview --token=${{ env.VERCEL_TOKEN }}
-
       - name: Deploy to Vercel (Preview)
         id: deploy-vercel
         run: |
-          vercel build --token=${{ env.VERCEL_TOKEN }}
-          DEPLOY_URL=$(vercel deploy --prebuilt --token=${{ env.VERCEL_TOKEN }})
+          DEPLOY_URL=$(vercel deploy --prebuilt --token=${{ env.VERCEL_TOKEN }} --confirm)
           echo "preview_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Get current time
