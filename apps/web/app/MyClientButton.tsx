@@ -1,14 +1,11 @@
-// app/MyClientButton.tsx
-'use client'; // 👈 핵심 지시문
+'use client';
 
 import { Button } from '@together-dog/ui';
 
-type Props = {
-  children?: React.ReactNode;
-  onClick: () => void;
-  // 다른 props가 있다면 여기에 추가
-};
+export default function MyClientButton() {
+  const handleClick = () => {
+    console.log('버튼이 클릭되었습니다!'); // 클라이언트 측에서 실행
+  };
 
-export default function MyClientButton({ children, onClick }: Props) {
-  return <Button onClick={onClick}>{children}</Button>;
+  return <Button onClick={handleClick}>클릭하세요</Button>;
 }
