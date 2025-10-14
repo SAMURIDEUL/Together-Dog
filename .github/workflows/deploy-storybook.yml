@@ -1,0 +1,43 @@
+name: Deploy Storybook
+
+# Main 브랜치에 packages/ui 폴더 내 변경 사항이 push될 때만 실행
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/ui/**' 
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ 레포 체크아웃
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      # 2️⃣ Node.js 설정
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'pnpm' # pnpm 캐싱 설정
+
+      # 3️⃣ 의존성 설치
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 4️⃣ Storybook 빌드 (@ui 패키지만)
+      - name: Build Storybook
+        run: pnpm --filter @ui build-storybook
+
+      # 5️⃣ Vercel 배포 (안정적인 최신 Action 사용)
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25 # 현재 가장 많이 사용되는 안정적인 버전으로 변경
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN_UI }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID_UI }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID_UI }}
+          working-directory: packages/ui
+          vercel-args: '--prod' 
