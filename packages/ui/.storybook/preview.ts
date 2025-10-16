@@ -1,5 +1,5 @@
 // .storybook/preview.ts
-import '../src/styles/globals.css';
+import '../src/globals.css';
 import '../styles/fonts.css';
 import '../styles/preview.css';
 
