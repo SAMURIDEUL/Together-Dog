@@ -2,7 +2,7 @@
 
 /** @type {import('tailwindcss').Config} */
 const config = {
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx}', '../../apps/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       //... (공유 테마)

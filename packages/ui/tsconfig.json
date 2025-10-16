@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler", // "node"에서 "bundler"로 바꾸신 것 확인!
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
