@@ -3,6 +3,10 @@
 
 @import '../styles/fonts.css';
 
+/* @source "../nodemodules/@together-dog/ui"; */
+
+@source "../../../packages/*/src/**/*.{js,ts,jsx,tsx}";
+
 :root {
   --font-primary: 'Pretendard Variable', sans-serif;
   --font-secondary: 'NanumSquareNeo', sans-serif;
