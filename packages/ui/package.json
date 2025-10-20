@@ -5,10 +5,12 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src/globals.css"
   ],
   "license": "MIT",
   "private": false,
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "storybook dev -p 6006",
@@ -42,7 +44,6 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
-  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

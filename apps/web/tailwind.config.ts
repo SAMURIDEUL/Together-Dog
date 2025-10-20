@@ -1,9 +1,7 @@
-// apps/web/tailwind.config.js
+// apps/web/tailwind.config.ts (✅ 최종 수정)
+import type { Config } from 'tailwindcss';
 
-import sharedConfig from '../../packages/ui/tailwind.config';
-
-const config = {
-  presets: [sharedConfig],
+const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
@@ -18,6 +16,7 @@ const config = {
       },
     },
   },
+
   plugins: [],
 };
 

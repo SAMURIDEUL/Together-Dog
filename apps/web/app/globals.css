@@ -1,5 +1,4 @@
-@import 'tailwindcss/preflight';
-@import 'tailwindcss/utilities';
+/* apps/web/app/globals.css */
 @import 'tailwindcss';
 
 @import '../styles/fonts.css';
@@ -15,10 +14,8 @@ body {
   background-color: #fffdf7;
 }
 
-@layer base {
-  a:hover,
-  button:hover {
-    cursor: pointer;
-    text-decoration: none;
-  }
+a:hover,
+button:hover {
+  cursor: pointer;
+  text-decoration: none;
 }
