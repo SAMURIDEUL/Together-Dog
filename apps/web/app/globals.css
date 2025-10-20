@@ -3,8 +3,6 @@
 
 @import '../styles/fonts.css';
 
-/* @source "../nodemodules/@together-dog/ui"; */
-
 @source "../node_modules/@together-dog/ui";
 
 :root {
