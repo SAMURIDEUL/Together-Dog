@@ -5,7 +5,7 @@
 
 /* @source "../nodemodules/@together-dog/ui"; */
 
-@source "../../../packages/*/src/**/*.{js,ts,jsx,tsx}";
+@source "../node_modules/@together-dog/ui";
 
 :root {
   --font-primary: 'Pretendard Variable', sans-serif;
