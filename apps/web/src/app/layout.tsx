@@ -7,7 +7,7 @@ import localFont from 'next/font/local';
 
 // Pretendard 폰트 설정
 const pretendard = localFont({
-  src: '../public/fonts/PretendardVariable.woff2', // 폰트 파일 실제 경로
+  src: '../../public/fonts/PretendardVariable.woff2', // 폰트 파일 실제 경로
   display: 'swap',
   weight: '45 920',
   variable: '--font-primary', // CSS 변수 이름 지정
@@ -17,28 +17,31 @@ const pretendard = localFont({
 const nanumSquareNeo = localFont({
   src: [
     {
-      path: '../public/fonts/NanumSquareNeoTTF-aLt.woff2',
+      path: '../../public/fonts/NanumSquareNeoTTF-aLt.woff2',
       weight: '300',
       style: 'normal',
     },
     {
-      path: '../public/fonts/NanumSquareNeoTTF-bRg.woff2',
+      path: '../../public/fonts/NanumSquareNeoTTF-bRg.woff2',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../public/fonts/NanumSquareNeoTTF-cBd.woff2',
+      path: '../../public/fonts/NanumSquareNeoTTF-cBd.woff2',
       weight: '700',
       style: 'normal',
     },
   ],
   display: 'swap',
-  variable: '--font-secondary', // CSS 변수 이름 지정
+  variable: '--font-secondary',
 });
 
 export const metadata: Metadata = {
   title: '함께하개',
   description: '반려동물과 함께 다닐 수 있는 장소를 찾아보세요!',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({

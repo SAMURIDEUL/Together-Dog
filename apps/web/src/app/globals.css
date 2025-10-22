@@ -3,7 +3,7 @@
 
 @import '../styles/fonts.css';
 
-@source "../node_modules/@together-dog/ui";
+@source "../../node_modules/@together-dog/ui";
 
 :root {
   --font-primary: 'Pretendard Variable', sans-serif;

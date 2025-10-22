@@ -1,4 +1,4 @@
-/* apps/web/app/MyClientButton.tsx */
+/* apps/web/src/app/MyClientButton.tsx */
 'use client';
 
 import { Button } from '@together-dog/ui';
