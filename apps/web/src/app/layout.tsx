@@ -5,6 +5,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
+import Header from './Header';
+
 // Pretendard 폰트 설정
 const pretendard = localFont({
   src: '../../public/fonts/PretendardVariable.woff2', // 폰트 파일 실제 경로
@@ -54,6 +56,7 @@ export default function RootLayout({
       <body
         className={`${pretendard.variable} ${nanumSquareNeo.variable} antialiased`}
       >
+        <Header />
         {children}
       </body>
     </html>
