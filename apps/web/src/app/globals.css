@@ -1,0 +1,23 @@
+/* apps/web/app/globals.css */
+@import 'tailwindcss';
+
+@import '../styles/fonts.css';
+
+@source "../../node_modules/@together-dog/ui";
+
+:root {
+  --font-primary: 'Pretendard Variable', sans-serif;
+  --font-secondary: 'NanumSquareNeo', sans-serif;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: #222;
+  background-color: #fffdf7;
+}
+
+a:hover,
+button:hover {
+  cursor: pointer;
+  text-decoration: none;
+}

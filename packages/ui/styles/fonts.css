@@ -1,0 +1,43 @@
+@font-face {
+  font-family: 'Pretendard Variable';
+  src: url('../../../apps/web/public/fonts/PretendardVariable.woff2')
+    format('woff2-variations');
+  font-weight: 45 920;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* NanumSquareNeo - Light */
+@font-face {
+  font-family: 'NanumSquareNeo';
+  src: url('../../../apps/web/public/fonts/NanumSquareNeoTTF-aLt.woff2')
+    format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* NanumSquareNeo - Regular */
+@font-face {
+  font-family: 'NanumSquareNeo';
+  src: url('../../../apps/web/public/fonts/NanumSquareNeoTTF-bRg.woff2')
+    format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* NanumSquareNeo - Bold */
+@font-face {
+  font-family: 'NanumSquareNeo';
+  src: url('../../../apps/web/public/fonts/NanumSquareNeoTTF-cBd.woff2')
+    format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-primary: 'Pretendard Variable', sans-serif;
+  --font-secondary: 'NanumSquareNeo', sans-serif;
+}

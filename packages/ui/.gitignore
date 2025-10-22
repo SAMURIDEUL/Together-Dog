@@ -25,8 +25,9 @@
 /out/
 
 # Storybook & Vitest (공유 패키지)
-/dist                 # packages/ui/dist (TS 컴파일 결과)
-/packages/*/dist      # 모든 하위 패키지의 dist 폴더
+dist                 # packages/ui/dist (TS 컴파일 결과)
+packages/*/dist      # 모든 하위 패키지의 dist 폴더
+
 
 # Next.js/Turbopack 캐시
 .next/cache
