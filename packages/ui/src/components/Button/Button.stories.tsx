@@ -1,4 +1,4 @@
-// packages/ui/src/Button.stories.tsx
+// packages/ui/src/stories/Button.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Button } from './Button';
@@ -6,6 +6,7 @@ import { Button } from './Button';
 const meta: Meta<typeof Button> = {
   title: 'UI/Button',
   component: Button,
+  tags: ['autodocs'],
 };
 
 export default meta;
