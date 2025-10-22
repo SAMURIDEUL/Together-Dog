@@ -14,6 +14,7 @@ export const typography = {
   lineHeight: {
     display: '1.3',
     title: '1.4',
+    subtitle: '1.5',
     body: '1.6',
     caption: '1.5',
     small: '1.4',
@@ -21,6 +22,7 @@ export const typography = {
   tracking: {
     display: '-0.04rem',
     title: '-0.02rem',
+    subtitle: '-0.01rem',
     body: '0rem',
     caption: '0.04rem',
     small: '0.06rem',

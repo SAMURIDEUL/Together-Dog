@@ -1,4 +1,4 @@
-// packages/ui/tokens/color.ts
+// packages/ui/src/tokens/color.ts
 
 /**
  * 🎨 Warm Pastel Yellow 팔레트
@@ -41,6 +41,7 @@ export const darkPalette = {
 
   textPrimary: '#F4EEDC', // 기본 텍스트 색상
   textSecondary: '#FFD670', // 강조 텍스트 색상
+  textAccent: '#A4835A', // 강조 텍스트 색상 (링크 등)
 
   border: 'rgba(255, 255, 255, 0.1)', // 밝은 보더 라인
   shadow: 'rgba(0, 0, 0, 0.3)', // 다크 모드 전용 그림자
