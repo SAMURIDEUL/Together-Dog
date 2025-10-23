@@ -142,6 +142,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      cpx:
+        specifier: ^1.5.0
+        version: 1.5.0
       eslint:
         specifier: ^9.12.0
         version: 9.37.0(jiti@2.6.1)
