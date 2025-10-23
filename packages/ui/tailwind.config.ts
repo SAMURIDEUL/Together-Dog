@@ -8,6 +8,7 @@ const config: Config = {
     './src/**/*.{js,ts,jsx,tsx, mdx}',
     './.storybook/**/*.{js,ts,jsx,tsx}',
     '../../apps/web/**/*.{js,ts,jsx,tsx}',
+    './src/safelist.css',
   ],
   darkMode: 'class',
   theme: {

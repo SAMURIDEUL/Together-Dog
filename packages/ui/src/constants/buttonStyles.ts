@@ -38,7 +38,7 @@ export const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
 
   secondary: cn(
     'flex items-center justify-center',
-    'hover:bg-[var(--color-neutralLight)]',
+    'hover:bg-gray-200',
     'dark:hover:bg-[var(--color-surface)]',
     ...SECONDARY_BASE,
   ),
@@ -49,7 +49,7 @@ export const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
     'border-[var(--color-border)]',
     'bg-[var(--color-surface)]',
     'text-[var(--color-text)]',
-    'hover:bg-gray-100',
+    'hover:bg-gray-200',
     ...DISABLED_CLASSES,
   ),
 };

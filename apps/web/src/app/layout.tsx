@@ -1,6 +1,7 @@
 // apps/web/src/app/layout.tsx
 
 import './globals.css';
+import '@together-dog/ui/globals.css';
 
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';

@@ -12,7 +12,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format esm,cjs --dts && cpx src/globals.css dist/",
     "dev": "storybook dev -p 6006",
     "lint": "eslint .",
     "test": "vitest run",
@@ -52,6 +52,8 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
-    }
+    },
+    "./globals.css": "./dist/globals.css",
+    "./dist/globals.css": "./dist/globals.css"
   }
 }
