@@ -1,0 +1,1 @@
+@source inline("{hover:,focus:,active:}{bg,text,border,shadow}-[var(--color-*)]");

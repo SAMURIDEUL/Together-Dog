@@ -1,3 +1,75 @@
-/* packages/ui/src/global.css */
+/* packages/ui/src/globals.css */
 @import 'tailwindcss';
 @import '../styles/typography.css';
+
+/* 🌈 디자인 토큰 기반 색상 변수 설정 */
+:root {
+  /* Primary Theme (Light Mode) */
+  --color-primary: #ffe08c;
+  --color-secondary: #c7a061;
+  --color-accent: #ffb6a1;
+
+  /* Background / Surface */
+  --color-background: #fff9e8;
+  --color-surface: #ffffff;
+  --color-hover: #c6c8cf;
+
+  /* Text */
+  --color-textPrimary: #1e1e1e;
+  --color-textSecondary: #3a2f2f;
+  --color-textAccent: #c7a061;
+
+  /* Neutral / Border / Shadow */
+  --color-neutralLight: #fff9e8;
+  --color-neutralDark: #1e1e1e;
+  --color-border: rgba(0, 0, 0, 0.05);
+  --color-shadow: rgba(0, 0, 0, 0.05);
+}
+
+/* 🌙 다크모드 테마 */
+[data-theme='dark'] {
+  --color-primary: #ffd670;
+  --color-secondary: #a4835a;
+  --color-accent: #ff9c8a;
+
+  --color-background: #2c2c2c;
+  --color-surface: #3a2f2f;
+
+  --color-textPrimary: #f4eedc;
+  --color-textSecondary: #ffd670;
+  --color-textAccent: #a4835a;
+
+  --color-neutralLight: #2c2c2c;
+  --color-neutralDark: #f4eedc;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* 🌐 전역 배경 및 텍스트 컬러 */
+html,
+body {
+  background-color: var(--color-background);
+  color: var(--color-textPrimary);
+  font-family: var(--font-primary, Arial, sans-serif);
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* 다크모드 전환 시 부드러운 트랜지션 */
+[data-theme='dark'] body {
+  background-color: var(--color-background);
+  color: var(--color-textPrimary);
+}
+
+/* 스크롤바 커스터마이징 (선택사항) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-accent);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-track {
+  background-color: var(--color-surface);
+}
