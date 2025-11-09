@@ -1,17 +1,34 @@
-import { IconGroup, iconPaths } from '../../tokens/iconPath';
+import { iconPaths } from '../../tokens/iconPath';
 
-export interface IconProps {
-  group: IconGroup;
-  name: string;
+type IconPropsBase = {
   size?: number;
   alt?: string;
   className?: string;
-}
+};
+
+export type IconProps =
+  | (IconPropsBase & {
+      group: 'category';
+      name: keyof typeof iconPaths.category;
+    })
+  | (IconPropsBase & {
+      group: 'restriction';
+      name: keyof typeof iconPaths.restriction;
+    })
+  | (IconPropsBase & {
+      group: 'general';
+      name: keyof typeof iconPaths.general;
+    });
 
 export const Icon = ({ group, name, size = 24, alt, className }: IconProps) => {
   const src =
     iconPaths[group]?.[name as keyof (typeof iconPaths)[typeof group]];
-  if (!src) return null;
+  if (!src) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn(`Icon not found: group="${group}", name="${name}"`);
+    }
+    return null;
+  }
 
   return (
     <img
