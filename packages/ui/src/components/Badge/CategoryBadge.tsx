@@ -5,14 +5,9 @@ import { Icon } from '../Icon/Icon';
 interface CategoryBadgeProps {
   category: keyof (typeof iconPaths)['category'];
   label: string;
-  icon: keyof (typeof iconPaths)['category'];
 }
 
-export const CategoryBadge = ({
-  category,
-  label,
-  icon,
-}: CategoryBadgeProps) => {
+export const CategoryBadge = ({ category, label }: CategoryBadgeProps) => {
   const bg = categoryColors[category];
 
   return (
@@ -23,7 +18,12 @@ export const CategoryBadge = ({
         color: 'var(--color-textPrimary)',
       }}
     >
-      <Icon className='align-middle' group='category' name={icon} size={14} />
+      <Icon
+        className='align-middle'
+        group='category'
+        name={category}
+        size={14}
+      />
       <span className='align-middle'>{label}</span>
     </div>
   );

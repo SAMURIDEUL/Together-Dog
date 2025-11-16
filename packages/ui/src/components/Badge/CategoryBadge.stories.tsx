@@ -31,11 +31,7 @@ export const AllCategories: Story = {
           >
         ).map((key) => (
           <div key={key} className='flex justify-center'>
-            <CategoryBadge
-              category={key}
-              icon={key}
-              label={categoryLabels[key]}
-            />
+            <CategoryBadge category={key} label={categoryLabels[key]} />
           </div>
         ))}
       </div>
@@ -48,7 +44,6 @@ export const Cafe: Story = {
   args: {
     category: 'cafe',
     label: '카페',
-    icon: 'cafe',
   },
 };
 
@@ -56,6 +51,5 @@ export const Restaurant: Story = {
   args: {
     category: 'restaurant',
     label: '식당',
-    icon: 'restaurant',
   },
 };
