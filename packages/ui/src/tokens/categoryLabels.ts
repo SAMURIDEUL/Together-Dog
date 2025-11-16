@@ -1,0 +1,15 @@
+export const categoryLabels = {
+  cafe: '카페',
+  restaurant: '식당',
+  hotel: '호텔',
+  museum: '박물관',
+  artGallery: '미술관',
+  pension: '펜션',
+  travelSpot: '여행지',
+  petPharmacy: '동물약국',
+  petHospital: '동물병원',
+  petSupplies: '반려동물용품',
+  grooming: '미용',
+  culturalCenter: '문예회관',
+  entrustedCare: '위탁관리',
+} as const;
