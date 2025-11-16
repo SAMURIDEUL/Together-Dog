@@ -1,0 +1,15 @@
+export const categoryColors = {
+  cafe: '#FFE08C',
+  restaurant: '#FFD3B6',
+  hotel: '#C7A061',
+  museum: '#B6D4FF',
+  artGallery: '#D6C2F0',
+  pension: '#C8E6C9',
+  petSupplies: '#FFE3E3',
+  petHospital: '#D6EAF8',
+  petPharmacy: '#E8F5E9',
+  grooming: '#FFECB3',
+  culturalCenter: '#F8D7DA',
+  travelSpot: '#FFF3C4',
+  entrustedCare: '#E0E0E0',
+} as const;
