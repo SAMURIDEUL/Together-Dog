@@ -21,3 +21,16 @@ button:hover {
   cursor: pointer;
   text-decoration: none;
 }
+
+@layer utilities {
+  .thin-scrollbar::-webkit-scrollbar {
+    height: 4px;
+  }
+  .thin-scrollbar::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+  .thin-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #d1d5db; /* Neutral Gray */
+    border-radius: 10px;
+  }
+}
