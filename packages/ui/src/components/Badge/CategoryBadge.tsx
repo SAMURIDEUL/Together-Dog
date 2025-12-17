@@ -12,7 +12,7 @@ export const CategoryBadge = ({ category, label }: CategoryBadgeProps) => {
 
   return (
     <div
-      className='inline-flex h-8 items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium shadow-sm'
+      className='inline-flex h-7 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium'
       style={{
         backgroundColor: bg,
         color: 'var(--color-textPrimary)',
