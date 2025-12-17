@@ -43,9 +43,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           </button>
         )}
         {errorMessage && (
-          <p className='animate-fade-in mt-1 text-xs text-red-500'>
-            {errorMessage}
-          </p>
+          <p className='mt-1 text-xs text-red-500'>{errorMessage}</p>
         )}
       </div>
     );
