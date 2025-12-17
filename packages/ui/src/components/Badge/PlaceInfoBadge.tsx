@@ -18,13 +18,15 @@ export const PlaceInfoBadge = ({
   variant = 'default',
   ...iconProps
 }: PlaceInfoBadgeProps) => {
+  const { size = 14, ...restIconProps } = iconProps;
+
   return (
     <div
       className={`inline-flex h-7 items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ${
         variantStyles[variant]
       } ${className || ''}`}
     >
-      <Icon {...iconProps} size={14} />
+      <Icon {...restIconProps} size={size} />
       <span>{text}</span>
     </div>
   );
