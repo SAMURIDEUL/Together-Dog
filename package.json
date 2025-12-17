@@ -2,6 +2,15 @@
   "name": "together-dog-monorepo",
   "private": true,
   "packageManager": "pnpm@10.18.3",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@tailwindcss/oxide",
+      "core-js",
+      "core-js-pure",
+      "sharp",
+      "unrs-resolver"
+    ]
+  },
   "scripts": {
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",
