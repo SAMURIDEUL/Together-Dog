@@ -4,4 +4,5 @@ export * from './components/Badge/CategoryBadge';
 export * from './components/Badge/PlaceInfoBadge';
 export * from './components/Button/Button';
 export * from './components/LikeButton/LikeButton';
+export * from './hooks/useInputValidate';
 export * from './tokens/iconPath';
