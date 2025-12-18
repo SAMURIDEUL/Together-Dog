@@ -16,7 +16,7 @@ export const GNB = () => {
       <div className='mx-auto flex h-16 max-w-screen-xl items-center justify-between px-4 md:px-8'>
         {/* Logo Area */}
         <Link className='group flex items-center gap-2' href='/'>
-          <div className='relative h-8 w-8 overflow-hidden transition-transform group-hover:scale-110'>
+          <div className='relative h-7 w-7 overflow-hidden transition-transform group-hover:scale-110'>
             <Image
               fill
               priority
@@ -42,7 +42,7 @@ export const GNB = () => {
             }`}
             href='/map'
           >
-            <MapIcon className='h-6 w-6' />
+            <MapIcon className='h-5 w-5' />
           </Link>
 
           {/* Theme Toggle */}
@@ -52,9 +52,9 @@ export const GNB = () => {
             onClick={toggleTheme}
           >
             {theme === 'dark' ? (
-              <MoonIcon className='h-6 w-6' />
+              <MoonIcon className='h-5 w-5' />
             ) : (
-              <SunIcon className='h-6 w-6' />
+              <SunIcon className='h-5 w-5' />
             )}
           </button>
 
@@ -68,7 +68,7 @@ export const GNB = () => {
             }`}
             href='/my'
           >
-            <UserIcon className='h-6 w-6' />
+            <UserIcon className='h-5 w-5' />
           </Link>
         </div>
       </div>
