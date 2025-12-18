@@ -35,7 +35,7 @@ export const GNB = () => {
           </Link>
           <Link
             aria-label='마이페이지'
-            className={`rounded-full p-2 text-gray-600 transition-colors hover:bg-gray-100`}
+            className='rounded-full p-2 text-gray-600 transition-colors hover:bg-gray-100'
             href='/my'
           >
             <UserIcon className='h-5 w-5' />
