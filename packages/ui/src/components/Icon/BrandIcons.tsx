@@ -1,5 +1,6 @@
 export const GithubIcon = ({ className }: { className?: string }) => (
   <svg
+    aria-hidden='true'
     className={className}
     fill='currentColor'
     stroke='none'

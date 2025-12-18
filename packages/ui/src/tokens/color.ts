@@ -27,16 +27,9 @@ export const lightPalette = {
   shadow: 'rgba(0, 0, 0, 0.05)',
 };
 
-export const darkPalette = {
-  // 🌙 다크 모드 색상
-  primary: '#FFD670', // 메인 컬러 (밝은 옐로)
-  neutralDark: '#1E1E1E', // 기본 텍스트용 거의 블랙
-};
-
 // 전체 테마를 한 번에 관리하기 위한 객체
 export const palette = {
   light: lightPalette,
-  dark: darkPalette,
 };
 
 // 타입 정의 (선택적으로 사용 가능)
