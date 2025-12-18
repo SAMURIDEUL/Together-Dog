@@ -10,7 +10,7 @@ export const GlobalToast = () => {
   if (toasts.length === 0) return null;
 
   return (
-    <div className='pointer-events-none fixed bottom-4 right-4 z-[9999] flex flex-col gap-2'>
+    <div className='pointer-events-none fixed bottom-4 left-1/2 z-[9999] flex -translate-x-1/2 flex-col items-center gap-2'>
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
