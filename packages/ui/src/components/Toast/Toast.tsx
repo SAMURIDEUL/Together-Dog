@@ -15,6 +15,13 @@ const iconMap: Record<ToastVariant, React.ReactNode> = {
   error: <ErrorIcon className='h-5 w-5 text-red-500' />,
 };
 
+/**
+ * Toast 컴포넌트
+ *
+ * 사용자에게 피드백 메시지(성공, 실패, 정보)를 시각적으로 전달하는 UI 컴포넌트입니다.
+ * - `variant` prop을 통해 스타일(배경색, 아이콘)을 변경할 수 있습니다.
+ * - `GlobalToast` 컨테이너 내부에서 렌더링되어 사용됩니다.
+ */
 export const Toast = ({
   id,
   message,
