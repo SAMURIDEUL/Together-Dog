@@ -1,5 +1,3 @@
-import * as React from 'react';
-
 export const EyeIcon = ({ className }: { className?: string }) => (
   <svg
     className={className}

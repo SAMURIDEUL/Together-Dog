@@ -37,6 +37,7 @@ export const Button = ({
   rounded,
   isDisabled = false,
   onClick,
+  className,
   ...props
 }: ButtonProps) => {
   const roundClass = BUTTON_ROUNDED[rounded ?? DEFAULT_BUTTON_ROUNDED[size]];
@@ -45,11 +46,12 @@ export const Button = ({
   return (
     <button
       className={cn(
-        'p-5 font-sans transition-colors duration-200',
+        'p-5 transition-colors duration-200',
         BUTTON_VARIANTS[variant],
         BUTTON_SIZE[size],
         roundClass,
         textClass,
+        className,
       )}
       disabled={isDisabled}
       onClick={onClick}
