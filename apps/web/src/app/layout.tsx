@@ -8,7 +8,8 @@ import localFont from 'next/font/local';
 
 import GlobalModal from '../components/GlobalModal';
 import { GlobalToast } from '../components/GlobalToast';
-import Header from './Header';
+import { GNB } from '../components/GNB';
+import { ThemeProvider } from '../components/ThemeProvider';
 
 // Pretendard 폰트 설정
 const pretendard = localFont({
@@ -59,10 +60,12 @@ export default function RootLayout({
       <body
         className={`${pretendard.variable} ${nanumSquareNeo.variable} antialiased`}
       >
-        <Header />
-        {children}
-        <GlobalModal />
-        <GlobalToast />
+        <ThemeProvider>
+          <GNB />
+          {children}
+          <GlobalModal />
+          <GlobalToast />
+        </ThemeProvider>
       </body>
     </html>
   );

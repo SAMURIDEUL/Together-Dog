@@ -2,6 +2,7 @@
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
+  darkMode: 'class',
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
@@ -12,7 +13,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        pretendard: ['var(--font-pretendard)'],
+        pretendard: ['var(--font-primary)'],
+        nanum: ['var(--font-secondary)'],
       },
     },
   },
