@@ -3,6 +3,8 @@
 import { Button } from '@together-dog/ui';
 import { useState } from 'react';
 
+import { useModalStore } from '../stores/useModalStore';
+
 export default function MyClientButton() {
   const [clicked, setClicked] = useState(false);
 
@@ -30,6 +32,31 @@ export default function MyClientButton() {
       {/* 🔹 secondary 스타일로도 테스트 */}
       <Button size='xl' variant='secondary'>
         Secondary 긴 버튼
+      </Button>
+
+      {/* 🔹 전역 모달 테스트 */}
+      <Button
+        size='xl'
+        variant='primary'
+        onClick={() => {
+          useModalStore.getState().openModal({
+            title: '전역 모달 테스트',
+            content: 'Zustand로 관리되는 전역 모달입니다!',
+            primaryAction: {
+              label: '확인',
+              onClick: () => {
+                alert('확인 버튼 클릭됨');
+                useModalStore.getState().closeModal();
+              },
+            },
+            secondaryAction: {
+              label: '취소',
+              onClick: () => useModalStore.getState().closeModal(),
+            },
+          });
+        }}
+      >
+        전역 모달 열기 🚀
       </Button>
 
       {clicked && (

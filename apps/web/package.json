@@ -14,7 +14,8 @@
     "@together-dog/ui": "workspace:*",
     "next": "16.0.10",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
