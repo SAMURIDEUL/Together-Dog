@@ -84,6 +84,7 @@ export const Modal = ({
           )}
           {showCloseButton && (
             <button
+              aria-label='모달 닫기'
               className='-mr-2 -mt-2 rounded-full p-1 text-neutral-400 transition-colors'
               type='button'
               onClick={onClose}
