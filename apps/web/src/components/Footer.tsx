@@ -1,7 +1,6 @@
 'use client';
 
 import { GithubIcon } from '@together-dog/ui';
-import Link from 'next/link';
 
 export const Footer = () => {
   return (
@@ -37,12 +36,11 @@ export const Footer = () => {
 
         {/* Links (Placeholder) */}
         <div className='flex justify-center gap-6 border-t border-gray-200 pt-6 text-sm text-gray-500 sm:justify-start'>
-          <Link className='hover:text-gray-900' href='#'>
-            이용약관
-          </Link>
-          <Link className='hover:text-gray-900' href='#'>
+          {/* TODO: 실제 페이지 경로로 변경 필요 */}
+          <span className='cursor-not-allowed text-gray-800'>이용약관</span>
+          <span className='cursor-not-allowed text-gray-800'>
             개인정보처리방침
-          </Link>
+          </span>
         </div>
       </div>
     </footer>
