@@ -10,7 +10,6 @@ const config: Config = {
     '../../apps/web/**/*.{js,ts,jsx,tsx}',
     './src/safelist.css',
   ],
-  darkMode: 'class',
   theme: {
     extend: {
       colors: {
@@ -20,15 +19,6 @@ const config: Config = {
         accent: palette.light.accent,
         neutralLight: palette.light.neutralLight,
         neutralDark: palette.light.neutralDark,
-
-        // 다크 모드
-        dark: {
-          primary: palette.dark.primary,
-          secondary: palette.dark.secondary,
-          accent: palette.dark.accent,
-          neutralLight: palette.dark.neutralLight,
-          neutralDark: palette.dark.neutralDark,
-        },
       },
     },
   },

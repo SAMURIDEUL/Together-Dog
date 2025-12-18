@@ -27,29 +27,9 @@ export const lightPalette = {
   shadow: 'rgba(0, 0, 0, 0.05)',
 };
 
-export const darkPalette = {
-  // 🌙 다크 모드 색상
-  primary: '#FFD670', // 메인 컬러 (밝은 옐로)
-  secondary: '#A4835A', // 보조 컬러 (톤 다운된 브라운)
-  accent: '#FF9C8A', // 강조 컬러 (조금 진한 코랄)
-
-  neutralLight: '#2C2C2C', // 전체 배경 (어두운 그레이)
-  neutralDark: '#F4EEDC', // 텍스트용 밝은 베이지 톤
-
-  background: '#2C2C2C', // 페이지 배경
-  surface: '#3A2F2F', // 카드나 섹션 배경
-
-  textPrimary: '#F4EEDC', // 기본 텍스트 색상
-  textSecondary: '#FFD670', // 강조 텍스트 색상
-
-  border: 'rgba(255, 255, 255, 0.1)', // 밝은 보더 라인
-  shadow: 'rgba(0, 0, 0, 0.3)', // 다크 모드 전용 그림자
-};
-
 // 전체 테마를 한 번에 관리하기 위한 객체
 export const palette = {
   light: lightPalette,
-  dark: darkPalette,
 };
 
 // 타입 정의 (선택적으로 사용 가능)
