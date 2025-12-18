@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { cn } from '../../utils/cn';
@@ -20,12 +20,19 @@ export const Modal = ({
   className,
 }: ModalProps) => {
   const [mounted, setMounted] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
+    previousFocusRef.current = document.activeElement as HTMLElement;
+
+    return () => {
+      previousFocusRef.current?.focus();
+    };
   }, []);
 
-  // ESC 키로 닫기
+  // ESC 키 핸들러 & 스크롤 방지
   useEffect(() => {
     if (!isOpen) return;
 
@@ -34,20 +41,53 @@ export const Modal = ({
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+    document.body.style.overflow = 'hidden';
 
-  // 스크롤 방지
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
     return () => {
+      window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
     };
+  }, [isOpen, onClose]);
+
+  // 초기 포커스 (첫 번째 요소)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const timer = setTimeout(() => {
+      const modal = modalRef.current;
+      if (modal) {
+        const focusableElements = modal.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled]):not([data-focus-guard])',
+        );
+        if (focusableElements.length > 0) {
+          focusableElements[0].focus();
+        }
+      }
+    }, 10);
+
+    return () => clearTimeout(timer);
   }, [isOpen]);
+
+  const getFocusableElements = () => {
+    if (!modalRef.current) return [];
+    return modalRef.current.querySelectorAll<HTMLElement>(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled]):not([data-focus-guard])',
+    );
+  };
+
+  const handleFocusFirst = () => {
+    const elements = getFocusableElements();
+    if (elements.length > 0) {
+      elements[0].focus();
+    }
+  };
+
+  const handleFocusLast = () => {
+    const elements = getFocusableElements();
+    if (elements.length > 0) {
+      elements[elements.length - 1].focus();
+    }
+  };
 
   if (!mounted || !isOpen) return null;
 
@@ -57,24 +97,31 @@ export const Modal = ({
       <div
         className='fixed inset-0 bg-black/50 transition-opacity'
         role='button'
-        tabIndex={0}
         onClick={onClose}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            onClose();
-          }
-        }}
       />
 
       {/* Container */}
       <div
+        ref={modalRef}
+        aria-label={!title ? '모달' : undefined}
+        aria-labelledby={title ? 'modal-title' : undefined}
+        aria-modal='true'
         className={cn(
           'relative z-50 flex w-full flex-col gap-4 rounded-2xl bg-white p-6 shadow-xl transition-all',
           width,
           className,
         )}
+        role='dialog'
+        onClick={(e) => e.stopPropagation()}
       >
+        {/* Top Sentinel (Focus Guard) */}
+        <div
+          className='absolute h-[1px] w-[1px] overflow-hidden opacity-0'
+          data-focus-guard='true'
+          tabIndex={0}
+          onFocus={handleFocusLast}
+        />
+
         {/* Header */}
         <div className='flex items-center justify-between'>
           {title ? (
@@ -124,6 +171,14 @@ export const Modal = ({
             )}
           </div>
         )}
+
+        {/* Bottom Sentinel (Focus Guard) */}
+        <div
+          className='absolute h-[1px] w-[1px] overflow-hidden opacity-0'
+          data-focus-guard='true'
+          tabIndex={0}
+          onFocus={handleFocusFirst}
+        />
       </div>
     </div>
   );
