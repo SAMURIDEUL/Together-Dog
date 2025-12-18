@@ -14,7 +14,7 @@ export const GlobalToast = () => {
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
-          className='animate-in slide-in-from-bottom-5 fade-in duration-300'
+          className='pointer-events-auto'
           id={toast.id}
           message={toast.message}
           variant={toast.variant}
