@@ -57,8 +57,14 @@ export const Modal = ({
       <div
         className='fixed inset-0 bg-black/50 transition-opacity'
         role='button'
-        tabIndex={-1}
+        tabIndex={0}
         onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onClose();
+          }
+        }}
       />
 
       {/* Container */}

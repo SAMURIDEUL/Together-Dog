@@ -9,18 +9,28 @@ interface ModalState {
   primaryAction: {
     label: string;
     onClick: () => void;
+    isDisabled?: boolean;
   } | null;
   /** Secondary Action Button (Left side, usually 'Cancel') */
   secondaryAction: {
     label: string;
     onClick: () => void;
+    isDisabled?: boolean;
   } | null;
   /** Open the modal with specific content and actions */
   openModal: (params: {
     title?: ReactNode;
     content: ReactNode;
-    primaryAction?: { label: string; onClick: () => void };
-    secondaryAction?: { label: string; onClick: () => void };
+    primaryAction?: {
+      label: string;
+      onClick: () => void;
+      isDisabled?: boolean;
+    };
+    secondaryAction?: {
+      label: string;
+      onClick: () => void;
+      isDisabled?: boolean;
+    };
   }) => void;
   /** Close the modal */
   closeModal: () => void;
