@@ -7,8 +7,8 @@ interface CardProps {
   children?: ReactNode;
 }
 
-export const Card = ({ darkMode = false, children }: CardProps) => {
-  const color = darkMode ? palette.dark : palette.light;
+export const Card = ({ children }: CardProps) => {
+  const color = palette.light;
 
   return (
     <div

@@ -26,25 +26,6 @@
   --color-shadow: rgba(0, 0, 0, 0.05);
 }
 
-/* 🌙 다크모드 테마 */
-[data-theme='dark'] {
-  --color-primary: #ffd670;
-  --color-secondary: #a4835a;
-  --color-accent: #ff9c8a;
-
-  --color-background: #2c2c2c;
-  --color-surface: #3a2f2f;
-
-  --color-textPrimary: #f4eedc;
-  --color-textSecondary: #ffd670;
-  --color-textAccent: #a4835a;
-
-  --color-neutralLight: #2c2c2c;
-  --color-neutralDark: #f4eedc;
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-shadow: rgba(0, 0, 0, 0.3);
-}
-
 /* 🌐 전역 배경 및 텍스트 컬러 */
 html,
 body {
@@ -55,9 +36,7 @@ body {
     background-color 0.3s ease,
     color 0.3s ease;
 }
-
-/* 다크모드 전환 시 부드러운 트랜지션 */
-[data-theme='dark'] body {
+/* [data-theme='dark'] body {
   background-color: var(--color-background);
   color: var(--color-textPrimary);
-}
+} */

@@ -3,6 +3,7 @@
 export * from './components/Badge/CategoryBadge';
 export * from './components/Badge/PlaceInfoBadge';
 export * from './components/Button/Button';
+export * from './components/Icon/BrandIcons';
 export * from './components/Icon/NavigationIcons';
 export * from './components/LikeButton/LikeButton';
 export * from './components/Modal/Modal';

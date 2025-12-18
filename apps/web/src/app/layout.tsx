@@ -1,11 +1,12 @@
 // apps/web/src/app/layout.tsx
 
-import './globals.css';
 import '@together-dog/ui/globals.css';
+import './globals.css';
 
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
+import { Footer } from '../components/Footer';
 import GlobalModal from '../components/GlobalModal';
 import { GlobalToast } from '../components/GlobalToast';
 import { GNB } from '../components/GNB';
@@ -56,13 +57,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang='ko'>
+    <html suppressHydrationWarning lang='ko'>
       <body
-        className={`${pretendard.variable} ${nanumSquareNeo.variable} antialiased`}
+        suppressHydrationWarning
+        className={`${pretendard.variable} ${nanumSquareNeo.variable} bg-white text-gray-900 antialiased`}
       >
         <ThemeProvider>
-          <GNB />
-          {children}
+          <div className='flex min-h-screen flex-col'>
+            <GNB />
+            <main className='flex-1'>{children}</main>
+            <Footer />
+          </div>
           <GlobalModal />
           <GlobalToast />
         </ThemeProvider>

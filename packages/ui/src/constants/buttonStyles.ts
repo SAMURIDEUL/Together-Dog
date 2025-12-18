@@ -29,9 +29,6 @@ export const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
     'bg-[var(--color-primary)]',
     'text-[var(--color-textPrimary)]',
     'hover:bg-[var(--color-secondary)]',
-    'dark:bg-[var(--color-primary)]',
-    'dark:text-[var(--color-textPrimary)]',
-    'dark:hover:bg-[var(--color-accent)]',
     'cursor-pointer',
     ...DISABLED_CLASSES,
   ),
@@ -39,7 +36,6 @@ export const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
   secondary: cn(
     'flex items-center justify-center',
     'hover:bg-gray-200',
-    'dark:hover:bg-[var(--color-surface)]',
     ...SECONDARY_BASE,
   ),
 
