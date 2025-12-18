@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
 import GlobalModal from '../components/GlobalModal';
+import { GlobalToast } from '../components/GlobalToast';
 import Header from './Header';
 
 // Pretendard 폰트 설정
@@ -61,6 +62,7 @@ export default function RootLayout({
         <Header />
         {children}
         <GlobalModal />
+        <GlobalToast />
       </body>
     </html>
   );
