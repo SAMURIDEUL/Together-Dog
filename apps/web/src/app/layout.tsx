@@ -6,11 +6,11 @@ import './globals.css';
 import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 
-import { Footer } from '../components/Footer';
-import GlobalModal from '../components/GlobalModal';
-import { GlobalToast } from '../components/GlobalToast';
-import { GNB } from '../components/GNB';
-import { ThemeProvider } from '../components/ThemeProvider';
+import { Footer } from '../components/shared/Footer';
+import GlobalModal from '../components/shared/GlobalModal';
+import { GlobalToast } from '../components/shared/GlobalToast';
+import { GNB } from '../components/shared/GNB';
+import { ThemeProvider } from '../components/shared/ThemeProvider';
 
 // Pretendard 폰트 설정
 const pretendard = localFont({
