@@ -1,7 +1,6 @@
 'use client';
 
 import { cn, Icon, type iconPaths, SearchIcon } from '@together-dog/ui';
-import Image from 'next/image';
 import type { ComponentProps } from 'react';
 
 type CategoryKey = keyof typeof iconPaths.category;
@@ -31,41 +30,8 @@ export const HeroSection = ({
       {/* Background Patterns */}
       <div className='absolute inset-0 z-0 bg-gradient-to-b from-orange-50 to-white' />
 
-      {/* Dog Illustration */}
-      <div className='absolute -left-10 bottom-10 z-0 w-32 opacity-20 md:left-10 md:w-48 lg:left-20 lg:w-64'>
-        <Image
-          priority
-          alt='Dog illustration'
-          className='h-auto w-full'
-          height={300}
-          src='/images/landing/dog.jpg'
-          width={300}
-        />
-      </div>
-
-      {/* Cat Illustration (Stretching) */}
-      <div className='absolute -right-10 top-10 z-0 w-32 rotate-12 opacity-20 md:right-10 md:w-40 lg:right-20 lg:w-56'>
-        <Image
-          priority
-          alt='Cat stretching illustration'
-          className='h-auto w-full'
-          height={200}
-          src='/images/landing/cat-stretch.jpg'
-          width={300}
-        />
-      </div>
-
-      {/* Cat Illustration (Rolling) */}
-      <div className='absolute bottom-20 right-10 z-0 hidden w-24 -rotate-12 opacity-15 md:block md:w-32 lg:right-40 lg:w-40'>
-        <Image
-          priority
-          alt='Cat rolling illustration'
-          className='h-auto w-full'
-          height={300}
-          src='/images/landing/cat-roll.jpg'
-          width={300}
-        />
-      </div>
+      {/* Background Pattern */}
+      <div className="absolute inset-0 z-0 bg-[url('/images/landing/dog-pattern.svg')] opacity-[0.2] [background-size:240px_240px]" />
 
       {/* Content */}
       <div className='relative z-10 flex w-full max-w-3xl flex-col items-center gap-8 text-center'>

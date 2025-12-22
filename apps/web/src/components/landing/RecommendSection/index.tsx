@@ -5,8 +5,8 @@ import Link from 'next/link';
 import type { ComponentProps } from 'react';
 
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
+import { mapPlaceToCardProps } from '@/utils/petMapper';
 
-import { mapPlaceToCardProps } from './mapper';
 import { MOCK_API_RESPONSE } from './mock';
 
 export const RecommendSection = ({

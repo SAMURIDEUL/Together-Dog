@@ -101,7 +101,7 @@ export const MOCK_API_RESPONSE: ApiPlaceResponse = {
         petSizeLimit: '해당없음',
         indoorFlag: false,
         outdoorFlag: false,
-        petRestrictions: '해당없음',
+        petRestrictions: '목줄, 배변봉투 지참 필수',
       },
     },
     {
@@ -145,7 +145,7 @@ export const MOCK_API_RESPONSE: ApiPlaceResponse = {
         petSizeLimit: '해당없음',
         indoorFlag: false,
         outdoorFlag: false,
-        petRestrictions: '해당없음',
+        petRestrictions: '맹견 출입금지, 입마개 필수',
       },
     },
   ],
