@@ -12,14 +12,13 @@
 }
 
 :root {
-  --font-primary: 'Pretendard Variable', sans-serif;
-  --font-secondary: 'NanumSquareNeo', sans-serif;
+  --color-background: #fffdf7;
 }
 
 body {
   font-family: var(--font-primary);
   color: #222;
-  background-color: #fffdf7;
+  background-color: var(--color-background);
 }
 
 a:hover,

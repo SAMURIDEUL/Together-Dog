@@ -28,7 +28,7 @@ export const HeroSection = ({
       {...props}
     >
       {/* Background Patterns */}
-      <div className='absolute inset-0 z-0 bg-gradient-to-b from-orange-50 to-white' />
+      <div className='absolute inset-0 z-0 bg-gradient-to-b from-orange-50/0 to-[var(--color-background)]' />
 
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0 bg-[url('/images/landing/dog-pattern.svg')] opacity-[0.2] [background-size:240px_240px]" />
@@ -39,7 +39,7 @@ export const HeroSection = ({
           {HERO_TITLE}
         </h1>
         <p className='text-lg text-gray-600 md:text-xl'>
-          함께 갈 수 있는 모든 곳을 찾아보세요
+          함께 갈 수 있는 모든 곳을 찾아보세요 🐶
         </p>
 
         {/* Search Bar */}

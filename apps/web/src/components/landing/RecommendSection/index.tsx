@@ -13,6 +13,10 @@ export const RecommendSection = ({
   className,
   ...props
 }: ComponentProps<'section'>) => {
+  function likeClickHandler() {
+    console.log('likeClickHandler');
+  }
+
   return (
     <section
       className={cn(
@@ -41,9 +45,7 @@ export const RecommendSection = ({
           <PlaceInfoCard
             key={place.id}
             {...mapPlaceToCardProps(place, index)}
-            onLikeClick={() => {
-              // TODO: Implement like functionality
-            }}
+            onLikeClick={likeClickHandler}
           />
         ))}
       </div>
