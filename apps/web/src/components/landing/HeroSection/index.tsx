@@ -9,8 +9,16 @@ const CATEGORIES: { label: string; id: CategoryKey }[] = [
   { label: '카페', id: 'cafe' },
   { label: '식당', id: 'restaurant' },
   { label: '숙소', id: 'pension' },
+  { label: '호텔', id: 'hotel' },
   { label: '여행지', id: 'travelSpot' },
+  { label: '박물관', id: 'museum' },
+  { label: '미술관', id: 'artGallery' },
+  { label: '문화센터', id: 'culturalCenter' },
+  { label: '용품', id: 'petSupplies' },
+  { label: '미용', id: 'grooming' },
+  { label: '유치원', id: 'entrustedCare' },
   { label: '병원', id: 'petHospital' },
+  { label: '약국', id: 'petPharmacy' },
 ];
 
 const HERO_TITLE = '반려동물과 함께\n떠나볼까요?';
