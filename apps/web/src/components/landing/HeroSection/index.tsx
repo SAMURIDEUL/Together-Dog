@@ -1,7 +1,9 @@
 'use client';
 
 import { cn, Icon, type iconPaths, SearchIcon } from '@together-dog/ui';
+import { useRouter } from 'next/navigation';
 import type { ComponentProps } from 'react';
+import { useState } from 'react';
 
 type CategoryKey = keyof typeof iconPaths.category;
 
@@ -27,6 +29,21 @@ export const HeroSection = ({
   className,
   ...props
 }: ComponentProps<'section'>) => {
+  const router = useRouter();
+  const [keyword, setKeyword] = useState('');
+
+  const handleSearch = () => {
+    if (keyword.trim()) {
+      router.push(`/places?keyword=${encodeURIComponent(keyword)}`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
     <section
       className={cn(
@@ -52,13 +69,20 @@ export const HeroSection = ({
 
         {/* Search Bar */}
         <div className='relative w-full max-w-xl'>
-          <div className='pointer-events-none absolute inset-y-0 left-4 flex items-center text-gray-400'>
+          <button
+            className='absolute inset-y-0 left-4 flex items-center text-gray-400 hover:text-orange-500'
+            type='button'
+            onClick={handleSearch}
+          >
             <SearchIcon className='h-6 w-6' />
-          </div>
+          </button>
           <input
             className='w-full rounded-full border border-gray-200 bg-white py-4 pl-12 pr-6 text-lg shadow-lg outline-none transition-all placeholder:text-gray-400 hover:shadow-xl focus:border-orange-400 focus:ring-4 focus:ring-orange-100'
             placeholder='어디로 떠나시나요?'
             type='text'
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
         </div>
 
@@ -69,6 +93,7 @@ export const HeroSection = ({
               key={category.id}
               className='flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:translate-y-0'
               type='button'
+              onClick={() => router.push(`/places?category=${category.id}`)}
             >
               <Icon group='category' name={category.id} size={20} />
               {category.label}
