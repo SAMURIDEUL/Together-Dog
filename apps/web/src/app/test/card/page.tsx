@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { PlaceInfoCard } from '@/components/PlaceInfoCard/PlaceInfoCard';
+import { PlaceInfoCard } from '@/components/PlaceInfoCard';
 
 export default function CardTestPage() {
   const [isLiked, setIsLiked] = useState(false);

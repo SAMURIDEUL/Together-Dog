@@ -2,7 +2,7 @@
 
 import { Toast } from '@together-dog/ui';
 
-import { useToastStore } from '../stores/useToastStore';
+import { useToastStore } from '@/stores/useToastStore';
 
 /**
  * Global Toast Container

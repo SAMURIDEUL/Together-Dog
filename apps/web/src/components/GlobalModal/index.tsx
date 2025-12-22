@@ -2,7 +2,7 @@
 
 import { Modal } from '@together-dog/ui';
 
-import { useModalStore } from '../stores/useModalStore';
+import { useModalStore } from '@/stores/useModalStore';
 
 const GlobalModal = () => {
   const { isOpen, title, content, primaryAction, secondaryAction, closeModal } =
