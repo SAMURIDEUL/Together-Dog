@@ -5,6 +5,12 @@
 
 @source "../../node_modules/@together-dog/ui";
 
+@theme {
+  --font-pretendard: var(--font-primary);
+  --font-nanum: var(--font-secondary);
+  --font-dohyeon: var(--font-dohyeon), sans-serif;
+}
+
 :root {
   --font-primary: 'Pretendard Variable', sans-serif;
   --font-secondary: 'NanumSquareNeo', sans-serif;

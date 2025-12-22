@@ -4,6 +4,7 @@ import '@together-dog/ui/globals.css';
 import './globals.css';
 
 import type { Metadata } from 'next';
+import { Do_Hyeon } from 'next/font/google';
 import localFont from 'next/font/local';
 
 import { Footer } from '../components/shared/Footer';
@@ -18,6 +19,13 @@ const pretendard = localFont({
   display: 'swap',
   weight: '45 920',
   variable: '--font-primary', // CSS 변수 이름 지정
+});
+
+// Do Hyeon 폰트 설정
+const dohyeon = Do_Hyeon({
+  weight: '400',
+  preload: false,
+  variable: '--font-dohyeon',
 });
 
 // NanumSquareNeo 폰트 설정 (여러 웨이트를 배열로 관리)
@@ -60,7 +68,7 @@ export default function RootLayout({
     <html suppressHydrationWarning lang='ko'>
       <body
         suppressHydrationWarning
-        className={`${pretendard.variable} ${nanumSquareNeo.variable} bg-white text-gray-900 antialiased`}
+        className={`${pretendard.variable} ${nanumSquareNeo.variable} ${dohyeon.variable} bg-white text-gray-900 antialiased`}
       >
         <ThemeProvider>
           <div className='flex min-h-screen flex-col'>
