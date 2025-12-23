@@ -72,6 +72,7 @@ export const HeroSection = ({
         {/* Search Bar */}
         <div className='relative w-full max-w-xl'>
           <button
+            aria-label='검색'
             className='absolute inset-y-0 left-4 flex items-center text-gray-400 hover:text-orange-500'
             type='button'
             onClick={handleSearch}
@@ -79,6 +80,7 @@ export const HeroSection = ({
             <SearchIcon className='h-6 w-6' />
           </button>
           <input
+            aria-label='검색어 입력'
             className='w-full rounded-full border border-gray-200 bg-white py-4 pl-12 pr-6 text-lg shadow-lg outline-none transition-all placeholder:text-gray-400 hover:shadow-xl focus:border-orange-400 focus:ring-4 focus:ring-orange-100'
             placeholder='어디로 떠나시나요?'
             type='text'
@@ -94,6 +96,7 @@ export const HeroSection = ({
           {POPULAR_TAGS.map((region) => (
             <button
               key={region}
+              aria-label={`인기 지역 ${region}`}
               className='hover:text-orange-500 hover:underline'
               type='button'
               onClick={() =>

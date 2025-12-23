@@ -24,6 +24,7 @@ export const RecommendSection = ({
     const targetPlace = places.find((p) => p.id === id);
     if (!targetPlace) return;
 
+    // TODO: API 연동 시 console.log 제거
     if (!targetPlace.isLike) {
       console.log(`찜한 장소 id : ${id}`);
     } else {
