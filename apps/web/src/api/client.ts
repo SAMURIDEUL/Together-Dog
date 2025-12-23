@@ -53,6 +53,9 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error: AxiosError) => {
+    // 개발 환경에서만 상세 로그 출력
+    const isDev = process.env.NODE_ENV === 'development';
+
     // 에러 처리
     if (error.response) {
       // 서버가 응답을 반환한 경우
@@ -69,25 +72,25 @@ apiClient.interceptors.response.use(
           break;
         case 403:
           // 권한 없음
-          console.error('접근 권한이 없습니다.');
+          if (isDev) console.error('접근 권한이 없습니다.');
           break;
         case 404:
           // 찾을 수 없음
-          console.error('요청한 리소스를 찾을 수 없습니다.');
+          if (isDev) console.error('요청한 리소스를 찾을 수 없습니다.');
           break;
         case 500:
           // 서버 에러
-          console.error('서버 오류가 발생했습니다.');
+          if (isDev) console.error('서버 오류가 발생했습니다.');
           break;
         default:
-          console.error('오류가 발생했습니다:', error.message);
+          if (isDev) console.error('오류가 발생했습니다:', error.message);
       }
     } else if (error.request) {
       // 요청은 보냈지만 응답을 받지 못한 경우
-      console.error('서버로부터 응답이 없습니다.');
+      if (isDev) console.error('서버로부터 응답이 없습니다.');
     } else {
       // 요청 설정 중 에러가 발생한 경우
-      console.error('요청 중 오류가 발생했습니다:', error.message);
+      if (isDev) console.error('요청 중 오류가 발생했습니다:', error.message);
     }
 
     return Promise.reject(error);

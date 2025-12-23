@@ -1,4 +1,4 @@
-import { Place } from '@/types/place';
+import { ApiPlaceResponse, Place } from '@/types/place';
 
 import { apiClient } from './client';
 
@@ -30,11 +30,9 @@ export const getPlaces = async (
   return response.data;
 };
 
-export const getRandomPlaces = async () => {
-  const response = await apiClient.get<{
-    status: number;
-    message: string;
-    data: Place[];
-  }>('/categories/places/random');
+export const getRandomPlaces = async (): Promise<ApiPlaceResponse> => {
+  const response = await apiClient.get<ApiPlaceResponse>(
+    '/categories/places/random',
+  );
   return response.data;
 };
