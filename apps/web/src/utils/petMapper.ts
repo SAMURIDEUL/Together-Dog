@@ -89,7 +89,6 @@ const CATEGORY_ICON_MAP: {
   { keywords: ['운동장', '공원', '여행'], icon: 'travelSpot' },
 ];
 
-// --- 추가 장소 매핑 로직 ---// categoryId/category3를 iconPaths 키로 매핑
 export const getCategoryIcon = (
   _categoryId: number,
   category3: string,
@@ -105,15 +104,29 @@ export const getCategoryIcon = (
 export const determinePetSizeVariant = (
   limitString: string,
 ): PlaceInfoCardProps['badges'][0]['variant'] => {
+  // 1. Absolute Positive (제한 없음 등)
   if (limitString.match(/제한\s*없음|해당\s*없음|모두\s*가능|모두\s*허용/)) {
     return 'positive';
   }
-  if (limitString.match(/(미만|이하|제한|불가|금지|초과|필수|주의|이상)/)) {
+
+  // 2. Strong Negative (명시적 금지)
+  // "대형견 불가", "입질견 금지" 등은 무조건 경고
+  if (limitString.match(/(불가|금지|제한|필수|주의|안됨)/)) {
     return 'warning';
   }
+
+  // 3. Conditional Positive (허용/가능)
+  // 위에서 '불가'가 걸러졌으므로, 여기서는 "10kg 이상 가능", "소형견 전용" 등 긍정적 의미
   if (limitString.match(/(가능|전용|동반|소형|중형|대형|특수|묘|허용)/)) {
     return 'positive';
   }
+
+  // 4. Size/Age Constraints (단순 제한)
+  // "10kg 미만", "10kg 이상" 등 수치 제한만 있는 경우 경고로 처리
+  if (limitString.match(/(미만|이하|초과|이상)/)) {
+    return 'warning';
+  }
+
   return 'default';
 };
 
