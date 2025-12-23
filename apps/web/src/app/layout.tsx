@@ -24,7 +24,7 @@ const pretendard = localFont({
 // Do Hyeon 폰트 설정
 const dohyeon = Do_Hyeon({
   weight: '400',
-  preload: false,
+  preload: true,
   variable: '--font-dohyeon',
 });
 

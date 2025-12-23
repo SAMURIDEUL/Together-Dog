@@ -6,13 +6,13 @@
 @source "../../node_modules/@together-dog/ui";
 
 @theme {
-  --font-pretendard: var(--font-primary);
-  --font-nanum: var(--font-secondary);
   --font-dohyeon: var(--font-dohyeon), sans-serif;
 }
 
 :root {
   --color-background: #fffdf7;
+  --font-primary: 'Pretendard Variable', -apple-system, sans-serif;
+  --font-secondary: 'NanumSquareNeo', sans-serif;
 }
 
 body {
