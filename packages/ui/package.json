@@ -48,6 +48,10 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
+  "sideEffects": [
+    "*.css",
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -55,6 +59,11 @@
       "require": "./dist/index.js"
     },
     "./globals.css": "./dist/globals.css",
-    "./dist/globals.css": "./dist/globals.css"
+    "./dist/globals.css": "./dist/globals.css",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.js"
+    }
   }
 }
