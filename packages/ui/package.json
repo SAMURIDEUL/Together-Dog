@@ -12,7 +12,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts && cpx src/globals.css dist/",
+    "build": "tsup --format esm,cjs --dts && cpx src/globals.css dist/",
     "dev": "storybook dev -p 6006",
     "lint": "eslint .",
     "test": "vitest run",
