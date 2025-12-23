@@ -1,7 +1,13 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/**/*.{ts,tsx}'], // 모든 소스 파일 개별 변환
+  entry: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.stories.{ts,tsx}',
+    '!src/**/*.test.{ts,tsx}',
+    '!src/setupTests.ts',
+    '!src/vitest.setup.ts',
+  ],
   bundle: false, // 번들링 하지 않음 (Tree Shaking 지원)
   splitting: false,
   format: ['esm', 'cjs'], // ES module + CommonJS 빌드

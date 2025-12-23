@@ -131,24 +131,33 @@ export const mapPlaceToCardProps = (
       name: 'pension',
       variant: 'positive',
     });
+  } else {
+    badges.push({
+      text: '실내 불가',
+      group: 'restriction',
+      name: 'noEntry',
+      variant: 'warning',
+    });
   }
   if (place.petPolicy.outdoorFlag) {
     badges.push({
       text: '야외 동반',
-      group: 'general',
-      name: 'map',
+      group: 'restriction',
+      name: 'terrace',
       variant: 'positive',
+    });
+  } else {
+    badges.push({
+      text: '야외 불가',
+      group: 'restriction',
+      name: 'noEntry',
+      variant: 'warning',
     });
   }
   if (
     place.petPolicy.petSizeLimit &&
     place.petPolicy.petSizeLimit !== '해당없음'
   ) {
-    // 동적 파서가 "10kg"를 찾아내면 중복될 수 있음.
-    // 하지만 이 컬럼은 명시적인 데이터임.
-    // 동적 파서가 무게 제한을 찾았는지 확인하고 건너뛸 수도 있겠지만,
-    // 일단은 명시적 데이터가 보통 우선하거나 보완하므로 유지함.
-
     // "가능" 또는 "모두" 포함 시 긍정, "미만/이하/제한" 등은 경고, "소형/중형" 등은 긍정(허용)으로 간주
     const variant = determinePetSizeVariant(place.petPolicy.petSizeLimit);
 

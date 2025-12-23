@@ -50,7 +50,7 @@ export const ReviewStepVisual = () => (
       ))}
     </div>
     <p className='text-[10px] leading-tight text-gray-600'>
-      "우리 아이가 정원에서 너무 신나게 놀았어요! 재방분 의사 200% 입니다 🐶"
+      "우리 아이가 정원에서 너무 신나게 놀았어요! 재방문 의사 200% 입니다 🐶"
     </p>
   </div>
 );

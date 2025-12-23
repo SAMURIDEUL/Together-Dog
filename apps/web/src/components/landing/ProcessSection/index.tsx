@@ -17,7 +17,7 @@ export const ProcessSection = ({
       {...props}
     >
       <div className='mb-16 text-center'>
-        <h2 className='font- text-3xl font-normal text-gray-900 md:text-5xl'>
+        <h2 className='font-dohyeon text-3xl font-normal text-gray-900 md:text-5xl'>
           함께하개 이용 가이드
         </h2>
         <p className='mt-6 text-lg text-gray-500'>

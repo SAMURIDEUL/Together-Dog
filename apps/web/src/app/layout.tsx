@@ -7,11 +7,13 @@ import type { Metadata } from 'next';
 import { Do_Hyeon } from 'next/font/google';
 import localFont from 'next/font/local';
 
-import { Footer } from '../components/shared/Footer';
-import GlobalModal from '../components/shared/GlobalModal';
-import { GlobalToast } from '../components/shared/GlobalToast';
-import { GNB } from '../components/shared/GNB';
-import { ThemeProvider } from '../components/shared/ThemeProvider';
+import {
+  Footer,
+  GlobalModal,
+  GlobalToast,
+  GNB,
+  ThemeProvider,
+} from '@/components/shared';
 
 // Pretendard 폰트 설정
 const pretendard = localFont({
