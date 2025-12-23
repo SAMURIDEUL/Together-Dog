@@ -5,8 +5,12 @@ export default defineConfig({
     'src/**/*.{ts,tsx}',
     '!src/**/*.stories.{ts,tsx}',
     '!src/**/*.test.{ts,tsx}',
+    '!src/**/*.spec.{ts,tsx}',
     '!src/setupTests.ts',
     '!src/vitest.setup.ts',
+    '!src/jest-dom.d.ts',
+    '!src/vite-env.d.ts',
+    '!src/**/__tests__/**',
   ],
   bundle: false, // 번들링 하지 않음 (Tree Shaking 지원)
   splitting: false,
