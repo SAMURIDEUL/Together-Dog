@@ -69,7 +69,8 @@ export const parseRestrictionBadges = (
   return badges;
 };
 
-// --- 추가 장소 매핑 로직 ---// categoryId/category3를 iconPaths 키로 매핑
+// --- 추가 장소 매핑 로직 ---
+// categoryId/category3를 iconPaths 키로 매핑
 const CATEGORY_ICON_MAP: {
   keywords: string[];
   icon: keyof typeof iconPaths.category;
@@ -193,6 +194,7 @@ export const mapPlaceToCardProps = (
 
   return {
     imageSrc:
+      // TODO: api 연결 후 수정
       RANDOM_IMAGES[place.id % RANDOM_IMAGES.length] || RANDOM_IMAGES[0],
     category: categoryKey,
     categoryLabel: place.category3,
