@@ -70,55 +70,51 @@ export const parseRestrictionBadges = (
 };
 
 // --- 추가 장소 매핑 로직 ---// categoryId/category3를 iconPaths 키로 매핑
+const CATEGORY_ICON_MAP: {
+  keywords: string[];
+  icon: keyof typeof iconPaths.category;
+}[] = [
+  { keywords: ['동물병원', '병원'], icon: 'petHospital' },
+  { keywords: ['약국'], icon: 'petPharmacy' },
+  { keywords: ['용품', '샵'], icon: 'petSupplies' },
+  { keywords: ['카페', '베이커리'], icon: 'cafe' },
+  { keywords: ['식당', '음식점', '요리'], icon: 'restaurant' },
+  { keywords: ['펜션', '숙소', '민박'], icon: 'pension' },
+  { keywords: ['호텔', '리조트'], icon: 'hotel' },
+  { keywords: ['박물관'], icon: 'museum' },
+  { keywords: ['미술관', '갤러리'], icon: 'artGallery' },
+  { keywords: ['문화', '센터', '체험'], icon: 'culturalCenter' },
+  { keywords: ['유치원', '위탁', '돌봄'], icon: 'entrustedCare' },
+  { keywords: ['미용'], icon: 'grooming' },
+  { keywords: ['운동장', '공원', '여행'], icon: 'travelSpot' },
+];
+
+// --- 추가 장소 매핑 로직 ---// categoryId/category3를 iconPaths 키로 매핑
 export const getCategoryIcon = (
   _categoryId: number,
   category3: string,
 ): keyof typeof iconPaths.category => {
-  if (category3.includes('동물병원') || category3.includes('병원'))
-    return 'petHospital';
-  if (category3.includes('약국')) return 'petPharmacy';
-  if (category3.includes('용품') || category3.includes('샵'))
-    return 'petSupplies';
-  if (category3.includes('카페') || category3.includes('베이커리'))
-    return 'cafe';
-  if (
-    category3.includes('식당') ||
-    category3.includes('음식점') ||
-    category3.includes('요리')
-  )
-    return 'restaurant';
-  if (
-    category3.includes('펜션') ||
-    category3.includes('숙소') ||
-    category3.includes('민박')
-  )
-    return 'pension';
-  if (category3.includes('호텔') || category3.includes('리조트'))
-    return 'hotel';
-  if (category3.includes('박물관')) return 'museum';
-  if (category3.includes('미술관') || category3.includes('갤러리'))
-    return 'artGallery';
-  if (
-    category3.includes('문화') ||
-    category3.includes('센터') ||
-    category3.includes('체험')
-  )
-    return 'culturalCenter';
-  if (
-    category3.includes('유치원') ||
-    category3.includes('위탁') ||
-    category3.includes('돌봄')
-  )
-    return 'entrustedCare';
-  if (category3.includes('미용')) return 'grooming';
-  if (
-    category3.includes('운동장') ||
-    category3.includes('공원') ||
-    category3.includes('여행')
-  )
-    return 'travelSpot';
+  const match = CATEGORY_ICON_MAP.find((item) =>
+    item.keywords.some((keyword) => category3.includes(keyword)),
+  );
 
-  return 'travelSpot'; // Default fallback
+  return match ? match.icon : 'travelSpot';
+};
+
+// --- Helper Function: Pet Size Variant Logic ---
+export const determinePetSizeVariant = (
+  limitString: string,
+): PlaceInfoCardProps['badges'][0]['variant'] => {
+  if (limitString.match(/제한\s*없음|해당\s*없음|모두\s*가능|모두\s*허용/)) {
+    return 'positive';
+  }
+  if (limitString.match(/(미만|이하|제한|불가|금지|초과|필수|주의|이상)/)) {
+    return 'warning';
+  }
+  if (limitString.match(/(가능|전용|동반|소형|중형|대형|특수|묘|허용)/)) {
+    return 'positive';
+  }
+  return 'default';
 };
 
 export const mapPlaceToCardProps = (
@@ -154,27 +150,7 @@ export const mapPlaceToCardProps = (
     // 일단은 명시적 데이터가 보통 우선하거나 보완하므로 유지함.
 
     // "가능" 또는 "모두" 포함 시 긍정, "미만/이하/제한" 등은 경고, "소형/중형" 등은 긍정(허용)으로 간주
-    let variant: PlaceInfoCardProps['badges'][0]['variant'] = 'default';
-
-    if (
-      place.petPolicy.petSizeLimit.match(
-        /제한\s*없음|해당\s*없음|모두\s*가능|모두\s*허용/,
-      )
-    ) {
-      variant = 'positive';
-    } else if (
-      place.petPolicy.petSizeLimit.match(
-        /(미만|이하|제한|불가|금지|초과|필수|주의|이상)/,
-      )
-    ) {
-      variant = 'warning';
-    } else if (
-      place.petPolicy.petSizeLimit.match(
-        /(가능|전용|동반|소형|중형|대형|특수|묘|허용)/,
-      )
-    ) {
-      variant = 'positive';
-    }
+    const variant = determinePetSizeVariant(place.petPolicy.petSizeLimit);
 
     badges.push({
       text: place.petPolicy.petSizeLimit,
