@@ -144,14 +144,8 @@ export const mapPlaceToCardProps = (
       name: 'pension',
       variant: 'positive',
     });
-  } else {
-    badges.push({
-      text: '실내 불가',
-      group: 'restriction',
-      name: 'noEntry',
-      variant: 'warning',
-    });
   }
+
   if (place.petPolicy.outdoorFlag) {
     badges.push({
       text: '야외 동반',
@@ -159,14 +153,8 @@ export const mapPlaceToCardProps = (
       name: 'terrace',
       variant: 'positive',
     });
-  } else {
-    badges.push({
-      text: '야외 불가',
-      group: 'restriction',
-      name: 'noEntry',
-      variant: 'warning',
-    });
   }
+
   if (
     place.petPolicy.petSizeLimit &&
     place.petPolicy.petSizeLimit !== '해당없음'
