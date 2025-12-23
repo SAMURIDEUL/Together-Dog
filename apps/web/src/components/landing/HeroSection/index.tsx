@@ -25,6 +25,8 @@ const CATEGORIES: { label: string; id: CategoryKey }[] = [
 
 const HERO_TITLE = '반려동물과 함께\n떠나볼까요?';
 
+const POPULAR_TAGS = ['성수동', '연남동', '강남역', '송리단길'];
+
 export const HeroSection = ({
   className,
   ...props
@@ -84,6 +86,23 @@ export const HeroSection = ({
             onChange={(e) => setKeyword(e.target.value)}
             onKeyDown={handleKeyDown}
           />
+        </div>
+
+        {/* Popular Regions Quick Links */}
+        <div className='flex items-center gap-2 text-sm text-gray-500'>
+          <span className='font-medium text-gray-400'>인기 지역:</span>
+          {POPULAR_TAGS.map((region) => (
+            <button
+              key={region}
+              className='hover:text-orange-500 hover:underline'
+              type='button'
+              onClick={() =>
+                router.push(`/map?keyword=${encodeURIComponent(region)}`)
+              }
+            >
+              #{region}
+            </button>
+          ))}
         </div>
 
         {/* Categories */}

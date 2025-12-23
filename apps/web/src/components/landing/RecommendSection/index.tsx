@@ -2,20 +2,40 @@
 
 import { cn } from '@together-dog/ui';
 import Link from 'next/link';
-import type { ComponentProps } from 'react';
+import { type ComponentProps, useState } from 'react';
 
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
+import type { Place } from '@/types/place';
 import { mapPlaceToCardProps } from '@/utils/petMapper';
 
 import { MOCK_API_RESPONSE } from './mock';
+
+interface PlaceWithLike extends Place {
+  isLike?: boolean;
+}
 
 export const RecommendSection = ({
   className,
   ...props
 }: ComponentProps<'section'>) => {
-  function likeClickHandler() {
-    console.log('likeClickHandler');
-  }
+  const [places, setPlaces] = useState<PlaceWithLike[]>(MOCK_API_RESPONSE.data);
+
+  const handleLikeClick = (id: number) => {
+    const targetPlace = places.find((p) => p.id === id);
+    if (!targetPlace) return;
+
+    if (!targetPlace.isLike) {
+      console.log(`찜한 장소 id : ${id}`);
+    } else {
+      console.log(`취소한 장소 id : ${id}`);
+    }
+
+    setPlaces((prev) =>
+      prev.map((place) =>
+        place.id === id ? { ...place, isLike: !place.isLike } : place,
+      ),
+    );
+  };
 
   return (
     <section
@@ -41,11 +61,12 @@ export const RecommendSection = ({
       </div>
 
       <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-        {MOCK_API_RESPONSE.data.map((place, index) => (
+        {places.map((place, index) => (
           <PlaceInfoCard
             key={place.id}
             {...mapPlaceToCardProps(place, index)}
-            onLikeClick={likeClickHandler}
+            isLike={place.isLike}
+            onLikeClick={() => handleLikeClick(place.id)}
           />
         ))}
       </div>
