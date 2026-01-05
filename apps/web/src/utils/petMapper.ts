@@ -5,13 +5,32 @@ import { RANDOM_IMAGES } from '@/components/landing/RecommendSection/mock';
 import { type PlaceInfoCardProps } from '@/components/shared/PlaceInfoCard';
 import { type Place } from '@/types/place';
 
-// 제한사항 키워드 매핑 설정
-const RESTRICTION_KEYWORD_MAP = restrictionKeywords as {
+// 제한사항 키워드 데이터 타입 정의
+interface RestrictionKeyword {
   keyword: string;
   name: keyof typeof iconPaths.restriction;
   label: string;
   variant?: 'default' | 'positive' | 'warning';
-}[];
+}
+
+// 타입 가드 함수
+const isRestrictionKeyword = (item: unknown): item is RestrictionKeyword => {
+  if (typeof item !== 'object' || item === null) return false;
+  const i = item as Record<string, unknown>;
+
+  return (
+    typeof i.keyword === 'string' &&
+    typeof i.name === 'string' &&
+    typeof i.label === 'string' &&
+    (i.variant === undefined ||
+      ['default', 'positive', 'warning'].includes(i.variant as string))
+  );
+};
+
+// 안전하게 파싱된 제한사항 키워드 맵 (런타임 검증 포함)
+const RESTRICTION_KEYWORD_MAP: RestrictionKeyword[] = (
+  restrictionKeywords as unknown[]
+).filter(isRestrictionKeyword);
 
 export const parseRestrictionBadges = (
   restrictions: string,
@@ -23,7 +42,12 @@ export const parseRestrictionBadges = (
   // 마리 수 제한: "최대 2마리", "2마리", "객실당 1마리" 등
   const countMatch = restrictions.match(/((객실당|팀당)\s*)?(최대\s*)?\d+마리/);
   if (countMatch) {
-    badges.push({ text: countMatch[0], group: 'restriction', name: 'warning' });
+    badges.push({
+      text: countMatch[0],
+      group: 'restriction',
+      name: 'warning',
+      variant: 'warning',
+    });
   }
 
   // 무게 제한: "15kg 미만", "10kg", "8~15kg" 등
@@ -35,6 +59,7 @@ export const parseRestrictionBadges = (
       text: weightMatch[0],
       group: 'restriction',
       name: 'warning',
+      variant: 'warning',
     });
   }
 
@@ -179,7 +204,9 @@ export const mapPlaceToCardProps = (
 
     // 필요한 경우 기존 배지와 중복 제거 (단순 텍스트 확인)
     restrictionBadges.forEach((rb) => {
-      const isDuplicate = badges.some((b) => b.text === rb.text); // Strict text match
+      const isDuplicate = badges.some(
+        (b) => b.text === rb.text && b.group === rb.group && b.name === rb.name,
+      );
       if (!isDuplicate) {
         badges.push(rb);
       }
