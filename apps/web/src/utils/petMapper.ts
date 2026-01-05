@@ -21,6 +21,7 @@ const isRestrictionKeyword = (item: unknown): item is RestrictionKeyword => {
   return (
     typeof i.keyword === 'string' &&
     typeof i.name === 'string' &&
+    i.name in iconPaths.restriction &&
     typeof i.label === 'string' &&
     (i.variant === undefined ||
       ['default', 'positive', 'warning'].includes(i.variant as string))
@@ -70,6 +71,7 @@ export const parseRestrictionBadges = (
       text: vaccineMatch[0],
       group: 'restriction',
       name: 'vaccination',
+      variant: 'warning',
     });
   }
 
