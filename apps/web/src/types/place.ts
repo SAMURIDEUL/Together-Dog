@@ -30,4 +30,26 @@ export interface Place {
   updatedAt: string;
   categoryId: number;
   petPolicy: PetPolicy;
+  averageRating?: number;
+}
+
+export interface PlaceDetail {
+  placeInfo: Place;
+  top3photos: string[];
+}
+
+export interface PlaceReview {
+  id: number;
+  placeId: number;
+  userId: number;
+  rating: number;
+  content: string;
+  visitDate: string;
+  createdAt: string;
+  photos: string[];
+}
+
+export interface PlaceReviewResponse {
+  reviews: PlaceReview[];
+  hasNext: boolean;
 }
