@@ -96,7 +96,6 @@ export const parseRestrictionBadges = (
   return badges;
 };
 
-// --- 추가 장소 매핑 로직 ---
 // categoryId/category3를 iconPaths 키로 매핑
 const CATEGORY_ICON_MAP: {
   keywords: string[];
