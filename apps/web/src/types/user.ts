@@ -5,15 +5,15 @@ export interface User {
   id: number;
   email: string;
   nickname: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface MyInfo {
   email: string;
   nickname: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type MyInfoApiResponse = ApiResponse<MyInfo>;

@@ -7,7 +7,8 @@ export interface ReviewPhoto {
   photoUrl: string;
 }
 
-export interface Review {
+// 리뷰 작성/수정 응답용 (상세 photo 객체 포함)
+export interface ReviewWithPhotos {
   id: number;
   placeId: number;
   userId: number;
@@ -17,7 +18,19 @@ export interface Review {
   createdAt?: string;
   updatedAt?: string;
   photos?: ReviewPhoto[];
-  photoUrls?: string[]; // ReviewResponse uses photoUrls
+}
+
+// 리뷰 목록 조회용 (간단한 URL 배열만)
+export interface ReviewSummary {
+  id: number;
+  placeId: number;
+  userId: number;
+  rating: number;
+  content: string;
+  visitDate: string;
+  createdAt?: string;
+  updatedAt?: string;
+  photoUrls?: string[];
 }
 
 // --- Create Review ---
@@ -29,7 +42,7 @@ export interface CreateReviewRequest {
   images?: File[]; // Frontend usage for multipart/form-data
 }
 
-export type CreateReviewApiResponse = ApiResponse<Review>;
+export type CreateReviewApiResponse = ApiResponse<ReviewWithPhotos>;
 
 // --- Update Review ---
 export interface UpdateReviewRequest {
@@ -42,7 +55,7 @@ export interface UpdateReviewRequest {
 
 // ReviewUpdateResponse from Swagger
 export interface ReviewUpdateResponse {
-  updatedReview: Review;
+  updatedReview: ReviewWithPhotos;
   reviewUpdated: boolean;
   deletePhotoIds: number[];
   newPhotos: ReviewPhoto[];
@@ -51,16 +64,8 @@ export interface ReviewUpdateResponse {
 export type UpdateReviewApiResponse = ApiResponse<ReviewUpdateResponse>;
 
 // --- My Reviews ---
-export interface MyReviewItem {
-  id: number;
-  placeId: number;
-  rating: number;
-  content: string;
-  visitDate: string;
-  createdAt: string;
-  updatedAt: string;
-  photoUrls: string[];
-}
+// MyReviewItem is essentially ReviewSummary
+export type MyReviewItem = ReviewSummary;
 
 export interface MyReviewsResponse {
   content: MyReviewItem[];

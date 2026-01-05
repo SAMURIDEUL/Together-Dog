@@ -3,7 +3,7 @@ import { ApiResponse } from './api';
 // --- Login ---
 export interface LoginRequest {
   email: string;
-  password_hash: string;
+  password: string;
 }
 
 export interface LoginResponse {
@@ -24,7 +24,7 @@ export type CheckAvailabilityApiResponse = ApiResponse<{
 // --- Signup ---
 export interface SignupRequest {
   email: string;
-  password_hash: string;
+  password: string;
   nickname: string;
 }
 
