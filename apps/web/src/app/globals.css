@@ -5,15 +5,20 @@
 
 @source "../../node_modules/@together-dog/ui";
 
+@theme {
+  --font-dohyeon: var(--font-dohyeon), sans-serif;
+}
+
 :root {
-  --font-primary: 'Pretendard Variable', sans-serif;
+  --color-background: #fffdf7;
+  --font-primary: 'Pretendard Variable', -apple-system, sans-serif;
   --font-secondary: 'NanumSquareNeo', sans-serif;
 }
 
 body {
   font-family: var(--font-primary);
   color: #222;
-  background-color: #fffdf7;
+  background-color: var(--color-background);
 }
 
 a:hover,

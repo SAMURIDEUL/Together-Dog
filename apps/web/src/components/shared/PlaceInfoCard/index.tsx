@@ -64,10 +64,10 @@ export const PlaceInfoCard = ({
 
         {/* 뱃지 영역 (가로 스크롤 가능) */}
         <div className='thin-scrollbar flex items-center gap-1.5 overflow-x-auto pb-2'>
-          {badges.map((badge, index) => (
+          {badges.map(({ key, ...badgeProps }, index) => (
             <PlaceInfoBadge
-              key={badge.key || index}
-              {...badge}
+              key={key || index}
+              {...badgeProps}
               className='flex-shrink-0'
             />
           ))}

@@ -12,7 +12,7 @@
   "private": false,
   "type": "module",
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts && cpx src/globals.css dist/",
+    "build": "tsup --format esm,cjs --dts && cpx src/globals.css dist/",
     "dev": "storybook dev -p 6006",
     "lint": "eslint .",
     "test": "vitest run",
@@ -48,6 +48,10 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
+  "sideEffects": [
+    "*.css",
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -55,6 +59,11 @@
       "require": "./dist/index.js"
     },
     "./globals.css": "./dist/globals.css",
-    "./dist/globals.css": "./dist/globals.css"
+    "./dist/globals.css": "./dist/globals.css",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.js"
+    }
   }
 }

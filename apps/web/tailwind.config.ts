@@ -1,4 +1,5 @@
 // apps/web/tailwind.config.ts
+
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
@@ -15,6 +16,7 @@ const config: Config = {
       fontFamily: {
         pretendard: ['var(--font-primary)'],
         nanum: ['var(--font-secondary)'],
+        dohyeon: ['var(--font-dohyeon)', 'sans-serif'],
       },
     },
   },
