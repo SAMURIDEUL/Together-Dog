@@ -149,6 +149,6 @@ export const MOCK_API_RESPONSE: ApiPlaceResponse = {
       },
     },
   ],
-  path: '/categories/places/random',
+  path: '/places/random',
   timestamp: '2025-10-31T14:38:36.757227400',
 };

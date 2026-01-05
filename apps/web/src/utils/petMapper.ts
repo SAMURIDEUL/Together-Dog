@@ -1,7 +1,6 @@
 import { iconPaths } from '@together-dog/ui';
 
 import restrictionKeywords from '@/assets/data/restriction-keywords.json';
-import { RANDOM_IMAGES } from '@/components/landing/RecommendSection/mock';
 import { type PlaceInfoCardProps } from '@/components/shared/PlaceInfoCard';
 import { type Place } from '@/types/place';
 
@@ -157,6 +156,22 @@ export const determinePetSizeVariant = (
   return 'default';
 };
 
+const CATEGORY_IMAGE_MAP: Record<keyof typeof iconPaths.category, string> = {
+  petHospital: 'petHospital.png',
+  petPharmacy: 'petPharmacy.png',
+  petSupplies: 'petSupplies.png',
+  cafe: 'cafe.png',
+  restaurant: 'restaurant.png',
+  pension: 'pension.png',
+  hotel: 'hotel.png',
+  museum: 'museum.png',
+  artGallery: 'artGallery.png',
+  culturalCenter: 'culturalCenter.png',
+  entrustedCare: 'entrustedCare.png',
+  grooming: 'grooming.png',
+  travelSpot: 'travelSpot.png',
+};
+
 export const mapPlaceToCardProps = (
   place: Place,
   _index: number,
@@ -220,10 +235,11 @@ export const mapPlaceToCardProps = (
   // 카테고리 매퍼 사용
   const categoryKey = getCategoryIcon(place.categoryId, place.category3);
 
+  // 이미지 매핑
+  const imageFilename = CATEGORY_IMAGE_MAP[categoryKey] || '여행지.png';
+
   return {
-    imageSrc:
-      // TODO: api 연결 후 수정
-      RANDOM_IMAGES[place.id % RANDOM_IMAGES.length] || RANDOM_IMAGES[0],
+    imageSrc: `/images/category/${imageFilename}`,
     category: categoryKey,
     categoryLabel: place.category3,
     name: place.name,

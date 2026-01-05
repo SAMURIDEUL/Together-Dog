@@ -2,13 +2,12 @@
 
 import { cn } from '@together-dog/ui';
 import Link from 'next/link';
-import { type ComponentProps, useState } from 'react';
+import { type ComponentProps, useEffect, useState } from 'react';
 
+import { getRandomPlaces } from '@/api/place';
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
 import type { Place } from '@/types/place';
 import { mapPlaceToCardProps } from '@/utils/petMapper';
-
-import { MOCK_API_RESPONSE } from './mock';
 
 interface PlaceWithLike extends Place {
   isLike?: boolean;
@@ -18,7 +17,19 @@ export const RecommendSection = ({
   className,
   ...props
 }: ComponentProps<'section'>) => {
-  const [places, setPlaces] = useState<PlaceWithLike[]>(MOCK_API_RESPONSE.data);
+  const [places, setPlaces] = useState<PlaceWithLike[]>([]);
+
+  useEffect(() => {
+    const fetchPlaces = async () => {
+      try {
+        const response = await getRandomPlaces();
+        setPlaces(response.data);
+      } catch (error) {
+        console.error('Failed to fetch recommend places:', error);
+      }
+    };
+    fetchPlaces();
+  }, []);
 
   const handleLikeClick = (id: number) => {
     const targetPlace = places.find((p) => p.id === id);
@@ -55,7 +66,7 @@ export const RecommendSection = ({
         </div>
         <Link
           className='flex items-center text-sm font-medium text-gray-500 hover:text-orange-500 hover:underline'
-          href='/map'
+          href='/places'
         >
           전체 보기 {'>'}
         </Link>
