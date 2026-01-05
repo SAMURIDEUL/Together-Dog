@@ -239,6 +239,7 @@ export const mapPlaceToCardProps = (
   const imageFilename = CATEGORY_IMAGE_MAP[categoryKey] || '여행지.png';
 
   return {
+    id: place.id,
     imageSrc: `/images/category/${imageFilename}`,
     category: categoryKey,
     categoryLabel: place.category3,
