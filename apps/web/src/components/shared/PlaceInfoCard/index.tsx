@@ -32,16 +32,16 @@ export const PlaceInfoCard = ({
 }: PlaceInfoCardProps) => {
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-xl bg-white shadow-md ${
+      className={`group relative w-full overflow-hidden rounded-xl bg-white shadow-md ${
         className || ''
       }`}
     >
       {/* 이미지 영역 */}
-      <div className='relative aspect-video w-full'>
+      <div className='relative aspect-video w-full overflow-hidden bg-gray-50'>
         <Image
           fill
           alt={name}
-          className='object-cover'
+          className='object-contain p-2 transition-transform duration-300 group-hover:scale-110'
           sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
           src={imageSrc}
         />
