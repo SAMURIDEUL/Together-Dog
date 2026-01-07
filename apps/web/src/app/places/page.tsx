@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
@@ -87,11 +88,12 @@ const PlacesContent = () => {
       {!loading && !error && places.length > 0 && (
         <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {places.map((place, index) => (
-            <PlaceInfoCard
-              key={place.id}
-              {...mapPlaceToCardProps(place, index)}
-              isLike={false} // TODO: Implement like logic
-            />
+            <Link key={place.id} href={`/places/${place.id}`}>
+              <PlaceInfoCard
+                {...mapPlaceToCardProps(place, index)}
+                isLike={false} // TODO: Implement like logic
+              />
+            </Link>
           ))}
         </div>
       )}
