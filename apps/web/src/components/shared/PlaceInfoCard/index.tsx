@@ -40,7 +40,7 @@ export const PlaceInfoCard = ({
       <div className='relative aspect-video w-full overflow-hidden bg-gray-50'>
         <Image
           fill
-          alt={name}
+          alt={name || 'Place Image'}
           className='object-contain p-2 transition-transform duration-300 group-hover:scale-110'
           sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
           src={imageSrc}

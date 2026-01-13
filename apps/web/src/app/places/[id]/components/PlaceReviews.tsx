@@ -81,7 +81,7 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
               <div className='mt-3 flex gap-2 overflow-x-auto'>
                 {review.photos.map((photo, idx) => (
                   <div
-                    key={idx}
+                    key={`${photo}-${idx}`}
                     className='relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100'
                   >
                     <Image

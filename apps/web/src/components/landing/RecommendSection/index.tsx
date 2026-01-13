@@ -7,10 +7,11 @@ import { type ComponentProps, useEffect, useState } from 'react';
 import { getRandomPlaces } from '@/api/place';
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
 import type { Place } from '@/types/place';
-import { mapPlaceToCardProps } from '@/utils/petMapper';
+import { mapPlaceToCardProps, resolveThumbnailPath } from '@/utils/petMapper';
 
 interface PlaceWithLike extends Place {
   isLike?: boolean;
+  thumbnail?: string;
 }
 
 export const RecommendSection = ({
@@ -23,7 +24,14 @@ export const RecommendSection = ({
     const fetchPlaces = async () => {
       try {
         const response = await getRandomPlaces();
-        setPlaces(response.data);
+        // API response structure: { places: Place, thumbnail: string }[]
+        // Map it to PlaceWithLike
+        const mappedPlaces = response.data.map((item) => ({
+          ...item.places,
+          thumbnail: resolveThumbnailPath(item.thumbnail),
+          isLike: false,
+        }));
+        setPlaces(mappedPlaces);
       } catch (error) {
         console.error('Failed to fetch recommend places:', error);
       }
@@ -35,11 +43,11 @@ export const RecommendSection = ({
     const targetPlace = places.find((p) => p.id === id);
     if (!targetPlace) return;
 
-    // TODO: API 연동 시 console.log 제거
+    // console.log removed for production
     if (!targetPlace.isLike) {
-      console.log(`찜한 장소 id : ${id}`);
+      // 찜하기 로직
     } else {
-      console.log(`취소한 장소 id : ${id}`);
+      // 찜 취소 로직
     }
 
     setPlaces((prev) =>
@@ -75,8 +83,12 @@ export const RecommendSection = ({
       <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
         {places.map((place, index) => (
           <PlaceInfoCard
-            key={place.id}
+            // eslint-disable-next-line react/no-array-index-key
+            key={`${place.id}-${index}`}
             {...mapPlaceToCardProps(place, index)}
+            imageSrc={
+              place.thumbnail || mapPlaceToCardProps(place, index).imageSrc
+            }
             isLike={place.isLike}
             onLikeClick={() => handleLikeClick(place.id)}
           />

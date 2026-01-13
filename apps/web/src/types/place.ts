@@ -6,6 +6,19 @@ export interface ApiPlaceResponse {
   timestamp: string;
 }
 
+export interface RandomPlaceItem {
+  places: Place;
+  thumbnail: string;
+}
+
+export interface RandomPlaceResponse {
+  status: number;
+  message: string;
+  data: RandomPlaceItem[];
+  path: string;
+  timestamp: string;
+}
+
 export interface PetPolicy {
   placeId?: number;
   petAllowed: boolean;
@@ -31,6 +44,7 @@ export interface Place {
   categoryId: number;
   petPolicy: PetPolicy;
   averageRating?: number;
+  isLiked?: boolean;
 }
 
 export interface PlaceDetail {

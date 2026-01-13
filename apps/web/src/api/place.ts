@@ -1,9 +1,4 @@
-import {
-  ApiPlaceResponse,
-  Place,
-  PlaceDetail,
-  PlaceReviewResponse,
-} from '@/types/place';
+import { Place, PlaceDetail, PlaceReviewResponse } from '@/types/place';
 
 import { apiClient } from './client';
 
@@ -36,9 +31,11 @@ export const getPlaces = async (
   return response.data;
 };
 
+import { RandomPlaceResponse } from '@/types/place';
+
 // 랜덤 장소 추천 (메인 페이지용)
-export const getRandomPlaces = async (): Promise<ApiPlaceResponse> => {
-  const response = await apiClient.get<ApiPlaceResponse>('/places/random');
+export const getRandomPlaces = async (): Promise<RandomPlaceResponse> => {
+  const response = await apiClient.get<RandomPlaceResponse>('/places/random');
   return response.data;
 };
 
@@ -61,4 +58,14 @@ export const getPlaceReviews = async (
     },
   );
   return response.data;
+};
+
+// 장소 찜하기
+export const likePlace = async (placeId: number): Promise<void> => {
+  await apiClient.post(`/places/${placeId}/like`);
+};
+
+// 장소 찜 취소하기
+export const unlikePlace = async (placeId: number): Promise<void> => {
+  await apiClient.delete(`/places/${placeId}/like`);
 };
