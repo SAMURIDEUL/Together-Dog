@@ -6,15 +6,20 @@ export interface ApiPlaceResponse {
   timestamp: string;
 }
 
-export interface RandomPlaceItem {
+export interface RawRandomPlaceItem {
   places: Place;
+  thumbnail: string;
+}
+
+export interface PlaceWithThumbnail {
+  place: Place;
   thumbnail: string;
 }
 
 export interface RandomPlaceResponse {
   status: number;
   message: string;
-  data: RandomPlaceItem[];
+  data: RawRandomPlaceItem[];
   path: string;
   timestamp: string;
 }

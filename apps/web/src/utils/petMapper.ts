@@ -89,7 +89,7 @@ export const mapPlaceToCardProps = (
   return {
     imageSrc: `/images/category/${imageFilename}`,
     category: categoryKey,
-    categoryLabel: place.category3,
+    categoryLabel: place.category3 || '기타',
     name: place.name,
     address: place.roadAddress || place.city || '',
     badges: badgesWithKeys,

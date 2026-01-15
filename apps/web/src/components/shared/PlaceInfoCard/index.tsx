@@ -50,15 +50,12 @@ export const PlaceInfoCard = ({
           <CategoryBadge category={category} label={categoryLabel} />
         </div>
         {/* 좋아요 버튼 (우측 상단) */}
-        <div
-          className='absolute right-3 top-3 z-10'
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onLikeClick?.();
-          }}
-        >
-          <LikeButton isLike={isLike} size={20} />
+        <div className='absolute right-3 top-3 z-10'>
+          <LikeButton
+            isLike={isLike}
+            size={20}
+            onClick={() => onLikeClick?.()}
+          />
         </div>
       </div>
 

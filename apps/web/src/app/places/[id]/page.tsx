@@ -110,10 +110,6 @@ export default function PlaceDetailPage() {
         onLikeToggle={handleLikeToggle}
       />
 
-      <div className='mt-2 px-4 text-xs text-gray-400'>
-        {/* Debug/Divider */}
-      </div>
-
       <PlaceDetailInfo place={placeInfo} />
 
       <div className='my-2 h-2 bg-gray-100' />

@@ -4,6 +4,8 @@ import {
   PlaceDetail,
   PlaceDetailResponse,
   PlaceReviewResponse,
+  PlaceWithThumbnail,
+  RandomPlaceResponse,
 } from '@/types/place';
 
 import { apiClient } from './client';
@@ -37,12 +39,13 @@ export const getPlaces = async (
   return response.data;
 };
 
-import { RandomPlaceResponse } from '@/types/place';
-
 // 랜덤 장소 추천 (메인 페이지용)
-export const getRandomPlaces = async (): Promise<RandomPlaceResponse> => {
+export const getRandomPlaces = async (): Promise<PlaceWithThumbnail[]> => {
   const response = await apiClient.get<RandomPlaceResponse>('/places/random');
-  return response.data;
+  return response.data.data.map((item) => ({
+    place: item.places,
+    thumbnail: item.thumbnail,
+  }));
 };
 
 // 장소 상세 정보 조회

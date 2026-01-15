@@ -4,7 +4,7 @@ import { cn } from '@together-dog/ui';
 import Link from 'next/link';
 import { type ComponentProps, useEffect, useState } from 'react';
 
-import { getRandomPlaces } from '@/api/place';
+import { getRandomPlaces, likePlace, unlikePlace } from '@/api/place';
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
 import type { Place } from '@/types/place';
 import { mapPlaceToCardProps, resolveThumbnailPath } from '@/utils/petMapper';
@@ -23,11 +23,10 @@ export const RecommendSection = ({
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
-        const response = await getRandomPlaces();
-        // API response structure: { places: Place, thumbnail: string }[]
-        // Map it to PlaceWithLike
-        const mappedPlaces = response.data.map((item) => ({
-          ...item.places,
+        const data = await getRandomPlaces();
+        // data type is PlaceWithThumbnail[]
+        const mappedPlaces = data.map((item) => ({
+          ...item.place,
           thumbnail: resolveThumbnailPath(item.thumbnail),
           isLike: false,
         }));
@@ -39,22 +38,36 @@ export const RecommendSection = ({
     fetchPlaces();
   }, []);
 
-  const handleLikeClick = (id: number) => {
+  const handleLikeClick = async (id: number) => {
     const targetPlace = places.find((p) => p.id === id);
     if (!targetPlace) return;
 
-    // console.log removed for production
-    if (!targetPlace.isLike) {
-      // 찜하기 로직
-    } else {
-      // 찜 취소 로직
-    }
-
+    // 1. Optimistic Update (즉시 UI 반영)
+    const previousIsLike = targetPlace.isLike;
     setPlaces((prev) =>
       prev.map((place) =>
         place.id === id ? { ...place, isLike: !place.isLike } : place,
       ),
     );
+
+    try {
+      // 2. API Call
+      if (previousIsLike) {
+        await unlikePlace(id);
+      } else {
+        await likePlace(id);
+      }
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+      // 3. Rollback on Error (에러 발생 시 원복)
+      setPlaces((prev) =>
+        prev.map((place) =>
+          place.id === id ? { ...place, isLike: previousIsLike } : place,
+        ),
+      );
+      // TODO: Add toast notification here
+      alert('찜하기 처리에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (
@@ -81,22 +94,19 @@ export const RecommendSection = ({
       </div>
 
       <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-        {places.map((place, index) => (
-          <Link
-            // eslint-disable-next-line react/no-array-index-key
-            key={`${place.id}-${index}`}
-            href={`/places/${place.id}`}
-          >
-            <PlaceInfoCard
-              {...mapPlaceToCardProps(place, index)}
-              imageSrc={
-                place.thumbnail || mapPlaceToCardProps(place, index).imageSrc
-              }
-              isLike={place.isLike}
-              onLikeClick={() => handleLikeClick(place.id)}
-            />
-          </Link>
-        ))}
+        {places.map((place, index) => {
+          const cardProps = mapPlaceToCardProps(place, index);
+          return (
+            <Link key={place.id} href={`/places/${place.id}`}>
+              <PlaceInfoCard
+                {...cardProps}
+                imageSrc={place.thumbnail || cardProps.imageSrc}
+                isLike={place.isLike}
+                onLikeClick={() => handleLikeClick(place.id)}
+              />
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

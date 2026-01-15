@@ -5,6 +5,10 @@ import { RESTRICTION_KEYWORD_MAP } from './constants';
 export const parseRestrictionBadges = (
   restrictions: string,
 ): PlaceInfoCardProps['badges'] => {
+  if (!restrictions || restrictions.trim() === '') {
+    return [];
+  }
+
   const badges: PlaceInfoCardProps['badges'] = [];
 
   // 1. 동적 매칭 (특정 값 추출 정규식)
@@ -69,6 +73,8 @@ export const parseRestrictionBadges = (
 export const determinePetSizeVariant = (
   limitString: string,
 ): PlaceInfoCardProps['badges'][0]['variant'] => {
+  if (!limitString) return 'default';
+
   // 1. Absolute Positive (제한 없음 등)
   if (limitString.match(/제한\s*없음|해당\s*없음|모두\s*가능|모두\s*허용/)) {
     return 'positive';
