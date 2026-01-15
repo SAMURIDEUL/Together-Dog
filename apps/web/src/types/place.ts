@@ -52,6 +52,14 @@ export interface PlaceDetail {
   top3photos: string[];
 }
 
+export interface PlaceDetailResponse {
+  status: number;
+  message: string;
+  data: PlaceDetail;
+  path: string;
+  timestamp: string;
+}
+
 export interface PlaceReview {
   id: number;
   placeId: number;
@@ -66,4 +74,12 @@ export interface PlaceReview {
 export interface PlaceReviewResponse {
   reviews: PlaceReview[];
   hasNext: boolean;
+}
+
+export interface ApiPlaceReviewResponse {
+  status: number;
+  message: string;
+  data: PlaceReviewResponse;
+  path: string;
+  timestamp: string;
 }

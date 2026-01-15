@@ -43,7 +43,7 @@ export const PlaceDetailMap = ({ place }: PlaceDetailMapProps) => {
         }}
       />
 
-      <div className='relative h-[200px] w-full overflow-hidden rounded-lg bg-gray-100'>
+      <div className='relative h-[320px] w-full overflow-hidden rounded-lg bg-gray-100'>
         {mapLoaded ? (
           <Map
             center={{ lat: place.lat, lng: place.lon }}

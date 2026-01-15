@@ -82,16 +82,20 @@ export const RecommendSection = ({
 
       <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
         {places.map((place, index) => (
-          <PlaceInfoCard
+          <Link
             // eslint-disable-next-line react/no-array-index-key
             key={`${place.id}-${index}`}
-            {...mapPlaceToCardProps(place, index)}
-            imageSrc={
-              place.thumbnail || mapPlaceToCardProps(place, index).imageSrc
-            }
-            isLike={place.isLike}
-            onLikeClick={() => handleLikeClick(place.id)}
-          />
+            href={`/places/${place.id}`}
+          >
+            <PlaceInfoCard
+              {...mapPlaceToCardProps(place, index)}
+              imageSrc={
+                place.thumbnail || mapPlaceToCardProps(place, index).imageSrc
+              }
+              isLike={place.isLike}
+              onLikeClick={() => handleLikeClick(place.id)}
+            />
+          </Link>
         ))}
       </div>
     </section>

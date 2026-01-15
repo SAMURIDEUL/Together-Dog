@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { getPlaceDetail, likePlace, unlikePlace } from '@/api/place';
 import { PlaceDetail } from '@/types/place';
+import { resolveThumbnailPath } from '@/utils/petMapper';
 
 import { PlaceDetailHeader } from './components/PlaceDetailHeader';
 import { PlaceDetailInfo } from './components/PlaceDetailInfo';
@@ -29,6 +30,11 @@ export default function PlaceDetailPage() {
         if (isNaN(placeId)) throw new Error('Invalid Place ID');
 
         const result = await getPlaceDetail(placeId);
+
+        if (!result || !result.placeInfo) {
+          throw new Error('No Data');
+        }
+
         setData(result);
         setIsLiked(!!result.placeInfo.isLiked);
       } catch (err) {
@@ -83,13 +89,13 @@ export default function PlaceDetailPage() {
     <div className='pb-safe min-h-screen bg-gray-50'>
       {/* Hero / Gallery */}
       {top3photos && top3photos.length > 0 ? (
-        <div className='relative aspect-video w-full bg-gray-200'>
+        <div className='relative aspect-video w-full bg-gray-50'>
           <Image
             fill
             priority
             alt={placeInfo.name}
-            className='object-cover'
-            src={top3photos[0].replace('/images/default/', '/images/category/')}
+            className='object-contain'
+            src={resolveThumbnailPath(top3photos[0])}
           />
         </div>
       ) : (
