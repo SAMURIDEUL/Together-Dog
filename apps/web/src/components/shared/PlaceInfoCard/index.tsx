@@ -15,8 +15,9 @@ export interface PlaceInfoCardProps {
   address: string;
   badges: Array<PlaceInfoBadgeProps & { key?: string | number }>;
   isLike?: boolean;
-  onLikeClick?: () => void;
+  onLikeClick?: (e: React.MouseEvent) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const PlaceInfoCard = ({
@@ -29,6 +30,7 @@ export const PlaceInfoCard = ({
   isLike = false,
   onLikeClick,
   className,
+  disabled = false,
 }: PlaceInfoCardProps) => {
   return (
     <div
@@ -52,9 +54,10 @@ export const PlaceInfoCard = ({
         {/* 좋아요 버튼 (우측 상단) */}
         <div className='absolute right-3 top-3 z-10'>
           <LikeButton
+            disabled={disabled}
             isLike={isLike}
             size={20}
-            onClick={() => onLikeClick?.()}
+            onClick={onLikeClick}
           />
         </div>
       </div>

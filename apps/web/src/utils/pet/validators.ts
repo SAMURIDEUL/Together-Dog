@@ -15,6 +15,7 @@ export const isRestrictionKeyword = (
     i.name in iconPaths.restriction &&
     typeof i.label === 'string' &&
     (i.variant === undefined ||
-      ['default', 'positive', 'warning'].includes(i.variant as string))
+      (typeof i.variant === 'string' &&
+        ['default', 'positive', 'warning'].includes(i.variant)))
   );
 };

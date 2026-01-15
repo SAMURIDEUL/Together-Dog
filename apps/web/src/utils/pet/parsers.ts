@@ -73,7 +73,7 @@ export const parseRestrictionBadges = (
 export const determinePetSizeVariant = (
   limitString: string,
 ): PlaceInfoCardProps['badges'][0]['variant'] => {
-  if (!limitString) return 'default';
+  if (!limitString || limitString.trim() === '') return 'default';
 
   // 1. Absolute Positive (제한 없음 등)
   if (limitString.match(/제한\s*없음|해당\s*없음|모두\s*가능|모두\s*허용/)) {

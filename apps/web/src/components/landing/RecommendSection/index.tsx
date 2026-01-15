@@ -19,6 +19,7 @@ export const RecommendSection = ({
   ...props
 }: ComponentProps<'section'>) => {
   const [places, setPlaces] = useState<PlaceWithLike[]>([]);
+  const [loadingIds, setLoadingIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -38,9 +39,16 @@ export const RecommendSection = ({
     fetchPlaces();
   }, []);
 
-  const handleLikeClick = async (id: number) => {
+  const handleLikeClick = async (e: React.MouseEvent, id: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (loadingIds.has(id)) return;
+
     const targetPlace = places.find((p) => p.id === id);
     if (!targetPlace) return;
+
+    setLoadingIds((prev) => new Set(prev).add(id));
 
     // 1. Optimistic Update (즉시 UI 반영)
     const previousIsLike = targetPlace.isLike;
@@ -67,6 +75,12 @@ export const RecommendSection = ({
       );
       // TODO: Add toast notification here
       alert('찜하기 처리에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      setLoadingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   };
 
@@ -100,9 +114,10 @@ export const RecommendSection = ({
             <Link key={place.id} href={`/places/${place.id}`}>
               <PlaceInfoCard
                 {...cardProps}
+                disabled={loadingIds.has(place.id)}
                 imageSrc={place.thumbnail || cardProps.imageSrc}
                 isLike={place.isLike}
-                onLikeClick={() => handleLikeClick(place.id)}
+                onLikeClick={(e) => handleLikeClick(e, place.id)}
               />
             </Link>
           );
