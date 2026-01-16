@@ -7,10 +7,11 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "next lint.",
-    "format": "prettier --write."
+    "lint": "next lint",
+    "format": "prettier --write"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.17",
     "@together-dog/ui": "workspace:*",
     "axios": "^1.13.2",
     "clsx": "^2.1.1",

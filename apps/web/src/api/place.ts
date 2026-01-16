@@ -1,8 +1,11 @@
 import {
-  ApiPlaceResponse,
+  ApiPlaceReviewResponse,
   Place,
   PlaceDetail,
+  PlaceDetailResponse,
   PlaceReviewResponse,
+  PlaceWithThumbnail,
+  RandomPlaceResponse,
 } from '@/types/place';
 
 import { apiClient } from './client';
@@ -37,15 +40,20 @@ export const getPlaces = async (
 };
 
 // 랜덤 장소 추천 (메인 페이지용)
-export const getRandomPlaces = async (): Promise<ApiPlaceResponse> => {
-  const response = await apiClient.get<ApiPlaceResponse>('/places/random');
-  return response.data;
+export const getRandomPlaces = async (): Promise<PlaceWithThumbnail[]> => {
+  const response = await apiClient.get<RandomPlaceResponse>('/places/random');
+  return response.data.data.map((item) => ({
+    place: item.places,
+    thumbnail: item.thumbnail,
+  }));
 };
 
 // 장소 상세 정보 조회
 export const getPlaceDetail = async (placeId: number): Promise<PlaceDetail> => {
-  const response = await apiClient.get<PlaceDetail>(`/places/${placeId}`);
-  return response.data;
+  const response = await apiClient.get<PlaceDetailResponse>(
+    `/places/${placeId}`,
+  );
+  return response.data.data;
 };
 
 // 장소 리뷰 목록 조회
@@ -54,11 +62,21 @@ export const getPlaceReviews = async (
   page = 0,
   size = 10,
 ): Promise<PlaceReviewResponse> => {
-  const response = await apiClient.get<PlaceReviewResponse>(
+  const response = await apiClient.get<ApiPlaceReviewResponse>(
     `/places/${placeId}/reviews`,
     {
       params: { page, size },
     },
   );
-  return response.data;
+  return response.data.data;
+};
+
+// 장소 찜하기
+export const likePlace = async (placeId: number): Promise<void> => {
+  await apiClient.post(`/places/${placeId}/like`);
+};
+
+// 장소 찜 취소하기
+export const unlikePlace = async (placeId: number): Promise<void> => {
+  await apiClient.delete(`/places/${placeId}/like`);
 };

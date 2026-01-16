@@ -8,7 +8,6 @@ import {
   type PlaceInfoBadgeProps,
 } from '@together-dog/ui';
 import Image from 'next/image';
-import Link from 'next/link';
 
 export interface PlaceInfoCardProps {
   id: number;
@@ -19,12 +18,12 @@ export interface PlaceInfoCardProps {
   address: string;
   badges: Array<PlaceInfoBadgeProps & { key?: string | number }>;
   isLike?: boolean;
-  onLikeClick?: () => void;
+  onLikeClick?: (e: React.MouseEvent) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const PlaceInfoCard = ({
-  id,
   imageSrc,
   category,
   categoryLabel,
@@ -34,6 +33,7 @@ export const PlaceInfoCard = ({
   isLike = false,
   onLikeClick,
   className,
+  disabled = false,
 }: PlaceInfoCardProps) => {
   return (
     <div
@@ -41,44 +41,47 @@ export const PlaceInfoCard = ({
         className || ''
       }`}
     >
-      <Link className='block' href={`/places/${id}`}>
-        {/* 이미지 영역 */}
-        <div className='relative aspect-video w-full overflow-hidden bg-gray-50'>
-          <Image
-            fill
-            alt={name}
-            className='object-contain p-2 transition-transform duration-300 group-hover:scale-110'
-            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-            src={imageSrc}
+      {/* 이미지 영역 */}
+      <div className='relative aspect-video w-full overflow-hidden bg-gray-50'>
+        <Image
+          fill
+          alt={name || 'Place Image'}
+          className='object-contain p-2 transition-transform duration-300 group-hover:scale-110'
+          sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+          src={imageSrc}
+        />
+        {/* 카테고리 뱃지 (좌측 상단) */}
+        <div className='absolute left-3 top-3'>
+          <CategoryBadge category={category} label={categoryLabel} />
+        </div>
+        {/* 좋아요 버튼 (우측 상단) */}
+        <div className='absolute right-3 top-3 z-10'>
+          <LikeButton
+            disabled={disabled}
+            isLike={isLike}
+            size={20}
+            onClick={onLikeClick}
           />
-          {/* 카테고리 뱃지 (좌측 상단) */}
-          <div className='absolute left-3 top-3'>
-            <CategoryBadge category={category} label={categoryLabel} />
-          </div>
+        </div>
+      </div>
+
+      {/* 정보 영역 */}
+      <div className='flex flex-col gap-3 p-4'>
+        <div>
+          <h3 className='text-lg font-bold text-gray-900'>{name}</h3>
+          <p className='mt-1 line-clamp-1 text-sm text-gray-500'>{address}</p>
         </div>
 
-        {/* 정보 영역 */}
-        <div className='flex flex-col gap-3 p-4'>
-          <div>
-            <h3 className='text-lg font-bold text-gray-900'>{name}</h3>
-            <p className='mt-1 line-clamp-1 text-sm text-gray-500'>{address}</p>
-          </div>
-
-          {/* 뱃지 영역 (가로 스크롤 가능) */}
-          <div className='thin-scrollbar flex items-center gap-1.5 overflow-x-auto pb-2'>
-            {badges.map(({ key, ...badgeProps }, index) => (
-              <PlaceInfoBadge
-                key={key || index}
-                {...badgeProps}
-                className='flex-shrink-0'
-              />
-            ))}
-          </div>
+        {/* 뱃지 영역 (가로 스크롤 가능) */}
+        <div className='thin-scrollbar flex items-center gap-1.5 overflow-x-auto pb-2'>
+          {badges.map(({ key, ...badgeProps }, index) => (
+            <PlaceInfoBadge
+              key={key || index}
+              {...badgeProps}
+              className='flex-shrink-0'
+            />
+          ))}
         </div>
-      </Link>
-      {/* 좋아요 버튼 (우측 상단) - Link 외부에 배치하여 클릭 분리 */}
-      <div className='pointer-events-auto absolute right-3 top-3'>
-        <LikeButton isLike={isLike} size={20} onClick={onLikeClick} />
       </div>
     </div>
   );

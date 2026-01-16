@@ -6,6 +6,24 @@ export interface ApiPlaceResponse {
   timestamp: string;
 }
 
+export interface RawRandomPlaceItem {
+  places: Place;
+  thumbnail: string;
+}
+
+export interface PlaceWithThumbnail {
+  place: Place;
+  thumbnail: string;
+}
+
+export interface RandomPlaceResponse {
+  status: number;
+  message: string;
+  data: RawRandomPlaceItem[];
+  path: string;
+  timestamp: string;
+}
+
 export interface PetPolicy {
   placeId?: number;
   petAllowed: boolean;
@@ -31,11 +49,20 @@ export interface Place {
   categoryId: number;
   petPolicy: PetPolicy;
   averageRating?: number;
+  isLiked?: boolean;
 }
 
 export interface PlaceDetail {
   placeInfo: Place;
   top3photos: string[];
+}
+
+export interface PlaceDetailResponse {
+  status: number;
+  message: string;
+  data: PlaceDetail;
+  path: string;
+  timestamp: string;
 }
 
 export interface PlaceReview {
@@ -52,4 +79,12 @@ export interface PlaceReview {
 export interface PlaceReviewResponse {
   reviews: PlaceReview[];
   hasNext: boolean;
+}
+
+export interface ApiPlaceReviewResponse {
+  status: number;
+  message: string;
+  data: PlaceReviewResponse;
+  path: string;
+  timestamp: string;
 }

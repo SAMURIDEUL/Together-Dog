@@ -1,6 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
 
@@ -27,26 +28,6 @@ const calculateDistance = (
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
-};
-
-// Category to marker color mapping
-const getCategoryMarkerColor = (categoryId: number): string => {
-  const colorMap: Record<number, string> = {
-    1: 'blue', // 동물약국
-    2: 'purple', // 미술관
-    3: 'orange', // 카페
-    4: 'red', // 동물병원
-    5: 'yellow', // 반려동물용품
-    6: 'pink', // 미용
-    7: 'violet', // 문예회관
-    8: 'blue', // 펜션
-    9: 'orange', // 식당
-    10: 'green', // 여행지
-    11: 'skyblue', // 위탁관리
-    12: 'purple', // 박물관
-    13: 'blue', // 호텔
-  };
-  return colorMap[categoryId] || 'grey';
 };
 
 const getMarkerImageUrl = (): string => {
@@ -135,13 +116,18 @@ const DASHBOARD_SECTIONS = [
   },
 ];
 
-const PlacesDashboard = () => {
+const PlacesContent = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const categoryId = categoryParam ? parseInt(categoryParam, 10) : null;
 
   // State
   const [sectionData, setSectionData] = useState<Record<string, Place[]>>({});
   const [allPlaces, setAllPlaces] = useState<Place[]>([]);
+  const [categoryPlaces, setCategoryPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -174,59 +160,125 @@ const PlacesDashboard = () => {
     }
   }, []);
 
-  // Fetch data when user location is available
+  // Fetch data
   useEffect(() => {
     if (!userLocation) return;
 
-    const fetchDashboardData = async () => {
+    const fetchData = async () => {
       setLoading(true);
+      setError(null);
       try {
-        // Fetch all sections in parallel
-        const results = await Promise.all(
-          DASHBOARD_SECTIONS.map((section) =>
-            getPlaces(section.apiId, { size: 20 }).then((res) => ({
-              id: section.id,
-              data: res.data,
-            })),
-          ),
-        );
+        if (categoryId) {
+          // List View: Fetch specific category
+          const res = await getPlaces(categoryId, { size: 50 });
+          setCategoryPlaces(res.data);
+        } else {
+          // Dashboard View: Fetch all sections
+          const results = await Promise.all(
+            DASHBOARD_SECTIONS.map((section) =>
+              getPlaces(section.apiId, { size: 20 }).then((res) => ({
+                id: section.id,
+                data: res.data,
+              })),
+            ),
+          );
 
-        const newSectionData: Record<string, Place[]> = {};
-        let collectedPlaces: Place[] = [];
+          const newSectionData: Record<string, Place[]> = {};
+          let collectedPlaces: Place[] = [];
 
-        results.forEach(({ id, data }) => {
-          // Sort by distance from user location
-          const sortedData = data
-            .map((place) => ({
-              ...place,
-              distance: calculateDistance(
-                userLocation.lat,
-                userLocation.lng,
-                place.lat,
-                place.lon,
-              ),
-            }))
-            .sort((a, b) => a.distance - b.distance)
-            .slice(0, 10); // Take top 10 closest
+          results.forEach(({ id, data }) => {
+            // Sort by distance from user location
+            const sortedData = data
+              .map((place) => ({
+                ...place,
+                distance: calculateDistance(
+                  userLocation.lat,
+                  userLocation.lng,
+                  place.lat,
+                  place.lon,
+                ),
+              }))
+              .sort((a, b) => a.distance - b.distance)
+              .slice(0, 10); // Take top 10 closest
 
-          newSectionData[id] = sortedData;
-          collectedPlaces = [...collectedPlaces, ...sortedData];
-        });
+            newSectionData[id] = sortedData;
+            collectedPlaces = [...collectedPlaces, ...sortedData];
+          });
 
-        setSectionData(newSectionData);
-        setAllPlaces(collectedPlaces);
+          setSectionData(newSectionData);
+          setAllPlaces(collectedPlaces);
+        }
       } catch (err) {
-        console.error('Failed to fetch dashboard data:', err);
+        console.error('Failed to fetch place data:', err);
+        setError('장소 정보를 불러오는데 실패했습니다.');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDashboardData();
-  }, [userLocation]);
+    fetchData();
+  }, [userLocation, categoryId]);
 
   const mapCenter = userLocation || { lat: 37.5665, lng: 126.978 };
 
+  // Common Loading
+  if (loading) {
+    return (
+      <div className='flex min-h-screen items-center justify-center'>
+        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500' />
+      </div>
+    );
+  }
+
+  // Common Error
+  if (error) {
+    return (
+      <div className='flex min-h-screen items-center justify-center text-red-500'>
+        {error}
+      </div>
+    );
+  }
+
+  // --- List View (Category Grid) ---
+  if (categoryId) {
+    const currentCategory = DASHBOARD_SECTIONS.find(
+      (s) => s.apiId === categoryId,
+    );
+    return (
+      <div className='container mx-auto max-w-screen-xl px-4 py-8 pb-20'>
+        <div className='mb-6 flex items-center justify-between'>
+          <h2 className='text-2xl font-bold text-gray-900'>
+            {currentCategory?.title || '카테고리 장소'}
+          </h2>
+          <button
+            className='text-sm text-gray-500 hover:text-gray-700'
+            onClick={() => router.push('/places')}
+          >
+            ← 전체 보기
+          </button>
+        </div>
+
+        {categoryPlaces.length === 0 ? (
+          <div className='py-20 text-center text-gray-500'>
+            검색 결과가 없습니다.
+          </div>
+        ) : (
+          <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+            {categoryPlaces.map((place, index) => (
+              <Link key={place.id} href={`/places/${place.id}`}>
+                <PlaceInfoCard
+                  {...mapPlaceToCardProps(place, index)}
+                  isLike={false}
+                />
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // --- Dashboard View ---
   return (
     <div className='relative min-h-screen bg-gray-50 pb-20'>
       {/* 1. Top Map Section */}
@@ -246,7 +298,7 @@ const PlacesDashboard = () => {
           </button>
         </div>
 
-        {!loading && userLocation && (
+        {userLocation && (
           <Map
             center={mapCenter}
             level={7}
@@ -265,8 +317,7 @@ const PlacesDashboard = () => {
             {/* Clustered Place Markers */}
             <MarkerClusterer averageCenter minLevel={6}>
               {allPlaces.map((place) => {
-                const markerColor = getCategoryMarkerColor(place.categoryId);
-                const markerImageUrl = getMarkerImageUrl(markerColor);
+                const markerImageUrl = getMarkerImageUrl();
 
                 return (
                   <MapMarker
@@ -314,7 +365,9 @@ const PlacesDashboard = () => {
                 </div>
                 <button
                   className='flex items-center gap-1 text-xs font-medium text-orange-500 hover:text-orange-600'
-                  onClick={() => router.push(`/places?category=${section.id}`)}
+                  onClick={() =>
+                    router.push(`/places?category=${section.apiId}`)
+                  }
                 >
                   더보기 <span className='text-lg leading-none'>›</span>
                 </button>
@@ -325,10 +378,12 @@ const PlacesDashboard = () => {
                 {sectionData[section.id]?.length > 0 ? (
                   sectionData[section.id].map((place, index) => (
                     <div key={place.id} className='w-[280px] flex-shrink-0'>
-                      <PlaceInfoCard
-                        {...mapPlaceToCardProps(place, index)}
-                        isLike={false}
-                      />
+                      <Link href={`/places/${place.id}`}>
+                        <PlaceInfoCard
+                          {...mapPlaceToCardProps(place, index)}
+                          isLike={false}
+                        />
+                      </Link>
                     </div>
                   ))
                 ) : (
@@ -347,7 +402,7 @@ const PlacesDashboard = () => {
 export default function PlacesPage() {
   return (
     <Suspense fallback={<div className='min-h-screen bg-gray-50' />}>
-      <PlacesDashboard />
+      <PlacesContent />
     </Suspense>
   );
 }

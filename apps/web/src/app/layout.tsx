@@ -13,6 +13,7 @@ import {
   GlobalModal,
   GlobalToast,
   GNB,
+  QueryProvider,
   ThemeProvider,
 } from '@/components/shared';
 
@@ -74,13 +75,15 @@ export default function RootLayout({
         className={`${pretendard.variable} ${nanumSquareNeo.variable} ${dohyeon.variable} bg-white text-gray-900 antialiased`}
       >
         <ThemeProvider>
-          <div className='flex min-h-screen flex-col'>
-            <GNB />
-            <main className='flex-1'>{children}</main>
-            <Footer />
-          </div>
-          <GlobalModal />
-          <GlobalToast />
+          <QueryProvider>
+            <div className='flex min-h-screen flex-col'>
+              <GNB />
+              <main className='flex-1'>{children}</main>
+              <Footer />
+            </div>
+            <GlobalModal />
+            <GlobalToast />
+          </QueryProvider>
         </ThemeProvider>
         <Script
           src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_APP_JS_KEY}&libraries=services,clusterer&autoload=false`}
