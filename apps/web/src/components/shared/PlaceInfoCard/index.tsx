@@ -15,8 +15,9 @@ export interface PlaceInfoCardProps {
   address: string;
   badges: Array<PlaceInfoBadgeProps & { key?: string | number }>;
   isLike?: boolean;
-  onLikeClick?: () => void;
+  onLikeClick?: (e: React.MouseEvent) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const PlaceInfoCard = ({
@@ -29,6 +30,7 @@ export const PlaceInfoCard = ({
   isLike = false,
   onLikeClick,
   className,
+  disabled = false,
 }: PlaceInfoCardProps) => {
   return (
     <div
@@ -40,7 +42,7 @@ export const PlaceInfoCard = ({
       <div className='relative aspect-video w-full overflow-hidden bg-gray-50'>
         <Image
           fill
-          alt={name}
+          alt={name || 'Place Image'}
           className='object-contain p-2 transition-transform duration-300 group-hover:scale-110'
           sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
           src={imageSrc}
@@ -50,8 +52,13 @@ export const PlaceInfoCard = ({
           <CategoryBadge category={category} label={categoryLabel} />
         </div>
         {/* 좋아요 버튼 (우측 상단) */}
-        <div className='absolute right-3 top-3'>
-          <LikeButton isLike={isLike} size={20} onClick={onLikeClick} />
+        <div className='absolute right-3 top-3 z-10'>
+          <LikeButton
+            disabled={disabled}
+            isLike={isLike}
+            size={20}
+            onClick={onLikeClick}
+          />
         </div>
       </div>
 

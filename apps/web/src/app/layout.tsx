@@ -12,6 +12,7 @@ import {
   GlobalModal,
   GlobalToast,
   GNB,
+  QueryProvider,
   ThemeProvider,
 } from '@/components/shared';
 
@@ -73,13 +74,15 @@ export default function RootLayout({
         className={`${pretendard.variable} ${nanumSquareNeo.variable} ${dohyeon.variable} bg-white text-gray-900 antialiased`}
       >
         <ThemeProvider>
-          <div className='flex min-h-screen flex-col'>
-            <GNB />
-            <main className='flex-1'>{children}</main>
-            <Footer />
-          </div>
-          <GlobalModal />
-          <GlobalToast />
+          <QueryProvider>
+            <div className='flex min-h-screen flex-col'>
+              <GNB />
+              <main className='flex-1'>{children}</main>
+              <Footer />
+            </div>
+            <GlobalModal />
+            <GlobalToast />
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
