@@ -62,7 +62,9 @@ export const PlaceDetailMap = ({ place }: PlaceDetailMapProps) => {
       <div className='mt-3 flex gap-2'>
         <a
           className='flex-1 rounded-lg border border-gray-200 bg-white py-3 text-center text-sm font-medium text-gray-700 hover:bg-gray-50'
-          href={`https://map.kakao.com/link/to/${place.name},${place.lat},${place.lon}`}
+          href={`https://map.kakao.com/link/to/${encodeURIComponent(
+            place.name,
+          )},${place.lat},${place.lon}`}
           rel='noreferrer'
           target='_blank'
         >

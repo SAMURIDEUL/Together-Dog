@@ -1,45 +1,41 @@
 'use client';
 
+import { useInfiniteQuery } from '@tanstack/react-query';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 
 import { getPlaceReviews } from '@/api/place';
-import { PlaceReview } from '@/types/place';
 
 interface PlaceReviewsProps {
   placeId: number;
 }
 
 export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
-  const [reviews, setReviews] = useState<PlaceReview[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [hasNext, setHasNext] = useState(false);
-  const [page, setPage] = useState(0);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ['reviews', placeId],
+    queryFn: ({ pageParam }) => getPlaceReviews(placeId, pageParam),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasNext ? allPages.length : undefined,
+  });
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await getPlaceReviews(placeId, page);
-        if (page === 0) {
-          setReviews(response.reviews);
-        } else {
-          setReviews((prev) => [...prev, ...response.reviews]);
-        }
-        setHasNext(response.hasNext);
-      } catch (error) {
-        console.error('Failed to fetch reviews', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReviews();
-  }, [placeId, page]);
+  const reviews = data?.pages.flatMap((page) => page.reviews) || [];
 
-  const loadMore = () => {
-    setPage((prev) => prev + 1);
-  };
+  if (status === 'pending') {
+    return (
+      <div className='bg-white px-4 py-8 text-center text-gray-500'>
+        리뷰를 불러오는 중...
+      </div>
+    );
+  }
 
-  if (!loading && reviews.length === 0) {
+  if (status === 'success' && reviews.length === 0) {
     return (
       <div className='bg-white px-4 py-8 text-center text-gray-500'>
         아직 작성된 리뷰가 없습니다.
@@ -98,13 +94,20 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
         ))}
       </div>
 
-      {hasNext && (
+      {hasNextPage && (
         <button
-          className='mt-6 w-full rounded-lg border border-gray-200 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50'
-          onClick={loadMore}
+          className='mt-6 w-full rounded-lg border border-gray-200 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:opacity-50'
+          disabled={isFetchingNextPage}
+          onClick={() => fetchNextPage()}
         >
-          더보기
+          {isFetchingNextPage ? '로딩 중...' : '더보기'}
         </button>
+      )}
+
+      {isFetching && !isFetchingNextPage && (
+        <div className='py-4 text-center text-xs text-gray-400'>
+          업데이트 중...
+        </div>
       )}
     </div>
   );
