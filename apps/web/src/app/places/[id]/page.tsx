@@ -24,7 +24,11 @@ export default function PlaceDetailPage() {
     const fetchDetail = async () => {
       try {
         const idString = Array.isArray(params.id) ? params.id[0] : params.id;
-        if (!idString) return;
+        if (!idString) {
+          setError('잘못된 장소 ID입니다.');
+          setLoading(false);
+          return;
+        }
 
         const placeId = parseInt(idString, 10);
         if (isNaN(placeId)) throw new Error('Invalid Place ID');
