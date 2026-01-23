@@ -4,8 +4,8 @@ import { useState } from 'react';
 
 import { PlaceItem } from '@/types/place';
 
-import { AddressSearchModal } from './AddressSearchModal';
 import { PlacesMap } from './PlacesMap';
+import { RegionSelector } from './RegionSelector';
 
 interface PlacesMapSectionProps {
   userLocation: { lat: number; lng: number } | null;
@@ -22,12 +22,11 @@ export const PlacesMapSection = ({
 }: PlacesMapSectionProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // 주소 검색 완료 후 좌표 변환
-  const handleComplete = (data: unknown) => {
-    const fullAddress = (data as any).address;
+  // 시군구동 선택 완료 후 좌표 변환
+  const handleComplete = (regionName: string) => {
     if (window.kakao && window.kakao.maps) {
       const geocoder = new window.kakao.maps.services.Geocoder();
-      geocoder.addressSearch(fullAddress, (result: any[], status: any) => {
+      geocoder.addressSearch(regionName, (result: { y: string; x: string }[], status: string) => {
         if (status === window.kakao.maps.services.Status.OK) {
           const { y, x } = result[0];
           onLocationUpdate(parseFloat(y), parseFloat(x));
@@ -61,7 +60,7 @@ export const PlacesMapSection = ({
         userLocation={userLocation}
       />
 
-      <AddressSearchModal
+      <RegionSelector
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onComplete={handleComplete}
