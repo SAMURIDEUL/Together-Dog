@@ -6,7 +6,7 @@ import { type ComponentProps, useEffect, useState } from 'react';
 
 import { getRandomPlaces, likePlace, unlikePlace } from '@/api/place';
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
-import type { PlaceItem } from '@/types/place';
+import type { Place, PlaceItem } from '@/types/place';
 import { mapPlaceToCardProps } from '@/utils/petMapper';
 
 interface PlaceItemWithLike extends PlaceItem {
@@ -24,11 +24,33 @@ export const RecommendSection = ({
     const fetchPlaces = async () => {
       try {
         const data = await getRandomPlaces();
-        // data type is PlaceItem[]
-        const mappedPlaces = data.map((item) => ({
-          ...item,
-          isLike: false,
-        }));
+
+        // 적응형 매핑: 'places' 키, 'placeInfo' 키 또는 단일 객체 구조 대응
+        const mappedPlaces = data.map((item: any) => {
+          // 케이스 1: 'places' 키가 있는 경우 (랜덤 API 디버그에서 확인됨)
+          if (item.places) {
+            return {
+              placeInfo: item.places,
+              thumbnail: item.thumbnail,
+              isLike: false,
+            };
+          }
+
+          // 케이스 2: 'placeInfo' 키가 있는 경우 (표준 PlaceItem 구조)
+          if (item.placeInfo) {
+            return {
+              ...item,
+              isLike: false,
+            };
+          }
+
+          // 케이스 3: 평면적인 Place 객체인 경우 (레거시 대응)
+          return {
+            placeInfo: item as unknown as Place,
+            thumbnail: '',
+            isLike: false,
+          };
+        });
         setPlaces(mappedPlaces);
       } catch (error) {
         console.error('Failed to fetch recommend places:', error);
@@ -48,7 +70,7 @@ export const RecommendSection = ({
 
     setLoadingIds((prev) => new Set(prev).add(id));
 
-    // 1. Optimistic Update (즉시 UI 반영)
+    // 1. 낙관적 업데이트 (즉시 UI 반영)
     const previousIsLike = targetPlace.isLike;
     setPlaces((prev) =>
       prev.map((place) =>
@@ -57,7 +79,7 @@ export const RecommendSection = ({
     );
 
     try {
-      // 2. API Call
+      // 2. API 요청
       if (previousIsLike) {
         await unlikePlace(id);
       } else {
@@ -65,7 +87,7 @@ export const RecommendSection = ({
       }
     } catch (error) {
       console.error('Failed to toggle like:', error);
-      // 3. Rollback on Error (에러 발생 시 원복)
+      // 3. 에러 발생 시 원복 (롤백)
       setPlaces((prev) =>
         prev.map((place) =>
           place.placeInfo.id === id
@@ -73,7 +95,7 @@ export const RecommendSection = ({
             : place,
         ),
       );
-      // TODO: Add toast notification here
+      // TODO: 토스트 알림 추가 필요
       alert('찜하기 처리에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setLoadingIds((prev) => {
@@ -109,10 +131,14 @@ export const RecommendSection = ({
 
       <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
         {places.map((place, index) => {
+          // 가드 절: 유효하지 않은 데이터 건너뛰기
+          if (!place || !place.placeInfo) return null;
+
           const cardProps = mapPlaceToCardProps(place, index);
+
           return (
             <Link
-              key={place.placeInfo.id}
+              key={`${place.placeInfo.id}-${index}`}
               href={`/places/${place.placeInfo.id}`}
             >
               <PlaceInfoCard
