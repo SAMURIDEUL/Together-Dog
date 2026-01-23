@@ -16,6 +16,8 @@ export interface GetPlacesParams {
   subdistrict?: string;
   keyword?: string;
   lastId?: number;
+  lat?: number;
+  lon?: number;
 }
 
 export interface GetPlacesResponse {
