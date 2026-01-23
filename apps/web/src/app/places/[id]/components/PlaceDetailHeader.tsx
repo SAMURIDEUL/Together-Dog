@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { CONSTANTS } from '@/shared/config/constants';
 import { useModalStore } from '@/stores/useModalStore';
 import { Place } from '@/types/place';
+import { CATEGORY_LABEL_MAP } from '@/utils/pet/constants';
+import { getCategoryIcon } from '@/utils/pet/resolvers';
 
 interface PlaceDetailHeaderProps {
   place: Place;
@@ -19,50 +21,10 @@ export const PlaceDetailHeader = ({
   const router = useRouter();
   const { openModal, closeModal } = useModalStore();
 
-  // Map backend Korean category names to Icon keys
-  const getCategoryIconKey = (categoryName: string) => {
-    if (!categoryName) return 'cafe';
-
-    // Normalize string just in case
-    const name = categoryName.trim();
-
-    if (name.includes('카페')) return 'cafe';
-    if (name.includes('음식점') || name.includes('식당')) return 'restaurant';
-    if (name.includes('숙소') || name.includes('펜션') || name.includes('호텔'))
-      return 'hotel'; // Check specific types if needed
-    if (name.includes('미술관')) return 'artGallery';
-    if (name.includes('박물관')) return 'museum';
-    if (name.includes('여행') || name.includes('관광')) return 'travelSpot';
-    if (name.includes('약국')) return 'petPharmacy';
-    if (name.includes('동물병원') || name.includes('병원'))
-      return 'petHospital';
-    if (name.includes('용품') || name.includes('샵')) return 'petSupplies';
-    if (name.includes('미용')) return 'grooming';
-    // Add more mappings as needed based on actual data
-
-    return 'cafe'; // Default fallback
-  };
-
-  const validCategory = getCategoryIconKey(place.category3);
-
-  const categoryLabels: Record<string, string> = {
-    cafe: '카페',
-    restaurant: '식당',
-    hotel: '숙소',
-    museum: '박물관',
-    artGallery: '미술관',
-    pension: '숙소',
-    travelSpot: '여행지',
-    petPharmacy: '동물약국',
-    petHospital: '동물병원',
-    petSupplies: '용품점',
-    grooming: '미용',
-    culturalCenter: '문화센터',
-    entrustedCare: '위탁관리',
-  };
+  const validCategory = getCategoryIcon(place.categoryId, place.category3);
 
   const displayLabel =
-    categoryLabels[validCategory] || place.category3 || '장소';
+    CATEGORY_LABEL_MAP[validCategory] || place.category3 || '장소';
 
   const handleLikeClick = () => {
     const token = localStorage.getItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
