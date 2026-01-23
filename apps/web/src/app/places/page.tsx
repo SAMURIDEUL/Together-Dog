@@ -7,7 +7,7 @@ import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
 
 import { getPlaces } from '@/api/place';
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
-import { Place } from '@/types/place';
+import { PlaceItem } from '@/types/place';
 import { mapPlaceToCardProps } from '@/utils/petMapper';
 
 // Haversine formula to calculate distance between two coordinates
@@ -123,9 +123,11 @@ const PlacesContent = () => {
   const categoryId = categoryParam ? parseInt(categoryParam, 10) : null;
 
   // State
-  const [sectionData, setSectionData] = useState<Record<string, Place[]>>({});
-  const [allPlaces, setAllPlaces] = useState<Place[]>([]);
-  const [categoryPlaces, setCategoryPlaces] = useState<Place[]>([]);
+  const [sectionData, setSectionData] = useState<Record<string, PlaceItem[]>>(
+    {},
+  );
+  const [allPlaces, setAllPlaces] = useState<PlaceItem[]>([]);
+  const [categoryPlaces, setCategoryPlaces] = useState<PlaceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{
@@ -171,20 +173,20 @@ const PlacesContent = () => {
         if (categoryId) {
           // List View: Fetch specific category
           const res = await getPlaces(categoryId, { size: 50 });
-          setCategoryPlaces(res.data);
+          setCategoryPlaces(res.data.places);
         } else {
           // Dashboard View: Fetch all sections
           const results = await Promise.all(
             DASHBOARD_SECTIONS.map((section) =>
               getPlaces(section.apiId, { size: 20 }).then((res) => ({
                 id: section.id,
-                data: res.data,
+                data: res.data.places,
               })),
             ),
           );
 
-          const newSectionData: Record<string, Place[]> = {};
-          let collectedPlaces: Place[] = [];
+          const newSectionData: Record<string, PlaceItem[]> = {};
+          let collectedPlaces: PlaceItem[] = [];
 
           results.forEach(({ id, data }) => {
             // Sort by distance from user location
@@ -194,8 +196,8 @@ const PlacesContent = () => {
                 distance: calculateDistance(
                   userLocation.lat,
                   userLocation.lng,
-                  place.lat,
-                  place.lon,
+                  place.placeInfo.lat,
+                  place.placeInfo.lon,
                 ),
               }))
               .sort((a, b) => a.distance - b.distance)
@@ -264,10 +266,13 @@ const PlacesContent = () => {
           </div>
         ) : (
           <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-            {categoryPlaces.map((place, index) => (
-              <Link key={place.id} href={`/places/${place.id}`}>
+            {categoryPlaces.map((item, index) => (
+              <Link
+                key={item.placeInfo.id}
+                href={`/places/${item.placeInfo.id}`}
+              >
                 <PlaceInfoCard
-                  {...mapPlaceToCardProps(place, index)}
+                  {...mapPlaceToCardProps(item, index)}
                   isLike={false}
                 />
               </Link>
@@ -321,14 +326,17 @@ const PlacesContent = () => {
 
                 return (
                   <MapMarker
-                    key={place.id}
+                    key={place.placeInfo.id}
                     image={{
                       src: markerImageUrl,
                       size: { width: 24, height: 35 },
                     }}
-                    position={{ lat: place.lat, lng: place.lon }}
-                    title={place.name}
-                    onClick={() => router.push(`/places/${place.id}`)}
+                    position={{
+                      lat: place.placeInfo.lat,
+                      lng: place.placeInfo.lon,
+                    }}
+                    title={place.placeInfo.name}
+                    onClick={() => router.push(`/places/${place.placeInfo.id}`)}
                   />
                 );
               })}
@@ -377,8 +385,11 @@ const PlacesContent = () => {
               <div className='scrollbar-hide -mx-4 flex gap-4 overflow-x-auto px-4 pb-4'>
                 {sectionData[section.id]?.length > 0 ? (
                   sectionData[section.id].map((place, index) => (
-                    <div key={place.id} className='w-[280px] flex-shrink-0'>
-                      <Link href={`/places/${place.id}`}>
+                    <div
+                      key={place.placeInfo.id}
+                      className='w-[280px] flex-shrink-0'
+                    >
+                      <Link href={`/places/${place.placeInfo.id}`}>
                         <PlaceInfoCard
                           {...mapPlaceToCardProps(place, index)}
                           isLike={false}

@@ -186,8 +186,8 @@ export const PlaceDetailInfo = ({ place }: PlaceDetailInfoProps) => {
           </h3>
           <div className='flex flex-wrap gap-2'>
             {sizeBadge && <PlaceInfoBadge {...sizeBadge} />}
-            {amenityBadges.map((badge, idx) => (
-              <PlaceInfoBadge key={`amenity-${badge.name}-${idx}`} {...badge} />
+            {amenityBadges.map((badge) => (
+              <PlaceInfoBadge key={`amenity-${badge.name}`} {...badge} />
             ))}
             {!sizeBadge && amenityBadges.length === 0 && (
               <span className='text-sm text-gray-400'>
@@ -205,8 +205,8 @@ export const PlaceDetailInfo = ({ place }: PlaceDetailInfoProps) => {
               이용 제한 및 안내
             </h3>
             <div className='mb-2 flex flex-wrap gap-2'>
-              {restrictionBadges.map((badge, idx) => (
-                <PlaceInfoBadge key={`rest-${badge.name}-${idx}`} {...badge} />
+              {restrictionBadges.map((badge) => (
+                <PlaceInfoBadge key={`rest-${badge.name}`} {...badge} />
               ))}
             </div>
             {/* If we have original text, mostly it's good to show it as detail text below badges for completeness */}

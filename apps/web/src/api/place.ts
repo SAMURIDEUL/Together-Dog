@@ -1,10 +1,9 @@
 import {
   ApiPlaceReviewResponse,
-  Place,
   PlaceDetail,
   PlaceDetailResponse,
+  PlaceItem,
   PlaceReviewResponse,
-  PlaceWithThumbnail,
   RandomPlaceResponse,
 } from '@/types/place';
 
@@ -20,9 +19,13 @@ export interface GetPlacesParams {
 }
 
 export interface GetPlacesResponse {
-  data: Place[];
-  nextCursor: number | null;
-  hasNext: boolean;
+  status: number;
+  message: string;
+  data: {
+    places: PlaceItem[];
+    nextCursor: number | null;
+    hasNext: boolean;
+  };
 }
 
 // 장소 목록 조회 (카테고리별)
@@ -36,16 +39,13 @@ export const getPlaces = async (
       params,
     },
   );
-  return response.data;
+  return response.data; // Returns the full API body including status, message, data
 };
 
 // 랜덤 장소 추천 (메인 페이지용)
-export const getRandomPlaces = async (): Promise<PlaceWithThumbnail[]> => {
+export const getRandomPlaces = async (): Promise<PlaceItem[]> => {
   const response = await apiClient.get<RandomPlaceResponse>('/places/random');
-  return response.data.data.map((item) => ({
-    place: item.places,
-    thumbnail: item.thumbnail,
-  }));
+  return response.data.data;
 };
 
 // 장소 상세 정보 조회

@@ -6,29 +6,27 @@ import { type ComponentProps, useEffect, useState } from 'react';
 
 import { getRandomPlaces, likePlace, unlikePlace } from '@/api/place';
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
-import type { Place } from '@/types/place';
-import { mapPlaceToCardProps, resolveThumbnailPath } from '@/utils/petMapper';
+import type { PlaceItem } from '@/types/place';
+import { mapPlaceToCardProps } from '@/utils/petMapper';
 
-interface PlaceWithLike extends Place {
-  isLike?: boolean;
-  thumbnail?: string;
+interface PlaceItemWithLike extends PlaceItem {
+  isLike: boolean;
 }
 
 export const RecommendSection = ({
   className,
   ...props
 }: ComponentProps<'section'>) => {
-  const [places, setPlaces] = useState<PlaceWithLike[]>([]);
+  const [places, setPlaces] = useState<PlaceItemWithLike[]>([]);
   const [loadingIds, setLoadingIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         const data = await getRandomPlaces();
-        // data type is PlaceWithThumbnail[]
+        // data type is PlaceItem[]
         const mappedPlaces = data.map((item) => ({
-          ...item.place,
-          thumbnail: resolveThumbnailPath(item.thumbnail),
+          ...item,
           isLike: false,
         }));
         setPlaces(mappedPlaces);
@@ -45,7 +43,7 @@ export const RecommendSection = ({
 
     if (loadingIds.has(id)) return;
 
-    const targetPlace = places.find((p) => p.id === id);
+    const targetPlace = places.find((p) => p.placeInfo.id === id);
     if (!targetPlace) return;
 
     setLoadingIds((prev) => new Set(prev).add(id));
@@ -54,7 +52,7 @@ export const RecommendSection = ({
     const previousIsLike = targetPlace.isLike;
     setPlaces((prev) =>
       prev.map((place) =>
-        place.id === id ? { ...place, isLike: !place.isLike } : place,
+        place.placeInfo.id === id ? { ...place, isLike: !place.isLike } : place,
       ),
     );
 
@@ -70,7 +68,9 @@ export const RecommendSection = ({
       // 3. Rollback on Error (에러 발생 시 원복)
       setPlaces((prev) =>
         prev.map((place) =>
-          place.id === id ? { ...place, isLike: previousIsLike } : place,
+          place.placeInfo.id === id
+            ? { ...place, isLike: previousIsLike }
+            : place,
         ),
       );
       // TODO: Add toast notification here
@@ -111,13 +111,15 @@ export const RecommendSection = ({
         {places.map((place, index) => {
           const cardProps = mapPlaceToCardProps(place, index);
           return (
-            <Link key={place.id} href={`/places/${place.id}`}>
+            <Link
+              key={place.placeInfo.id}
+              href={`/places/${place.placeInfo.id}`}
+            >
               <PlaceInfoCard
                 {...cardProps}
-                disabled={loadingIds.has(place.id)}
-                imageSrc={place.thumbnail || cardProps.imageSrc}
+                disabled={loadingIds.has(place.placeInfo.id)}
                 isLike={place.isLike}
-                onLikeClick={(e) => handleLikeClick(e, place.id)}
+                onLikeClick={(e) => handleLikeClick(e, place.placeInfo.id)}
               />
             </Link>
           );

@@ -31,6 +31,7 @@ export default function CardTestPage() {
           ]}
           category='cafe'
           categoryLabel='카페'
+          id={1}
           imageSrc='https://images.unsplash.com/photo-1712746438534-f0cc699b0b90?q=80&w=2070&auto=format&fit=crop'
           isLike={isLiked}
           name='투게더 카페'

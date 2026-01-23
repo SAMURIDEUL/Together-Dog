@@ -77,4 +77,6 @@ export const THUMBNAIL_MAPPING: Record<string, string> = {
   'hospital.png': 'petHospital.png',
   'market.png': 'petSupplies.png',
   'travel.png': 'travelSpot.png',
+  'literary.png': 'culturalCenter.png',
+  'consignment.png': 'entrustedCare.png',
 };

@@ -1,17 +1,20 @@
 import { type PlaceInfoCardProps } from '@/components/shared/PlaceInfoCard';
-import { type Place } from '@/types/place';
+import { type PlaceItem } from '@/types/place';
 
 import { CATEGORY_IMAGE_MAP } from './pet/constants';
 import { determinePetSizeVariant, parseRestrictionBadges } from './pet/parsers';
-import { getCategoryIcon } from './pet/resolvers';
+import { getCategoryIcon, resolveThumbnailPath } from './pet/resolvers';
 
 // Re-export specific helpers if needed elsewhere (optional)
 export { resolveThumbnailPath } from './pet/resolvers';
 
 export const mapPlaceToCardProps = (
-  place: Place,
+  item: PlaceItem,
   _index: number,
 ): PlaceInfoCardProps => {
+  const place = item.placeInfo;
+  const thumbnail = resolveThumbnailPath(item.thumbnail || '');
+
   const badges: PlaceInfoCardProps['badges'] = [];
   // 0. petPolicy가 없는 경우 방어 코드
   if (!place.petPolicy) {
@@ -23,6 +26,7 @@ export const mapPlaceToCardProps = (
       address: place.roadAddress || place.city || '',
       badges: [],
       isLike: false,
+      id: 0,
     };
   }
 
@@ -83,12 +87,14 @@ export const mapPlaceToCardProps = (
   // 카테고리 매퍼 사용
   const categoryKey = getCategoryIcon(place.categoryId, place.category3);
 
-  // 이미지 매핑
-  const imageFilename = CATEGORY_IMAGE_MAP[categoryKey] || 'travelSpot.png';
+  // 이미지 매핑 (썸네일 우선, 없으면 카테고리 이미지)
+  const imageFilename =
+    thumbnail ||
+    `/images/category/${CATEGORY_IMAGE_MAP[categoryKey] || 'travelSpot.png'}`;
 
   return {
     id: place.id,
-    imageSrc: `/images/category/${imageFilename}`,
+    imageSrc: imageFilename,
     category: categoryKey,
     categoryLabel: place.category3 || '기타',
     name: place.name,
