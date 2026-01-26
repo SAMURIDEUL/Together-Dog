@@ -12,6 +12,7 @@ interface PlacesMapSectionProps {
   allPlaces: PlaceItem[];
   locationStatus: 'loading' | 'granted' | 'denied';
   onLocationUpdate: (lat: number, lng: number) => void;
+  onLocationRequest: () => void;
 }
 
 export const PlacesMapSection = ({
@@ -19,6 +20,7 @@ export const PlacesMapSection = ({
   allPlaces,
   locationStatus,
   onLocationUpdate,
+  onLocationRequest,
 }: PlacesMapSectionProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
@@ -26,13 +28,16 @@ export const PlacesMapSection = ({
   const handleComplete = (regionName: string) => {
     if (window.kakao && window.kakao.maps) {
       const geocoder = new window.kakao.maps.services.Geocoder();
-      geocoder.addressSearch(regionName, (result: { y: string; x: string }[], status: string) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const { y, x } = result[0];
-          onLocationUpdate(parseFloat(y), parseFloat(x));
-          setIsSearchOpen(false);
-        }
-      });
+      geocoder.addressSearch(
+        regionName,
+        (result: { y: string; x: string }[], status: string) => {
+          if (status === window.kakao.maps.services.Status.OK) {
+            const { y, x } = result[0];
+            onLocationUpdate(parseFloat(y), parseFloat(x));
+            setIsSearchOpen(false);
+          }
+        },
+      );
     }
   };
 
@@ -41,10 +46,16 @@ export const PlacesMapSection = ({
       {/* 지도 위 컨트롤 버튼 */}
       <div className='absolute left-4 right-4 top-4 z-10 flex gap-2'>
         <button
-          className='flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold shadow-md transition-all hover:bg-gray-50 active:scale-95'
-          onClick={() => window.location.reload()}
+          className='flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold shadow-md transition-all hover:bg-gray-50 active:scale-95 disabled:opacity-50'
+          disabled={locationStatus === 'loading'}
+          onClick={onLocationRequest}
         >
-          📍 {locationStatus === 'granted' ? '내 위치' : '위치 권한 없음'}
+          📍{' '}
+          {locationStatus === 'loading'
+            ? '위치 확인 중...'
+            : locationStatus === 'granted'
+              ? '내 위치'
+              : '위치 권한 없음'}
         </button>
         <button
           className='flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold shadow-md transition-all hover:bg-gray-50 active:scale-95'

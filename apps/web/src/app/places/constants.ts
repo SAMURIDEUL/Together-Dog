@@ -1,3 +1,5 @@
+import { CATEGORY_IMAGE_MAP } from '@/utils/pet/constants';
+import { getCategoryIcon } from '@/utils/pet/resolvers';
 
 // 1. 대시보드 카테고리 설정
 export const DASHBOARD_SECTIONS = [
@@ -101,9 +103,36 @@ export const calculateDistance = (
   return R * c;
 };
 
-// 3. 마커 이미지 URL
-export const getMarkerImageUrl = (): string => {
-  return 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+// 3. 커스텀 핀 마커 생성 (SVG 기반)
+export const createMarkerPin = (
+  categoryId?: number,
+  category3?: string,
+): string => {
+  if (categoryId === undefined || category3 === undefined) {
+    return 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+  }
+
+  const iconName = getCategoryIcon(categoryId, category3);
+  const iconFilename = CATEGORY_IMAGE_MAP[iconName];
+  const iconUrl = `/images/category/${iconFilename}`;
+
+  // 오렌지색 핀 배경 + 흰색 원형 배경 + 카테고리 아이콘
+  const svg = `
+    <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 48C20 48 40 31.5 40 20C40 8.9543 31.0457 0 20 0C8.9543 0 0 8.9543 0 20C0 31.5 20 48 20 48Z" fill="#FF8A00"/>
+      <circle cx="20" cy="20" r="14" fill="white"/>
+      <image href="${iconUrl}" x="10" y="10" width="20" height="20"/>
+    </svg>
+  `.trim();
+
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+};
+
+export const getMarkerImageUrl = (
+  categoryId?: number,
+  category3?: string,
+): string => {
+  return createMarkerPin(categoryId, category3);
 };
 
 // 4. 카테고리 ID 파싱 헬퍼
@@ -114,4 +143,3 @@ export const getCategoryId = (param: string | null) => {
   const section = DASHBOARD_SECTIONS.find((s) => s.id === param);
   return section ? section.apiId : null;
 };
-

@@ -5,7 +5,7 @@ import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
 
 import { PlaceItem } from '@/types/place';
 
-import { getMarkerImageUrl } from '../constants';
+import { CategoryPin } from './CategoryPin';
 
 interface PlacesMapProps {
   userLocation: { lat: number; lng: number } | null;
@@ -39,33 +39,29 @@ export const PlacesMap = ({
             title='내 위치'
           />
 
-          {/* 장소 마커 클러스터링 */}
+          {/* 장소 커스텀 마커 클러스터링 */}
           <MarkerClusterer averageCenter minLevel={6}>
-            {allPlaces.map((place) => {
-              const markerImageUrl = getMarkerImageUrl();
-
-              return (
-                <MapMarker
-                  key={place.placeInfo.id}
-                  image={{
-                    src: markerImageUrl,
-                    size: { width: 24, height: 35 },
-                  }}
-                  position={{
-                    lat: place.placeInfo.lat,
-                    lng: place.placeInfo.lon,
-                  }}
-                  title={place.placeInfo.name}
-                  onClick={() => router.push(`/places/${place.placeInfo.id}`)}
-                />
-              );
-            })}
+            {allPlaces.map((place) => (
+              <CategoryPin
+                key={place.placeInfo.id}
+                category3={place.placeInfo.category3}
+                categoryId={place.placeInfo.categoryId}
+                name={place.placeInfo.name}
+                position={{
+                  lat: place.placeInfo.lat,
+                  lng: place.placeInfo.lon,
+                }}
+                onClick={() => router.push(`/places/${place.placeInfo.id}`)}
+              />
+            ))}
           </MarkerClusterer>
         </Map>
       )}
       {!userLocation && (
-        <div className='flex h-full items-center justify-center bg-gray-100 text-gray-400 font-medium'>
-          {locationStatus === 'loading' ? '지도를 불러오는 중...' : '위치 정보를 사용할 수 없습니다.'}
+        <div className='flex h-full items-center justify-center bg-gray-100 font-medium text-gray-400'>
+          {locationStatus === 'loading'
+            ? '지도를 불러오는 중...'
+            : '위치 정보를 사용할 수 없습니다.'}
         </div>
       )}
     </div>

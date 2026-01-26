@@ -25,6 +25,7 @@ const PlacesContent = () => {
     setUserLocation,
     locationStatus,
     setLocationStatus,
+    initLocation,
   } = usePlacesData(categoryId);
 
   // 로딩 및 에러 처리
@@ -46,7 +47,9 @@ const PlacesContent = () => {
 
   // 1. 리스트 뷰 (카테고리별 그리드)
   if (categoryId) {
-    const currentCategory = DASHBOARD_SECTIONS.find((s) => s.apiId === categoryId);
+    const currentCategory = DASHBOARD_SECTIONS.find(
+      (s) => s.apiId === categoryId,
+    );
     return (
       <CategoryListView
         categoryPlaces={categoryPlaces}
@@ -63,6 +66,7 @@ const PlacesContent = () => {
         allPlaces={allPlaces}
         locationStatus={locationStatus}
         userLocation={userLocation}
+        onLocationRequest={initLocation}
         onLocationUpdate={(lat, lng) => {
           setUserLocation({ lat, lng });
           setLocationStatus('granted');
@@ -89,4 +93,3 @@ export default function PlacesPage() {
     </Suspense>
   );
 }
-
