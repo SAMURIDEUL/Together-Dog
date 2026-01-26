@@ -96,12 +96,12 @@ export const mapPlaceToCardProps = (
     });
   }
 
-  // 3. Fallback: 배지가 하나도 없는 경우 "문의 필요" 배지 추가
+  // 3. Fallback: 배지가 하나도 없는 경우 "정보 확인 필요" 배지 추가
   if (badges.length === 0) {
     badges.push({
       text: '정보 확인 필요',
       group: 'restriction',
-      name: 'warning', // 아이콘 매핑 확인 필요, 없으면 기본값 사용됨
+      name: 'warning', // iconPaths.restriction.warning 매핑 확인 완료
       variant: 'default', // 회색 계열
     });
   }

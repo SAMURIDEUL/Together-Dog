@@ -12,18 +12,18 @@ export const usePlacesData = (categoryId: number | null) => {
     if (!store.userLocation) {
       store.initLocation();
     }
-  }, []);
+  }, [store]);
 
   // 2. 위치 정보가 확보되면 데이터 페칭
   useEffect(() => {
     if (!store.userLocation) return;
 
-    if (categoryId) {
+    if (categoryId !== null) {
       store.fetchCategoryData(categoryId, store.userLocation);
     } else {
       store.fetchDashboardData(store.userLocation);
     }
-  }, [store.userLocation, categoryId]);
+  }, [store, categoryId]);
 
   return {
     ...store,

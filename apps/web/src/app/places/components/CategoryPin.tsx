@@ -22,7 +22,7 @@ export const CategoryPin = ({
   onClick,
 }: CategoryPinProps) => {
   const iconName = getCategoryIcon(categoryId, category3);
-  const iconFilename = CATEGORY_IMAGE_MAP[iconName];
+  const iconFilename = CATEGORY_IMAGE_MAP[iconName] || 'travelSpot.png';
   const iconUrl = `/images/category/${iconFilename}`;
 
   return (

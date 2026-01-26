@@ -11,6 +11,7 @@ interface PlaceState {
   allPlaces: PlaceItem[];
   categoryPlaces: PlaceItem[];
   loading: boolean;
+  categoryLoading: boolean;
   error: string | null;
 
   // Actions
@@ -28,6 +29,7 @@ export const usePlaceStore = create<PlaceState>((set) => ({
   allPlaces: [],
   categoryPlaces: [],
   loading: false,
+  categoryLoading: false,
   error: null,
 
   setUserLocation: (userLocation) => set({ userLocation }),
@@ -78,18 +80,21 @@ export const usePlaceStore = create<PlaceState>((set) => ({
       });
 
       set({ sectionData, allPlaces: collectedPlaces, loading: false });
-    } catch (_err) {
+    } catch {
       set({ error: '장소 정보를 불러오는데 실패했습니다.', loading: false });
     }
   },
 
   fetchCategoryData: async (categoryId, location) => {
-    set({ loading: true, error: null });
+    set({ categoryLoading: true, error: null });
     try {
       const res = await getPlaces(categoryId, { size: 50, lat: location.lat, lon: location.lng });
-      set({ categoryPlaces: res.data.places, loading: false });
-    } catch (_err) {
-      set({ error: '장소 정보를 불러오는데 실패했습니다.', loading: false });
+      set({ categoryPlaces: res.data.places, categoryLoading: false });
+    } catch {
+      set({
+        error: '장소 정보를 불러오는데 실패했습니다.',
+        categoryLoading: false,
+      });
     }
   },
 }));

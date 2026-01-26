@@ -10,7 +10,7 @@ import {
 import Image from 'next/image';
 
 export interface PlaceInfoCardProps {
-  id: number;
+  id?: number;
   imageSrc: string;
   category: keyof (typeof iconPaths)['category'];
   categoryLabel: string;

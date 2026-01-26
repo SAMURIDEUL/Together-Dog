@@ -12,7 +12,56 @@ export const RecommendSection = ({
   className,
   ...props
 }: ComponentProps<'section'>) => {
-  const { places, loadingIds, handleLikeClick } = useRecommendPlaces();
+  const { places, isLoading, error, loadingIds, handleLikeClick } =
+    useRecommendPlaces();
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className='flex items-center justify-center py-20'>
+          <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500' />
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className='rounded-xl border border-dashed bg-white py-20 text-center'>
+          <p className='mb-4 text-gray-500'>{error}</p>
+          <button
+            className='text-sm font-semibold text-orange-500 hover:underline'
+            onClick={() => window.location.reload()}
+          >
+            다시 시도하기
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+        {places.map((place, index) => {
+          if (!place || !place.placeInfo) return null;
+
+          const cardProps = mapPlaceToCardProps(place, index);
+
+          return (
+            <Link
+              key={place.placeInfo.id}
+              href={`/places/${place.placeInfo.id}`}
+            >
+              <PlaceInfoCard
+                {...cardProps}
+                disabled={loadingIds.has(place.placeInfo.id)}
+                isLike={place.isLike}
+                onLikeClick={(e) => handleLikeClick(e, place.placeInfo.id)}
+              />
+            </Link>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <section
@@ -37,28 +86,7 @@ export const RecommendSection = ({
         </Link>
       </div>
 
-      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-        {places.map((place, index) => {
-          // 가드 절: 유효하지 않은 데이터 건너뛰기
-          if (!place || !place.placeInfo) return null;
-
-          const cardProps = mapPlaceToCardProps(place, index);
-
-          return (
-            <Link
-              key={`${place.placeInfo.id}-${index}`}
-              href={`/places/${place.placeInfo.id}`}
-            >
-              <PlaceInfoCard
-                {...cardProps}
-                disabled={loadingIds.has(place.placeInfo.id)}
-                isLike={place.isLike}
-                onLikeClick={(e) => handleLikeClick(e, place.placeInfo.id)}
-              />
-            </Link>
-          );
-        })}
-      </div>
+      {renderContent()}
     </section>
   );
 };

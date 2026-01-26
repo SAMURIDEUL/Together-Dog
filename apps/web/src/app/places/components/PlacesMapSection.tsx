@@ -31,10 +31,17 @@ export const PlacesMapSection = ({
       geocoder.addressSearch(
         regionName,
         (result: { y: string; x: string }[], status: string) => {
-          if (status === window.kakao.maps.services.Status.OK) {
+          if (
+            status === window.kakao.maps.services.Status.OK &&
+            result &&
+            result.length > 0
+          ) {
             const { y, x } = result[0];
             onLocationUpdate(parseFloat(y), parseFloat(x));
             setIsSearchOpen(false);
+          } else {
+            console.error('Geocoder addressSearch failed:', status, result);
+            alert('선택한 지역의 위치 정보를 가져오는데 실패했습니다.');
           }
         },
       );
@@ -51,11 +58,11 @@ export const PlacesMapSection = ({
           onClick={onLocationRequest}
         >
           📍{' '}
-          {locationStatus === 'loading'
-            ? '위치 확인 중...'
-            : locationStatus === 'granted'
-              ? '내 위치'
-              : '위치 권한 없음'}
+          {(() => {
+            if (locationStatus === 'loading') return '위치 확인 중...';
+            if (locationStatus === 'granted') return '내 위치';
+            return '위치 권한 없음';
+          })()}
         </button>
         <button
           className='flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold shadow-md transition-all hover:bg-gray-50 active:scale-95'

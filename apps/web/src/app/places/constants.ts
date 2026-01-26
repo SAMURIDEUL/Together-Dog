@@ -113,7 +113,14 @@ export const createMarkerPin = (
   }
 
   const iconName = getCategoryIcon(categoryId, category3);
-  const iconFilename = CATEGORY_IMAGE_MAP[iconName];
+  const iconFilename = CATEGORY_IMAGE_MAP[iconName] || 'travelSpot.png';
+
+  if (!CATEGORY_IMAGE_MAP[iconName]) {
+    console.warn(
+      `[createMarkerPin] No image found for category icon: ${iconName}. Using fallback.`,
+    );
+  }
+
   const iconUrl = `/images/category/${iconFilename}`;
 
   // 오렌지색 핀 배경 + 흰색 원형 배경 + 카테고리 아이콘

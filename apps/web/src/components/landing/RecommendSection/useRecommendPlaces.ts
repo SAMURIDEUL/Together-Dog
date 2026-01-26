@@ -11,26 +11,41 @@ export interface PlaceItemWithLike extends PlaceItem {
 export const useRecommendPlaces = () => {
   const [places, setPlaces] = useState<PlaceItemWithLike[]>([]);
   const [loadingIds, setLoadingIds] = useState<Set<number>>(new Set());
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // 1. 초기 데이터 페칭
   useEffect(() => {
     const fetchPlaces = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
         const data = await getRandomPlaces();
 
         // 적응형 매핑: 다양한 API 응답 구조 대응
-        const mappedPlaces = data.map((item: any) => {
-          if (item.places) {
-            return { placeInfo: item.places, thumbnail: item.thumbnail, isLike: false };
+        const mappedPlaces = data.map((item: PlaceItem | { places: Place; thumbnail: string }) => {
+          if ('places' in item) {
+            return {
+              placeInfo: item.places,
+              thumbnail: item.thumbnail,
+              isLike: false,
+            };
           }
-          if (item.placeInfo) {
+          if ('placeInfo' in item) {
             return { ...item, isLike: false };
           }
-          return { placeInfo: item as unknown as Place, thumbnail: '', isLike: false };
+          return {
+            placeInfo: item as unknown as Place,
+            thumbnail: '',
+            isLike: false,
+          };
         });
         setPlaces(mappedPlaces);
-      } catch (error) {
-        console.error('Failed to fetch recommend places:', error);
+      } catch (err) {
+        console.error('Failed to fetch recommend places:', err);
+        setError('추천 장소를 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchPlaces();
@@ -82,6 +97,8 @@ export const useRecommendPlaces = () => {
 
   return {
     places,
+    isLoading,
+    error,
     loadingIds,
     handleLikeClick,
   };

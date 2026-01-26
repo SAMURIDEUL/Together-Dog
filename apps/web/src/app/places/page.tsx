@@ -24,12 +24,13 @@ const PlacesContent = () => {
     userLocation,
     setUserLocation,
     locationStatus,
+    categoryLoading,
     setLocationStatus,
     initLocation,
   } = usePlacesData(categoryId);
 
   // 로딩 및 에러 처리
-  if (loading && !categoryId) {
+  if (loading && categoryId === null) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500' />
@@ -46,13 +47,14 @@ const PlacesContent = () => {
   }
 
   // 1. 리스트 뷰 (카테고리별 그리드)
-  if (categoryId) {
+  if (categoryId !== null) {
     const currentCategory = DASHBOARD_SECTIONS.find(
       (s) => s.apiId === categoryId,
     );
     return (
       <CategoryListView
         categoryPlaces={categoryPlaces}
+        loading={categoryLoading}
         title={currentCategory?.title || '장소 목록'}
         onBackClick={() => router.push('/places')}
       />

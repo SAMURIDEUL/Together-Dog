@@ -9,12 +9,14 @@ import { mapPlaceToCardProps } from '@/utils/petMapper';
 interface CategoryListViewProps {
   title: string;
   categoryPlaces: PlaceItem[];
+  loading: boolean;
   onBackClick: () => void;
 }
 
 export const CategoryListView = ({
   title,
   categoryPlaces,
+  loading,
   onBackClick,
 }: CategoryListViewProps) => {
   return (
@@ -29,11 +31,19 @@ export const CategoryListView = ({
         </button>
       </div>
 
-      {categoryPlaces.length === 0 ? (
-        <div className='py-20 text-center text-gray-500 bg-white rounded-xl border border-dashed'>
+      {loading && (
+        <div className='flex items-center justify-center py-20'>
+          <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500' />
+        </div>
+      )}
+
+      {!loading && categoryPlaces.length === 0 && (
+        <div className='rounded-xl border border-dashed bg-white py-20 text-center text-gray-500'>
           검색 결과가 없습니다.
         </div>
-      ) : (
+      )}
+
+      {!loading && categoryPlaces.length > 0 && (
         <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {categoryPlaces.map((item, index) => (
             <Link key={item.placeInfo.id} href={`/places/${item.placeInfo.id}`}>
