@@ -2,86 +2,65 @@
 
 import { cn } from '@together-dog/ui';
 import Link from 'next/link';
-import { type ComponentProps, useEffect, useState } from 'react';
+import { type ComponentProps } from 'react';
 
-import { getRandomPlaces, likePlace, unlikePlace } from '@/api/place';
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
-import type { Place } from '@/types/place';
-import { mapPlaceToCardProps, resolveThumbnailPath } from '@/utils/petMapper';
-
-interface PlaceWithLike extends Place {
-  isLike?: boolean;
-  thumbnail?: string;
-}
+import { mapPlaceToCardProps } from '@/utils/petMapper';
+import { useRecommendPlaces } from './useRecommendPlaces';
 
 export const RecommendSection = ({
   className,
   ...props
 }: ComponentProps<'section'>) => {
-  const [places, setPlaces] = useState<PlaceWithLike[]>([]);
-  const [loadingIds, setLoadingIds] = useState<Set<number>>(new Set());
+  const { places, isLoading, error, loadingIds, handleLikeClick } =
+    useRecommendPlaces();
 
-  useEffect(() => {
-    const fetchPlaces = async () => {
-      try {
-        const data = await getRandomPlaces();
-        // data type is PlaceWithThumbnail[]
-        const mappedPlaces = data.map((item) => ({
-          ...item.place,
-          thumbnail: resolveThumbnailPath(item.thumbnail),
-          isLike: false,
-        }));
-        setPlaces(mappedPlaces);
-      } catch (error) {
-        console.error('Failed to fetch recommend places:', error);
-      }
-    };
-    fetchPlaces();
-  }, []);
-
-  const handleLikeClick = async (e: React.MouseEvent, id: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (loadingIds.has(id)) return;
-
-    const targetPlace = places.find((p) => p.id === id);
-    if (!targetPlace) return;
-
-    setLoadingIds((prev) => new Set(prev).add(id));
-
-    // 1. Optimistic Update (즉시 UI 반영)
-    const previousIsLike = targetPlace.isLike;
-    setPlaces((prev) =>
-      prev.map((place) =>
-        place.id === id ? { ...place, isLike: !place.isLike } : place,
-      ),
-    );
-
-    try {
-      // 2. API Call
-      if (previousIsLike) {
-        await unlikePlace(id);
-      } else {
-        await likePlace(id);
-      }
-    } catch (error) {
-      console.error('Failed to toggle like:', error);
-      // 3. Rollback on Error (에러 발생 시 원복)
-      setPlaces((prev) =>
-        prev.map((place) =>
-          place.id === id ? { ...place, isLike: previousIsLike } : place,
-        ),
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className='flex items-center justify-center py-20'>
+          <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500' />
+        </div>
       );
-      // TODO: Add toast notification here
-      alert('찜하기 처리에 실패했습니다. 다시 시도해주세요.');
-    } finally {
-      setLoadingIds((prev) => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
     }
+
+    if (error) {
+      return (
+        <div className='rounded-xl border border-dashed bg-white py-20 text-center'>
+          <p className='mb-4 text-gray-500'>{error}</p>
+          <button
+            className='text-sm font-semibold text-orange-500 hover:underline'
+            onClick={() => window.location.reload()}
+          >
+            다시 시도하기
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+        {places.map((place, index) => {
+          if (!place || !place.placeInfo) return null;
+
+          const cardProps = mapPlaceToCardProps(place, index);
+
+          return (
+            <Link
+              key={place.placeInfo.id}
+              href={`/places/${place.placeInfo.id}`}
+            >
+              <PlaceInfoCard
+                {...cardProps}
+                disabled={loadingIds.has(place.placeInfo.id)}
+                isLike={place.isLike}
+                onLikeClick={(e) => handleLikeClick(e, place.placeInfo.id)}
+              />
+            </Link>
+          );
+        })}
+      </div>
+    );
   };
 
   return (
@@ -107,22 +86,8 @@ export const RecommendSection = ({
         </Link>
       </div>
 
-      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-        {places.map((place, index) => {
-          const cardProps = mapPlaceToCardProps(place, index);
-          return (
-            <Link key={place.id} href={`/places/${place.id}`}>
-              <PlaceInfoCard
-                {...cardProps}
-                disabled={loadingIds.has(place.id)}
-                imageSrc={place.thumbnail || cardProps.imageSrc}
-                isLike={place.isLike}
-                onLikeClick={(e) => handleLikeClick(e, place.id)}
-              />
-            </Link>
-          );
-        })}
-      </div>
+      {renderContent()}
     </section>
   );
 };
+

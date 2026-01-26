@@ -94,9 +94,75 @@ export const determinePetSizeVariant = (
 
   // 4. Size/Age Constraints (단순 제한)
   // "10kg 미만", "10kg 이상" 등 수치 제한만 있는 경우 경고로 처리
-  if (limitString.match(/(미만|이하|초과|이상)/)) {
-    return 'warning';
+  return 'default';
+};
+
+export const getPetSizeBadge = (
+  sizeLimit: string,
+): PlaceInfoCardProps['badges'][number] | null => {
+  if (!sizeLimit) return null;
+
+  const variant = determinePetSizeVariant(sizeLimit);
+  let name: PlaceInfoCardProps['badges'][number]['name'] = 'pets';
+
+  // 간단한 아이콘 매핑
+  if (sizeLimit.includes('소형')) {
+    name = 'sizeS';
+  } else if (sizeLimit.includes('중형')) {
+    name = 'sizeM';
+  } else if (sizeLimit.includes('대형')) {
+    name = 'sizeL';
   }
 
-  return 'default';
+  // 텍스트가 "해당없음" 이면 표시 안함? (기획 확인 필요, 일단 기존 로직 따름)
+  if (sizeLimit === '해당없음') return null;
+
+  return {
+    group: 'restriction',
+    name,
+    text: sizeLimit,
+    variant,
+  };
+};
+
+export const getAmenityBadges = (
+  indoorFlag?: boolean,
+  outdoorFlag?: boolean,
+): PlaceInfoCardProps['badges'] => {
+  const badges: PlaceInfoCardProps['badges'] = [];
+  if (indoorFlag) {
+    badges.push({
+      group: 'restriction',
+      name: 'floor',
+      text: '실내 이용 가능',
+      variant: 'default',
+    });
+  }
+  if (outdoorFlag) {
+    badges.push({
+      group: 'restriction',
+      name: 'terrace',
+      text: '야외 이용 가능',
+      variant: 'default',
+    });
+  }
+  return badges;
+};
+
+interface AddressParts {
+  roadAddress?: string | null;
+  city?: string | null;
+  district?: string | null;
+  subdistrict?: string | null;
+}
+
+export const formatDisplayAddress = (place: AddressParts): string => {
+  const isInvalidAddress =
+    !place.roadAddress ||
+    place.roadAddress === '\\N' ||
+    place.roadAddress === '';
+
+  return isInvalidAddress
+    ? [place.city, place.district, place.subdistrict].filter(Boolean).join(' ')
+    : place.roadAddress || '';
 };

@@ -1,3 +1,5 @@
+// apps/web/src/components/shared/PlaceInfoCard/index.tsx
+
 import {
   CategoryBadge,
   iconPaths,
@@ -8,6 +10,7 @@ import {
 import Image from 'next/image';
 
 export interface PlaceInfoCardProps {
+  id?: number;
   imageSrc: string;
   category: keyof (typeof iconPaths)['category'];
   categoryLabel: string;

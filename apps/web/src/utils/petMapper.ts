@@ -1,28 +1,56 @@
 import { type PlaceInfoCardProps } from '@/components/shared/PlaceInfoCard';
-import { type Place } from '@/types/place';
+import { type PlaceItem } from '@/types/place';
 
-import { CATEGORY_IMAGE_MAP } from './pet/constants';
+import { CATEGORY_IMAGE_MAP, CATEGORY_LABEL_MAP } from './pet/constants';
 import { determinePetSizeVariant, parseRestrictionBadges } from './pet/parsers';
-import { getCategoryIcon } from './pet/resolvers';
+import { getCategoryIcon, resolveThumbnailPath } from './pet/resolvers';
 
 // Re-export specific helpers if needed elsewhere (optional)
 export { resolveThumbnailPath } from './pet/resolvers';
 
 export const mapPlaceToCardProps = (
-  place: Place,
+  item: PlaceItem,
   _index: number,
 ): PlaceInfoCardProps => {
-  const badges: PlaceInfoCardProps['badges'] = [];
-  // 0. petPolicy가 없는 경우 방어 코드
-  if (!place.petPolicy) {
+  // Guard clause: item or placeInfo missing
+  if (!item || !item.placeInfo) {
     return {
+      id: 0,
       imageSrc: '/images/category/travelSpot.png',
       category: 'travelSpot',
-      categoryLabel: place.category3 || '기타',
+      categoryLabel: '알 수 없음',
+      name: '정보 없음',
+      address: '',
+      badges: [],
+      isLike: false,
+    };
+  }
+
+  const place = item.placeInfo;
+  const rawThumbnail = item.thumbnail?.trim();
+  const thumbnail = rawThumbnail ? resolveThumbnailPath(rawThumbnail) : '';
+
+  // 카테고리 정보 및 아이콘 폴백 미리 계산
+  const categoryKey = getCategoryIcon(place.categoryId, place.category3);
+  const fallbackImage = `/images/category/${
+    CATEGORY_IMAGE_MAP[categoryKey] || 'travelSpot.png'
+  }`;
+  const imageFilename = thumbnail || fallbackImage;
+
+  const badges: PlaceInfoCardProps['badges'] = [];
+
+  // 0. Guard clause: petPolicy missing
+  if (!place.petPolicy) {
+    return {
+      id: place.id,
+      imageSrc: imageFilename,
+      category: categoryKey,
+      categoryLabel:
+        CATEGORY_LABEL_MAP[categoryKey] || place.category3 || '기타',
       name: place.name,
       address: place.roadAddress || place.city || '',
       badges: [],
-      isLike: false,
+      isLike: place.isLiked ?? false,
     };
   }
 
@@ -77,22 +105,27 @@ export const mapPlaceToCardProps = (
     });
   }
 
+  // 3. Fallback: 배지가 하나도 없는 경우 "정보 확인 필요" 배지 추가
+  if (badges.length === 0) {
+    badges.push({
+      text: '정보 확인 필요',
+      group: 'restriction',
+      name: 'warning', // iconPaths.restriction.warning 매핑 확인 완료
+      variant: 'default', // 회색 계열
+    });
+  }
+
   // 배지 key 고유값 보장
   const badgesWithKeys = badges.map((badge, idx) => ({ ...badge, key: idx }));
 
-  // 카테고리 매퍼 사용
-  const categoryKey = getCategoryIcon(place.categoryId, place.category3);
-
-  // 이미지 매핑
-  const imageFilename = CATEGORY_IMAGE_MAP[categoryKey] || 'travelSpot.png';
-
   return {
-    imageSrc: `/images/category/${imageFilename}`,
+    id: place.id,
+    imageSrc: imageFilename,
     category: categoryKey,
-    categoryLabel: place.category3 || '기타',
+    categoryLabel: CATEGORY_LABEL_MAP[categoryKey] || place.category3 || '기타',
     name: place.name,
     address: place.roadAddress || place.city || '',
     badges: badgesWithKeys,
-    isLike: false,
+    isLike: place.isLiked ?? false,
   };
 };

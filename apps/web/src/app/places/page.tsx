@@ -1,109 +1,96 @@
 'use client';
 
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-import { getPlaces } from '@/api/place';
-import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
-import { Place } from '@/types/place';
-import { getCategoryId } from '@/utils/categoryMapper';
-import { mapPlaceToCardProps } from '@/utils/petMapper';
+import { CategoryListView } from './components/CategoryListView';
+import { DashboardSection } from './components/DashboardSection';
+import { PlacesMapSection } from './components/PlacesMapSection';
+import { DASHBOARD_SECTIONS, getCategoryId } from './constants';
+import { usePlacesData } from './hooks/usePlacesData';
 
-// Client Component to handle search params
 const PlacesContent = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryKey = searchParams.get('category');
-  const keyword = searchParams.get('keyword');
+  const categoryId = getCategoryId(searchParams.get('category'));
 
-  // State
-  const [places, setPlaces] = useState<Place[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // 커스텀 훅을 통한 데이터 및 위치 상태 관리
+  const {
+    sectionData,
+    allPlaces,
+    categoryPlaces,
+    loading,
+    error,
+    userLocation,
+    setUserLocation,
+    locationStatus,
+    categoryLoading,
+    setLocationStatus,
+    initLocation,
+  } = usePlacesData(categoryId);
 
-  useEffect(() => {
-    const fetchPlaces = async () => {
-      setLoading(true);
-      setError(null);
+  // 로딩 및 에러 처리
+  if (loading && categoryId === null) {
+    return (
+      <div className='flex min-h-screen items-center justify-center'>
+        <div className='h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500' />
+      </div>
+    );
+  }
 
-      try {
-        // 1. Determine Category ID
-        // If category is present in URL, map it.
-        // If not, default to 3 (Cafe) as agreed.
-        let categoryId = 3;
-        if (categoryKey) {
-          const mappedId = getCategoryId(categoryKey);
-          if (mappedId) {
-            categoryId = mappedId;
-          }
-        }
+  if (error) {
+    return (
+      <div className='flex min-h-screen items-center justify-center font-medium text-red-500'>
+        {error}
+      </div>
+    );
+  }
 
-        // 2. Fetch Data
-        const response = await getPlaces(categoryId, {
-          keyword: keyword || undefined,
-          size: 20, // Default size
-        });
+  // 1. 리스트 뷰 (카테고리별 그리드)
+  if (categoryId !== null) {
+    const currentCategory = DASHBOARD_SECTIONS.find(
+      (s) => s.apiId === categoryId,
+    );
+    return (
+      <CategoryListView
+        categoryPlaces={categoryPlaces}
+        loading={categoryLoading}
+        title={currentCategory?.title || '장소 목록'}
+        onBackClick={() => router.push('/places')}
+      />
+    );
+  }
 
-        setPlaces(response.data);
-      } catch (err) {
-        console.error('Failed to fetch places:', err);
-        setError('장소 목록을 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPlaces();
-  }, [categoryKey, keyword]);
-
-  // Title Logic
-  const getTitle = () => {
-    if (keyword) return `'${keyword}' 검색 결과`;
-    if (categoryKey) {
-      // Simple mapping for display
-      return '장소 목록';
-    }
-    return '추천 장소';
-  };
-
+  // 2. 대시보드 뷰 (지도 + 섹션별 리스트)
   return (
-    <div className='container mx-auto max-w-screen-xl px-4 py-8'>
-      <h1 className='mb-6 text-2xl font-bold text-gray-900'>{getTitle()}</h1>
+    <div className='relative min-h-screen bg-gray-50 pb-20'>
+      <PlacesMapSection
+        allPlaces={allPlaces}
+        locationStatus={locationStatus}
+        userLocation={userLocation}
+        onLocationRequest={initLocation}
+        onLocationUpdate={(lat, lng) => {
+          setUserLocation({ lat, lng });
+          setLocationStatus('granted');
+        }}
+      />
 
-      {loading && (
-        <div className='py-20 text-center'>
-          <div className='mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-orange-500' />
-          <p className='mt-4 text-gray-500'>장소를 불러오고 있습니다...</p>
-        </div>
-      )}
-
-      {error && <div className='py-20 text-center text-red-500'>{error}</div>}
-
-      {!loading && !error && places.length === 0 && (
-        <div className='py-20 text-center text-gray-500'>
-          검색 결과가 없습니다.
-        </div>
-      )}
-
-      {!loading && !error && places.length > 0 && (
-        <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-          {places.map((place, index) => (
-            <Link key={place.id} href={`/places/${place.id}`}>
-              <PlaceInfoCard
-                {...mapPlaceToCardProps(place, index)}
-                isLike={false} // TODO: Implement like logic
-              />
-            </Link>
-          ))}
-        </div>
-      )}
+      <div className='container mx-auto mt-8 max-w-screen-xl space-y-12 px-4'>
+        {DASHBOARD_SECTIONS.map((section) => (
+          <DashboardSection
+            key={section.id}
+            places={sectionData[section.id] || []}
+            section={section}
+          />
+        ))}
+      </div>
     </div>
   );
 };
 
 export default function PlacesPage() {
   return (
-    <Suspense fallback={<div className='min-h-screen' />}>
+    <Suspense fallback={<div className='min-h-screen bg-gray-50' />}>
       <PlacesContent />
     </Suspense>
   );

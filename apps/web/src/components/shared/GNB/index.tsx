@@ -15,6 +15,7 @@ export const GNB = () => {
               priority
               alt='함께하개 로고'
               className='object-contain'
+              sizes='28px'
               src='/images/logo.png'
             />
           </div>
