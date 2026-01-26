@@ -103,8 +103,13 @@ export const calculateDistance = (
 // 4. 카테고리 ID 파싱 헬퍼
 export const getCategoryId = (param: string | null) => {
   if (!param) return null;
-  const num = parseInt(param, 10);
-  if (!isNaN(num)) return num;
+
+  // 숫자로만 구성된 경우 (엄격한 체크)
+  if (/^\d+$/.test(param)) {
+    return Number(param);
+  }
+
+  // 문자열 ID인 경우 매핑 테이블에서 조회
   const section = DASHBOARD_SECTIONS.find((s) => s.id === param);
   return section ? section.apiId : null;
 };
