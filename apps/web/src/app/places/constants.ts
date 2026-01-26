@@ -15,7 +15,7 @@ export const DASHBOARD_SECTIONS = [
   {
     id: 'travelSpot',
     apiId: 10,
-    title: '산책과 놀이를 하려 공원 🌿',
+    title: '산책과 놀이를 하러 공원 🌿',
     subtitle: '신나게 뛰어놀 수 있는 여행지',
   },
   {
