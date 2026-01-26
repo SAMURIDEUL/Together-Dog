@@ -44,8 +44,11 @@ export const PlaceDetailInfo = ({ place }: PlaceDetailInfoProps) => {
           </h3>
           <div className='flex flex-wrap gap-2'>
             {sizeBadge && <PlaceInfoBadge {...sizeBadge} />}
-            {amenityBadges.map((badge) => (
-              <PlaceInfoBadge key={`amenity-${badge.name}`} {...badge} />
+            {amenityBadges.map((badge, index) => (
+              <PlaceInfoBadge
+                key={`amenity-${badge.name}-${index}`}
+                {...badge}
+              />
             ))}
             {!sizeBadge && amenityBadges.length === 0 && (
               <span className='text-sm text-gray-400'>
@@ -63,8 +66,11 @@ export const PlaceDetailInfo = ({ place }: PlaceDetailInfoProps) => {
               이용 제한 및 안내
             </h3>
             <div className='mb-2 flex flex-wrap gap-2'>
-              {restrictionBadges.map((badge) => (
-                <PlaceInfoBadge key={`rest-${badge.name}`} {...badge} />
+              {restrictionBadges.map((badge, index) => (
+                <PlaceInfoBadge
+                  key={`rest-${badge.name}-${index}`}
+                  {...badge}
+                />
               ))}
             </div>
             {/* 텍스트가 있으면 배지 아래에 상세 설명으로 노출 */}

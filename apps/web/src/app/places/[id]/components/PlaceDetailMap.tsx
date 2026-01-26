@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import { Map } from 'react-kakao-maps-sdk';
 
 import { Place } from '@/types/place';
+
+import { CategoryPin } from '../../components/CategoryPin';
 
 // Declare global window interface for kakao
 declare global {
@@ -24,11 +26,24 @@ export const PlaceDetailMap = ({ place }: PlaceDetailMapProps) => {
   const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    // layout.tsx에서 로드된 전역 kakao 객체 사용
-    if (window.kakao && window.kakao.maps) {
-      window.kakao.maps.load(() => {
-        setMapLoaded(true);
-      });
+    const loadKakaoMap = () => {
+      if (window.kakao && window.kakao.maps) {
+        window.kakao.maps.load(() => {
+          setMapLoaded(true);
+        });
+        return true;
+      }
+      return false;
+    };
+
+    if (!loadKakaoMap()) {
+      // SDK가 아직 로드되지 않은 경우 재시도
+      const interval = setInterval(() => {
+        if (loadKakaoMap()) {
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
     }
   }, []);
 
@@ -43,7 +58,13 @@ export const PlaceDetailMap = ({ place }: PlaceDetailMapProps) => {
             level={3}
             style={{ width: '100%', height: '100%' }}
           >
-            <MapMarker position={{ lat: place.lat, lng: place.lon }} />
+            <CategoryPin
+              category3={place.category3}
+              categoryId={place.categoryId}
+              name={place.name}
+              position={{ lat: place.lat, lng: place.lon }}
+              onClick={() => {}} // 상세 페이지이므로 클릭 액션은 비워둠
+            />
           </Map>
         ) : (
           <div className='flex h-full w-full items-center justify-center text-gray-400'>

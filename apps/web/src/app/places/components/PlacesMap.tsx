@@ -24,11 +24,24 @@ export const PlacesMap = ({
   const mapCenter = userLocation || { lat: 37.5665, lng: 126.978 };
 
   useEffect(() => {
-    // layout.tsx에서 로드된 전역 kakao 객체 사용
-    if (window.kakao && window.kakao.maps) {
-      window.kakao.maps.load(() => {
-        setMapLoaded(true);
-      });
+    const loadKakaoMap = () => {
+      if (window.kakao && window.kakao.maps) {
+        window.kakao.maps.load(() => {
+          setMapLoaded(true);
+        });
+        return true;
+      }
+      return false;
+    };
+
+    if (!loadKakaoMap()) {
+      // SDK가 아직 로드되지 않은 경우 재시도
+      const interval = setInterval(() => {
+        if (loadKakaoMap()) {
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
     }
   }, []);
 
