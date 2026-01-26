@@ -21,7 +21,7 @@ const CATEGORY_ID_ICON_MAP: Record<number, keyof typeof iconPaths.category> = {
 
 export const getCategoryIcon = (
   categoryId: number,
-  category3: string,
+  category3?: string,
 ): keyof typeof iconPaths.category => {
   // 1. 우선순위: 카테고리 ID로 조회 (예: 7 -> 문화센터)
   if (CATEGORY_ID_ICON_MAP[categoryId]) {

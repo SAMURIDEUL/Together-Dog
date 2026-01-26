@@ -27,7 +27,15 @@ export const mapPlaceToCardProps = (
   }
 
   const place = item.placeInfo;
-  const thumbnail = resolveThumbnailPath(item.thumbnail || '');
+  const rawThumbnail = item.thumbnail?.trim();
+  const thumbnail = rawThumbnail ? resolveThumbnailPath(rawThumbnail) : '';
+
+  // 카테고리 정보 및 아이콘 폴백 미리 계산
+  const categoryKey = getCategoryIcon(place.categoryId, place.category3);
+  const fallbackImage = `/images/category/${
+    CATEGORY_IMAGE_MAP[categoryKey] || 'travelSpot.png'
+  }`;
+  const imageFilename = thumbnail || fallbackImage;
 
   const badges: PlaceInfoCardProps['badges'] = [];
 
@@ -35,13 +43,14 @@ export const mapPlaceToCardProps = (
   if (!place.petPolicy) {
     return {
       id: place.id,
-      imageSrc: thumbnail || '/images/category/travelSpot.png',
-      category: 'travelSpot',
-      categoryLabel: place.category3 || '기타',
+      imageSrc: imageFilename,
+      category: categoryKey,
+      categoryLabel:
+        CATEGORY_LABEL_MAP[categoryKey] || place.category3 || '기타',
       name: place.name,
       address: place.roadAddress || place.city || '',
       badges: [],
-      isLike: false,
+      isLike: place.isLiked ?? false,
     };
   }
 
@@ -109,14 +118,6 @@ export const mapPlaceToCardProps = (
   // 배지 key 고유값 보장
   const badgesWithKeys = badges.map((badge, idx) => ({ ...badge, key: idx }));
 
-  // 카테고리 매퍼 사용
-  const categoryKey = getCategoryIcon(place.categoryId, place.category3);
-
-  // 이미지 매핑 (썸네일 우선, 없으면 카테고리 이미지)
-  const imageFilename =
-    thumbnail ||
-    `/images/category/${CATEGORY_IMAGE_MAP[categoryKey] || 'travelSpot.png'}`;
-
   return {
     id: place.id,
     imageSrc: imageFilename,
@@ -125,6 +126,6 @@ export const mapPlaceToCardProps = (
     name: place.name,
     address: place.roadAddress || place.city || '',
     badges: badgesWithKeys,
-    isLike: false,
+    isLike: place.isLiked ?? false,
   };
 };

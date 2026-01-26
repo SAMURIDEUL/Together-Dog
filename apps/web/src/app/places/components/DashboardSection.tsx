@@ -14,7 +14,10 @@ interface DashboardSectionProps {
   places: PlaceItem[];
 }
 
-export const DashboardSection = ({ section, places }: DashboardSectionProps) => {
+export const DashboardSection = ({
+  section,
+  places,
+}: DashboardSectionProps) => {
   const router = useRouter();
 
   return (
@@ -27,7 +30,7 @@ export const DashboardSection = ({ section, places }: DashboardSectionProps) => 
           <p className='mt-1 text-sm text-gray-500'>{section.subtitle}</p>
         </div>
         <button
-          className='flex items-center gap-1 text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors'
+          className='flex items-center gap-1 text-xs font-medium text-orange-500 transition-colors hover:text-orange-600'
           onClick={() => router.push(`/places?category=${section.apiId}`)}
         >
           더보기 <span className='text-lg leading-none'>›</span>
@@ -36,16 +39,28 @@ export const DashboardSection = ({ section, places }: DashboardSectionProps) => 
 
       <div className='scrollbar-hide -mx-4 flex gap-4 overflow-x-auto px-4 pb-4'>
         {places?.length > 0 ? (
-          places.map((place, index) => (
-            <div key={place.placeInfo.id} className='w-[280px] flex-shrink-0'>
-              <Link href={`/places/${place.placeInfo.id}`}>
-                <PlaceInfoCard
-                  {...mapPlaceToCardProps(place, index)}
-                  isLike={false}
-                />
-              </Link>
-            </div>
-          ))
+          places.map((place, index) => {
+            const placeId = place?.placeInfo?.id;
+            const card = (
+              <PlaceInfoCard
+                {...mapPlaceToCardProps(place, index)}
+                isLike={false}
+              />
+            );
+
+            return (
+              <div
+                key={placeId ?? `place-${index}`}
+                className='w-[280px] flex-shrink-0'
+              >
+                {placeId ? (
+                  <Link href={`/places/${placeId}`}>{card}</Link>
+                ) : (
+                  card
+                )}
+              </div>
+            );
+          })
         ) : (
           <div className='w-full rounded-xl border border-dashed border-gray-200 bg-white py-10 text-center text-sm text-gray-400'>
             주변에 등록된 장소가 없습니다.

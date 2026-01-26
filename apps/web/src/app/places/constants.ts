@@ -108,11 +108,11 @@ export const createMarkerPin = (
   categoryId?: number,
   category3?: string,
 ): string => {
-  if (categoryId === undefined || category3 === undefined) {
+  if (categoryId === undefined && category3 === undefined) {
     return 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
   }
 
-  const iconName = getCategoryIcon(categoryId, category3);
+  const iconName = getCategoryIcon(categoryId ?? -1, category3 ?? '');
   const iconFilename = CATEGORY_IMAGE_MAP[iconName] || 'travelSpot.png';
 
   if (!CATEGORY_IMAGE_MAP[iconName]) {

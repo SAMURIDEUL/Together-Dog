@@ -26,26 +26,32 @@ export const PlacesMapSection = ({
 
   // 시군구동 선택 완료 후 좌표 변환
   const handleComplete = (regionName: string) => {
-    if (window.kakao && window.kakao.maps) {
-      const geocoder = new window.kakao.maps.services.Geocoder();
-      geocoder.addressSearch(
-        regionName,
-        (result: { y: string; x: string }[], status: string) => {
-          if (
-            status === window.kakao.maps.services.Status.OK &&
-            result &&
-            result.length > 0
-          ) {
-            const { y, x } = result[0];
-            onLocationUpdate(parseFloat(y), parseFloat(x));
-            setIsSearchOpen(false);
-          } else {
-            console.error('Geocoder addressSearch failed:', status, result);
-            alert('선택한 지역의 위치 정보를 가져오는데 실패했습니다.');
-          }
-        },
-      );
+    // Kakao SDK 로드 확인
+    if (!window.kakao || !window.kakao.maps) {
+      console.error('Kakao Maps SDK not loaded');
+      alert('지도 서비스를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+      setIsSearchOpen(false); // 모달 닫기
+      return;
     }
+
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    geocoder.addressSearch(
+      regionName,
+      (result: { y: string; x: string }[], status: string) => {
+        if (
+          status === window.kakao.maps.services.Status.OK &&
+          result &&
+          result.length > 0
+        ) {
+          const { y, x } = result[0];
+          onLocationUpdate(parseFloat(y), parseFloat(x));
+          setIsSearchOpen(false);
+        } else {
+          console.error('Geocoder addressSearch failed:', status, result);
+          alert('선택한 지역의 위치 정보를 가져오는데 실패했습니다.');
+        }
+      },
+    );
   };
 
   return (

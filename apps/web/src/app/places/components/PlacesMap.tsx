@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
 
 import { PlaceItem } from '@/types/place';
@@ -19,11 +20,21 @@ export const PlacesMap = ({
   locationStatus,
 }: PlacesMapProps) => {
   const router = useRouter();
+  const [mapLoaded, setMapLoaded] = useState(false);
   const mapCenter = userLocation || { lat: 37.5665, lng: 126.978 };
+
+  useEffect(() => {
+    // layout.tsx에서 로드된 전역 kakao 객체 사용
+    if (window.kakao && window.kakao.maps) {
+      window.kakao.maps.load(() => {
+        setMapLoaded(true);
+      });
+    }
+  }, []);
 
   return (
     <div className='relative h-[350px] w-full bg-gray-200'>
-      {userLocation && (
+      {userLocation && mapLoaded ? (
         <Map
           center={mapCenter}
           level={7}
@@ -41,27 +52,28 @@ export const PlacesMap = ({
 
           {/* 장소 커스텀 마커 클러스터링 */}
           <MarkerClusterer averageCenter minLevel={6}>
-            {allPlaces.map((place) => (
-              <CategoryPin
-                key={place.placeInfo.id}
-                category3={place.placeInfo.category3}
-                categoryId={place.placeInfo.categoryId}
-                name={place.placeInfo.name}
-                position={{
-                  lat: place.placeInfo.lat,
-                  lng: place.placeInfo.lon,
-                }}
-                onClick={() => router.push(`/places/${place.placeInfo.id}`)}
-              />
-            ))}
+            {allPlaces
+              .filter((place) => place?.placeInfo?.id)
+              .map((place) => (
+                <CategoryPin
+                  key={place.placeInfo.id}
+                  category3={place.placeInfo.category3}
+                  categoryId={place.placeInfo.categoryId}
+                  name={place.placeInfo.name}
+                  position={{
+                    lat: place.placeInfo.lat,
+                    lng: place.placeInfo.lon,
+                  }}
+                  onClick={() => router.push(`/places/${place.placeInfo.id}`)}
+                />
+              ))}
           </MarkerClusterer>
         </Map>
-      )}
-      {!userLocation && (
+      ) : (
         <div className='flex h-full items-center justify-center bg-gray-100 font-medium text-gray-400'>
-          {locationStatus === 'loading'
-            ? '지도를 불러오는 중...'
-            : '위치 정보를 사용할 수 없습니다.'}
+          {!userLocation && locationStatus !== 'loading'
+            ? '위치 정보를 사용할 수 없습니다.'
+            : '지도를 불러오는 중...'}
         </div>
       )}
     </div>

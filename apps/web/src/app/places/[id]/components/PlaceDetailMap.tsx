@@ -1,13 +1,9 @@
 'use client';
 
-import Script from 'next/script';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 
 import { Place } from '@/types/place';
-
-// Using the key provided by the user
-const KAKAO_SDK_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=66384a84f00917706827f455af891fbb&libraries=services,clusterer&autoload=false`;
 
 // Declare global window interface for kakao
 declare global {
@@ -27,21 +23,18 @@ interface PlaceDetailMapProps {
 export const PlaceDetailMap = ({ place }: PlaceDetailMapProps) => {
   const [mapLoaded, setMapLoaded] = useState(false);
 
+  useEffect(() => {
+    // layout.tsx에서 로드된 전역 kakao 객체 사용
+    if (window.kakao && window.kakao.maps) {
+      window.kakao.maps.load(() => {
+        setMapLoaded(true);
+      });
+    }
+  }, []);
+
   return (
     <div className='bg-white px-4 py-6'>
       <h2 className='mb-4 text-lg font-bold text-gray-900'>위치</h2>
-
-      {/* Script Load */}
-      <Script
-        src={KAKAO_SDK_URL}
-        strategy='afterInteractive'
-        onLoad={() => {
-          // SDK loaded, but we must initialize it because of autoload=false
-          window.kakao.maps.load(() => {
-            setMapLoaded(true);
-          });
-        }}
-      />
 
       <div className='relative h-[320px] w-full overflow-hidden rounded-lg bg-gray-100'>
         {mapLoaded ? (

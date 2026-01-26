@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
 import { getRandomPlaces, likePlace, unlikePlace } from '@/api/place';
 import type { Place, PlaceItem } from '@/types/place';
 
@@ -23,23 +24,26 @@ export const useRecommendPlaces = () => {
         const data = await getRandomPlaces();
 
         // 적응형 매핑: 다양한 API 응답 구조 대응
-        const mappedPlaces = data.map((item: PlaceItem | { places: Place; thumbnail: string }) => {
-          if ('places' in item) {
+        const mappedPlaces = data.map(
+          (item: PlaceItem | { places: Place; thumbnail: string }) => {
+            if ('places' in item) {
+              return {
+                placeInfo: item.places,
+                thumbnail: item.thumbnail,
+                isLike: item.places.isLiked ?? false,
+              };
+            }
+            if ('placeInfo' in item) {
+              return { ...item, isLike: item.placeInfo.isLiked ?? false };
+            }
+            const fallbackPlace = item as unknown as Place;
             return {
-              placeInfo: item.places,
-              thumbnail: item.thumbnail,
-              isLike: false,
+              placeInfo: fallbackPlace,
+              thumbnail: '',
+              isLike: fallbackPlace.isLiked ?? false,
             };
-          }
-          if ('placeInfo' in item) {
-            return { ...item, isLike: false };
-          }
-          return {
-            placeInfo: item as unknown as Place,
-            thumbnail: '',
-            isLike: false,
-          };
-        });
+          },
+        );
         setPlaces(mappedPlaces);
       } catch (err) {
         console.error('Failed to fetch recommend places:', err);
@@ -82,7 +86,9 @@ export const useRecommendPlaces = () => {
       // 에러 발생 시 롤백
       setPlaces((prev) =>
         prev.map((place) =>
-          place.placeInfo.id === id ? { ...place, isLike: previousIsLike } : place,
+          place.placeInfo.id === id
+            ? { ...place, isLike: previousIsLike }
+            : place,
         ),
       );
       alert('찜하기 처리에 실패했습니다. 다시 시도해주세요.');
