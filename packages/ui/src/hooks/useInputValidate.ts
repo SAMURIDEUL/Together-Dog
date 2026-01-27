@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 
-// Common Validation Patterns
+// 공통 유효성 검사 패턴
 export const VALIDATION_PATTERNS = {
   email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-  password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, // 8+ chars, letter, number, special char
+  password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, // 8자 이상, 영문/숫자/특수문자 포함
   nickname: /^[가-힣a-zA-Z0-9]{2,10}$/,
 } as const;
 
@@ -36,7 +36,7 @@ export function useInputValidate(type: InputType, initial?: string) {
     setErrorMsg(getValidationError(type, newValue));
   };
 
-  // Allow manual validation trigger if needed
+  // 필요 시 수동으로 유효성 검사를 트리거하는 함수
   const validate = () => {
     const msg = getValidationError(type, value);
     setErrorMsg(msg);

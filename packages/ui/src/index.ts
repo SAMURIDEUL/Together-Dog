@@ -13,3 +13,5 @@ export * from './components/Toast/Toast.types';
 export * from './hooks/useInputValidate';
 export * from './tokens/iconPath';
 export * from './utils/cn';
+export * from './components/Input/Input';
+

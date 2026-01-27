@@ -18,13 +18,15 @@ export type RefreshTokenApiResponse = ApiResponse<LoginResponse>;
 
 // --- Check Email/Nickname ---
 export type CheckAvailabilityApiResponse = ApiResponse<{
-  [key: string]: string;
+  isDuplicate?: boolean;
+  isDupicate?: boolean; // Handling typo in API docs
+  [key: string]: string | boolean | undefined;
 }>;
 
 // --- Signup ---
 export interface SignupRequest {
   email: string;
-  password: string;
+  password_hash: string;
   nickname: string;
 }
 
