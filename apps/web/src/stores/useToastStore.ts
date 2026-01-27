@@ -8,7 +8,7 @@ interface ToastMessage {
   duration?: number;
 }
 
-interface ToastStore {
+interface ToastState {
   toasts: ToastMessage[];
   addToast: (
     message: string,
@@ -29,7 +29,7 @@ interface ToastStore {
  * const { addToast } = useToastStore();
  * addToast("저장이 완료되었습니다.", "success");
  */
-export const useToastStore = create<ToastStore>((set) => ({
+export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
   addToast: (message, variant = 'default', duration = 3000) => {
     const id = Math.random().toString(36).substring(2, 9);
