@@ -35,6 +35,7 @@ const initialState = {
  *
  * @example
  * const { isLoggedIn, user, isLoading, error } = useAuthStore();
+ * const { setLogin, setLogout, setIsLoading, setError } = useAuthStore();
  */
 export const useAuthStore = create<AuthState>((set) => ({
   ...initialState,
