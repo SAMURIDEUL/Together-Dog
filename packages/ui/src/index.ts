@@ -6,6 +6,7 @@ export * from './components/Button/Button';
 export * from './components/Icon/BrandIcons';
 export * from './components/Icon/Icon';
 export * from './components/Icon/NavigationIcons';
+export * from './components/Input/Input';
 export * from './components/LikeButton/LikeButton';
 export * from './components/Modal/Modal';
 export * from './components/Toast/Toast';
@@ -13,5 +14,3 @@ export * from './components/Toast/Toast.types';
 export * from './hooks/useInputValidate';
 export * from './tokens/iconPath';
 export * from './utils/cn';
-export * from './components/Input/Input';
-

@@ -2,8 +2,8 @@
 
 import { Button } from '@together-dog/ui';
 
-import { AuthInput } from './AuthInput';
 import { useSignup } from '../hooks/useSignup';
+import { AuthInput } from './AuthInput';
 
 export const SignUpForm = () => {
   const { fields, isPending, isFormValid, handleSubmit } = useSignup();
@@ -32,14 +32,14 @@ export const SignUpForm = () => {
       />
 
       <AuthInput
+        error={!!passwordField.errorMsg}
+        errorMessage={passwordField.errorMsg}
         id='password'
         label='비밀번호'
         placeholder='비밀번호 (5자 이상)'
         type='password'
         value={passwordField.value}
         onChange={passwordField.handleChange}
-        error={!!passwordField.errorMsg}
-        errorMessage={passwordField.errorMsg}
       />
 
       <AuthInput

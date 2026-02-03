@@ -52,7 +52,7 @@ export const AuthInput = ({
     return (
       <div className={`flex flex-col gap-1 ${className ?? ''}`}>
         {label && (
-          <label className='text-sm font-bold ml-1' htmlFor={id}>
+          <label className='ml-1 text-sm font-bold' htmlFor={id}>
             {label}
           </label>
         )}
@@ -60,14 +60,14 @@ export const AuthInput = ({
           <div className='flex-1'>
             <Input
               className='h-12'
-              id={id}
               error={error}
               errorMessage={errorMessage}
+              id={id}
               {...inputProps}
             />
           </div>
           <Button
-            className='w-18 md:w-24 whitespace-nowrap text-xs md:text-sm h-12'
+            className='w-18 h-12 whitespace-nowrap text-xs md:w-24 md:text-sm'
             type='button'
             onClick={onCheck}
           >
@@ -75,7 +75,7 @@ export const AuthInput = ({
           </Button>
         </div>
         {!errorMessage && successMessage && (
-          <p className='text-xs text-blue-500 pl-1'>{successMessage}</p>
+          <p className='pl-1 text-xs text-blue-500'>{successMessage}</p>
         )}
       </div>
     );
@@ -84,15 +84,15 @@ export const AuthInput = ({
   return (
     <div className={`space-y-1 ${className ?? ''}`}>
       {label && (
-        <label className='text-sm font-bold ml-1' htmlFor={id}>
+        <label className='ml-1 text-sm font-bold' htmlFor={id}>
           {label}
         </label>
       )}
       <Input
         className='h-12'
-        id={id}
         error={error}
         errorMessage={errorMessage}
+        id={id}
         {...inputProps}
       />
     </div>

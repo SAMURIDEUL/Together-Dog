@@ -1,10 +1,8 @@
 'use client';
 
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 
-import { checkEmail, checkNickname, login, signup } from '@/api/auth';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { checkEmail, checkNickname, signup } from '@/api/auth';
 import { SignupRequest } from '@/types/auth';
 
 interface UseSignupMutationProps {
@@ -16,15 +14,8 @@ export const useSignupMutation = ({
   onSuccess,
   onError,
 }: UseSignupMutationProps = {}) => {
-  const router = useRouter();
-  const { setLogin } = useAuthStore();
-
   return useMutation({
-    mutationFn: async ({
-      email,
-      password,
-      nickname,
-    }: SignupRequest) => {
+    mutationFn: async ({ email, password, nickname }: SignupRequest) => {
       // 1. 회원가입 요청만 수행 (자동 로그인 제거)
       await signup({ email, password, nickname });
     },
