@@ -17,11 +17,11 @@ export type LoginApiResponse = ApiResponse<LoginResponse>;
 export type RefreshTokenApiResponse = ApiResponse<LoginResponse>;
 
 // --- 이메일/닉네임 중복 확인 (Check Email/Nickname) ---
-export type CheckAvailabilityApiResponse = ApiResponse<{
+export type CheckAvailabilityApiResponse = {
   isDuplicate?: boolean;
   isDupicate?: boolean; // API 문서상의 오타 대응
   [key: string]: string | boolean | undefined;
-}>;
+};
 
 // --- 회원가입 (Signup) ---
 export interface SignupRequest {

@@ -1,5 +1,5 @@
 import { useInputValidate } from '@together-dog/ui';
-import { useState } from 'react';
+import { type ChangeEvent, useState } from 'react';
 
 import {
   useCheckEmailMutation,
@@ -32,7 +32,7 @@ export const useAuthField = (type: AuthFieldType) => {
 
     mutation.mutate(validation.value, {
       onSuccess: (res) => {
-        const { isDuplicate } = res.data;
+        const { isDuplicate } = res;
 
         if (isDuplicate) {
           setErrorMessage(
@@ -62,7 +62,7 @@ export const useAuthField = (type: AuthFieldType) => {
   };
 
   // 값 변경 시 상태 초기화
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     validation.handleChange(e);
     setIsChecked(false);
     setSuccessMessage('');
@@ -74,6 +74,7 @@ export const useAuthField = (type: AuthFieldType) => {
     handleChange, // 오버라이드
     isChecked,
     successMessage,
+    error: !!(validation.errorMsg || errorMessage),
     errorMessage: validation.errorMsg || errorMessage,
     handleCheck,
   };

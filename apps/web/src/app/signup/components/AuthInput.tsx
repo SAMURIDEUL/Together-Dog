@@ -1,5 +1,5 @@
 import { Button, Input } from '@together-dog/ui';
-import { ComponentProps } from 'react';
+import type { ChangeEvent, ComponentProps } from 'react';
 
 interface AuthInputProps extends ComponentProps<typeof Input> {
   onCheck?: () => void;
@@ -9,7 +9,7 @@ interface AuthInputProps extends ComponentProps<typeof Input> {
   // useAuthField 및 useInputValidate에서 넘어올 수 있는 로직용 props
   isChecked?: boolean;
   value?: string;
-  handleChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   errorMsg?: string;
   isValid?: boolean;
   handleCheck?: () => void;

@@ -2,7 +2,7 @@
 
 import { useInputValidate } from '@together-dog/ui';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { type ChangeEvent, type FormEvent, useState } from 'react';
 
 import { useSignupMutation } from '@/hooks/queries/useAuthMutation';
 
@@ -14,7 +14,7 @@ export const useSignup = () => {
   // 1. 개별 필드별 로직 분리 (Fields Logic)
   const emailField = useAuthField('email');
   const nicknameField = useAuthField('nickname');
-  
+
   // 비밀번호는 중복 확인이 필요 없으므로 기본 유효성 검사 훅 사용
   const passwordField = useInputValidate('password');
 
@@ -37,7 +37,7 @@ export const useSignup = () => {
   });
 
   // 4. 폼 제출 핸들러 (Submit Handler)
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!emailField.isChecked || !nicknameField.isChecked) {
@@ -45,7 +45,12 @@ export const useSignup = () => {
       return;
     }
 
-    if (!isPasswordMatch || !emailField.isValid || !passwordField.isValid || !nicknameField.isValid) {
+    if (
+      !isPasswordMatch ||
+      !emailField.isValid ||
+      !passwordField.isValid ||
+      !nicknameField.isValid
+    ) {
       alert('입력 정보를 다시 확인해 주세요.');
       return;
     }
@@ -74,7 +79,8 @@ export const useSignup = () => {
         value: passwordConfirm,
         error: !!passwordConfirmError,
         errorMessage: passwordConfirmError,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setPasswordConfirm(e.target.value),
+        onChange: (e: ChangeEvent<HTMLInputElement>) =>
+          setPasswordConfirm(e.target.value),
       },
     },
     isPending: signupMutation.isPending,
