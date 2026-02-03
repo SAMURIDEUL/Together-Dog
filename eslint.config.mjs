@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  { ignores: ['public/**'] }, // public 폴더 전체 무시
+  { ignores: ['public/**', '**/dist/**', '**/.next/**', '**/.turbo/**', '**/coverage/**'] }, // 빌드 결과물 및 캐시 무시
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   eslintConfigPrettier,
 
