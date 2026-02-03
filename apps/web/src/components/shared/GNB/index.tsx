@@ -1,12 +1,19 @@
 'use client';
+
 import { MapIcon, SearchIcon, UserIcon } from '@together-dog/ui';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import { useAuthStore } from '@/stores/useAuthStore';
 
 export const GNB = () => {
   const { isLoggedIn } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className='sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md transition-colors'>
@@ -49,7 +56,7 @@ export const GNB = () => {
           <div className='h-4 w-[1px] bg-gray-200' />
 
           {/* 인증 상태에 따른 버튼 */}
-          {isLoggedIn ? (
+          {mounted && isLoggedIn ? (
             <Link
               aria-label='마이페이지'
               className='rounded-full p-2 text-gray-600 transition-colors hover:bg-gray-100'
