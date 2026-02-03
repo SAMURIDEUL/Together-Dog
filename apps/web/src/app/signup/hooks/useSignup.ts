@@ -4,110 +4,31 @@ import { useInputValidate } from '@together-dog/ui';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import {
-  useCheckEmailMutation,
-  useCheckNicknameMutation,
-  useSignupMutation,
-} from '@/hooks/queries/useAuthMutation';
+import { useSignupMutation } from '@/hooks/queries/useAuthMutation';
+
+import { useAuthField } from './useAuthField';
 
 export const useSignup = () => {
   const router = useRouter();
 
-  // 1. Validation Hooks
-  const {
-    value: email,
-    handleChange: handleEmailChange,
-    errorMsg: emailError,
-    isValid: isEmailValid,
-  } = useInputValidate('email');
-
-  const {
-    value: password,
-    handleChange: handlePasswordChange,
-    errorMsg: pwError,
-    isValid: isPasswordValid,
-  } = useInputValidate('password');
-
-  const {
-    value: nickname,
-    handleChange: handleNicknameChange,
-    errorMsg: nicknameError,
-    isValid: isNicknameValid,
-  } = useInputValidate('nickname');
-
-  // 2. Duplicate Check States & Mutations
-  const [isEmailChecked, setIsEmailChecked] = useState(false);
-  const [emailMessage, setEmailMessage] = useState('');
+  // 1. 개별 필드별 로직 분리 (Fields Logic)
+  const emailField = useAuthField('email');
+  const nicknameField = useAuthField('nickname');
   
-  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
-  const [nicknameMessage, setNicknameMessage] = useState('');
+  // 비밀번호는 중복 확인이 필요 없으므로 기본 유효성 검사 훅 사용
+  const passwordField = useInputValidate('password');
 
-  const checkEmailMutation = useCheckEmailMutation();
-  const checkNicknameMutation = useCheckNicknameMutation();
-
-  const handleCheckEmail = () => {
-    if (!isEmailValid) return;
-    checkEmailMutation.mutate(email, {
-      onSuccess: (res) => {
-        const { isDuplicate, isDupicate } = res.data;
-        if (isDuplicate || isDupicate) {
-          setEmailMessage('이미 사용 중인 이메일입니다.');
-          setIsEmailChecked(false);
-        } else {
-          setEmailMessage('사용 가능한 이메일입니다.');
-          setIsEmailChecked(true);
-        }
-      },
-      onError: () => {
-        setEmailMessage('이메일 중복 확인 중 오류가 발생했습니다.');
-        setIsEmailChecked(false);
-      },
-    });
-  };
-
-  const handleCheckNickname = () => {
-    if (!isNicknameValid) return;
-    checkNicknameMutation.mutate(nickname, {
-      onSuccess: (res) => {
-        const { isDuplicate, isDupicate } = res.data;
-        if (isDuplicate || isDupicate) {
-          setNicknameMessage('이미 사용 중인 닉네임입니다.');
-          setIsNicknameChecked(false);
-        } else {
-          setNicknameMessage('사용 가능한 닉네임입니다.');
-          setIsNicknameChecked(true);
-        }
-      },
-      onError: () => {
-        setNicknameMessage('닉네임 중복 확인 중 오류가 발생했습니다.');
-        setIsNicknameChecked(false);
-      },
-    });
-  };
-
-  // Reset check state on change
-  const onEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleEmailChange(e);
-    setIsEmailChecked(false);
-    setEmailMessage('');
-  };
-
-  const onNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleNicknameChange(e);
-    setIsNicknameChecked(false);
-    setNicknameMessage('');
-  };
-
-  // 3. Password Confirm Logic
+  // 2. 비밀번호 확인 로직 (Password Confirm)
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const isPasswordMatch = password === passwordConfirm;
+  const isPasswordMatch = passwordField.value === passwordConfirm;
   const passwordConfirmError =
     passwordConfirm && !isPasswordMatch ? '비밀번호가 일치하지 않습니다.' : '';
 
-  // 4. Signup Mutation (Global Hook)
+  // 3. 회원가입 뮤테이션 (Mutation)
   const signupMutation = useSignupMutation({
     onSuccess: () => {
-      router.push('/');
+      alert('회원가입이 완료되었습니다! 로그인해 주세요.');
+      router.push('/login');
     },
     onError: (error) => {
       console.error('회원가입 실패:', error);
@@ -115,79 +36,49 @@ export const useSignup = () => {
     },
   });
 
+  // 4. 폼 제출 핸들러 (Submit Handler)
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email || !password || !passwordConfirm || !nickname) {
-      alert('모든 정보를 입력해 주세요.');
+    if (!emailField.isChecked || !nicknameField.isChecked) {
+      alert('이메일과 닉네임 중복 확인을 해주세요.');
       return;
     }
 
-    if (!isEmailChecked) {
-      alert('이메일 중복 확인을 해주세요.');
-      return;
-    }
-
-    if (!isNicknameChecked) {
-      alert('닉네임 중복 확인을 해주세요.');
-      return;
-    }
-
-    if (
-      !isEmailValid ||
-      !isPasswordValid ||
-      !isNicknameValid ||
-      !isPasswordMatch
-    ) {
+    if (!isPasswordMatch || !emailField.isValid || !passwordField.isValid || !nicknameField.isValid) {
       alert('입력 정보를 다시 확인해 주세요.');
       return;
     }
 
-    signupMutation.mutate({ email, password, nickname });
+    signupMutation.mutate({
+      email: emailField.value,
+      password: passwordField.value,
+      nickname: nicknameField.value,
+    });
   };
 
-  // 5. Form Validity
+  // 5. 버튼 활성화 상태 (Button Status)
   const isFormValid =
-    isEmailValid &&
-    isPasswordValid &&
-    isNicknameValid &&
+    emailField.isChecked &&
+    nicknameField.isChecked &&
+    passwordField.isValid &&
     isPasswordMatch &&
-    isEmailChecked &&
-    isNicknameChecked &&
-    // Ensure all fields have values
-    !!email &&
-    !!password &&
-    !!passwordConfirm &&
-    !!nickname;
+    !!passwordConfirm;
 
   return {
-    formState: {
-      email,
-      password,
-      passwordConfirm,
-      nickname,
-      isEmailChecked,
-      isNicknameChecked,
-      emailMessage,
-      nicknameMessage,
-    },
-    handlers: {
-      handleEmailChange: onEmailChange,
-      handlePasswordChange,
-      handleNicknameChange: onNicknameChange,
-      handlePasswordConfirmChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        setPasswordConfirm(e.target.value),
-      handleCheckEmail,
-      handleCheckNickname,
-      handleSubmit,
-    },
-    errors: {
-      emailError,
-      pwError,
-      nicknameError,
-      passwordConfirmError,
+    fields: {
+      emailField,
+      nicknameField,
+      passwordField,
+      passwordConfirm: {
+        value: passwordConfirm,
+        error: !!passwordConfirmError,
+        errorMessage: passwordConfirmError,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => setPasswordConfirm(e.target.value),
+      },
     },
     isPending: signupMutation.isPending,
     isFormValid,
+    handleSubmit,
   };
 };
