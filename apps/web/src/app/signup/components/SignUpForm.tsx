@@ -1,78 +1,53 @@
 'use client';
 
-import { Button } from '@together-dog/ui'; // Input import removed as it's now wrapped in AuthInput
+import { Button } from '@together-dog/ui';
 
 import { AuthInput } from './AuthInput';
 import { useSignup } from '../hooks/useSignup';
 
 export const SignUpForm = () => {
-  const { formState, handlers, errors, isPending, isFormValid } = useSignup();
-
-  const {
-    email,
-    password,
-    passwordConfirm,
-    nickname,
-    emailMessage,
-    nicknameMessage,
-  } = formState;
-  const {
-    handleEmailChange,
-    handlePasswordChange,
-    handleNicknameChange,
-    handlePasswordConfirmChange,
-    handleCheckEmail,
-    handleCheckNickname,
-    handleSubmit,
-  } = handlers;
-  const { emailError, pwError, nicknameError, passwordConfirmError } = errors;
+  const { fields, isPending, isFormValid, handleSubmit } = useSignup();
+  const { emailField, nicknameField, passwordField, passwordConfirm } = fields;
 
   return (
     <form className='space-y-4' onSubmit={handleSubmit}>
       <AuthInput
         checkButtonLabel='중복 확인'
-        error={!!nicknameError}
-        errorMessage={nicknameError}
+        id='nickname'
         label='닉네임'
         placeholder='닉네임 (2~10자)'
-        successMessage={nicknameMessage}
         type='text'
-        value={nickname}
-        onChange={handleNicknameChange}
-        onCheck={handleCheckNickname}
+        {...nicknameField}
+        onCheck={nicknameField.handleCheck}
       />
 
       <AuthInput
         checkButtonLabel='중복 확인'
-        error={!!emailError}
-        errorMessage={emailError}
+        id='email'
         label='이메일'
         placeholder='이메일 (example@email.com)'
-        successMessage={emailMessage}
         type='email'
-        value={email}
-        onChange={handleEmailChange}
-        onCheck={handleCheckEmail}
+        {...emailField}
+        onCheck={emailField.handleCheck}
       />
 
       <AuthInput
-        error={!!pwError}
-        errorMessage={pwError}
+        id='password'
         label='비밀번호'
-        placeholder='비밀번호 (영문, 숫자, 특수문자 포함 8자 이상)'
+        placeholder='비밀번호 (5자 이상)'
         type='password'
-        value={password}
-        onChange={handlePasswordChange}
+        value={passwordField.value}
+        onChange={passwordField.handleChange}
+        error={!!passwordField.errorMsg}
+        errorMessage={passwordField.errorMsg}
       />
 
       <AuthInput
-        error={!!passwordConfirmError}
-        errorMessage={passwordConfirmError}
+        id='passwordConfirm'
         label='비밀번호 확인'
         placeholder='비밀번호 확인'
         type='password'
-        value={passwordConfirm}
-        onChange={handlePasswordConfirmChange}
+        {...passwordConfirm}
       />
 
       <Button
