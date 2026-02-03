@@ -28,6 +28,7 @@ export const AuthInput = ({
   id,
   // 아래 항목들은 DOM에 전달되지 않도록 따로 추출합니다.
   isChecked,
+  value,
   handleChange,
   errorMsg,
   isValid,
@@ -45,6 +46,7 @@ export const AuthInput = ({
   // handleChange가 있으면 onChange로 변환해줍니다.
   const inputProps = {
     ...props,
+    value,
     onChange: props.onChange ?? handleChange,
   };
 
