@@ -1,6 +1,6 @@
 import { ApiResponse } from './api';
 
-// --- Login ---
+// --- 로그인 (Login) ---
 export interface LoginRequest {
   email: string;
   password: string;
@@ -13,20 +13,20 @@ export interface LoginResponse {
 
 export type LoginApiResponse = ApiResponse<LoginResponse>;
 
-// --- Refresh Token ---
+// --- 토큰 재발급 (Refresh Token) ---
 export type RefreshTokenApiResponse = ApiResponse<LoginResponse>;
 
-// --- Check Email/Nickname ---
+// --- 이메일/닉네임 중복 확인 (Check Email/Nickname) ---
 export type CheckAvailabilityApiResponse = ApiResponse<{
   isDuplicate?: boolean;
-  isDupicate?: boolean; // Handling typo in API docs
+  isDupicate?: boolean; // API 문서상의 오타 대응
   [key: string]: string | boolean | undefined;
 }>;
 
-// --- Signup ---
+// --- 회원가입 (Signup) ---
 export interface SignupRequest {
   email: string;
-  password_hash: string;
+  password: string;
   nickname: string;
 }
 

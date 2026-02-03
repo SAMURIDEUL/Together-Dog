@@ -11,8 +11,10 @@ export interface User {
 }
 
 export interface MyInfo {
+  id?: number;
   email: string;
   nickname: string;
+  likedPlaceIds?: number[];
   createdAt: string;
   updatedAt: string;
 }
