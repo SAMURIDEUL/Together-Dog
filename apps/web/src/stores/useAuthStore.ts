@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 import { User } from '@/types/user';
 
@@ -37,12 +38,19 @@ const initialState = {
  * const { isLoggedIn, user, isLoading, error } = useAuthStore();
  * const { setLogin, setLogout, setIsLoading, setError } = useAuthStore();
  */
-export const useAuthStore = create<AuthState>((set) => ({
-  ...initialState,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      ...initialState,
 
-  // 상태 변경 액션들
-  setLogin: (user: User) => set({ isLoggedIn: true, user }),
-  setLogout: () => set({ ...initialState }),
-  setIsLoading: (isLoading: boolean) => set({ isLoading }),
-  setError: (error: string | null) => set({ error }),
-}));
+      // 상태 변경 액션들
+      setLogin: (user: User) => set({ isLoggedIn: true, user }),
+      setLogout: () => set({ ...initialState }),
+      setIsLoading: (isLoading: boolean) => set({ isLoading }),
+      setError: (error: string | null) => set({ error }),
+    }),
+    {
+      name: 'auth-storage',
+    },
+  ),
+);
