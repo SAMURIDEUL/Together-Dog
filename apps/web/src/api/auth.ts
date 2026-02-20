@@ -12,7 +12,7 @@ import { apiClient } from './client';
 export const login = async (data: LoginRequest): Promise<LoginApiResponse> => {
   const payload = {
     email: data.email,
-    password_hash: data.password,
+    password: data.password,
   };
 
   const response = await apiClient.post<LoginApiResponse>(

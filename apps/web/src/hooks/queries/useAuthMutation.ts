@@ -57,8 +57,8 @@ export const useLoginMutation = ({
             data.refreshToken,
           );
         }
+        onSuccess?.();
       }
-      onSuccess?.();
     },
     onError: (error) => {
       onError?.(error);
