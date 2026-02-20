@@ -81,7 +81,7 @@ const ValidationExampleComponent = () => {
         <Input
           error={!password.isValid && password.value.length > 0}
           errorMessage={password.errorMsg}
-          placeholder='비밀번호 (8자 이상, 특수문자 포함)'
+          placeholder='비밀번호 (5자 이상)'
           type='password'
           value={password.value}
           onChange={password.handleChange}

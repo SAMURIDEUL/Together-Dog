@@ -4,6 +4,10 @@ import { FlatCompat } from '@eslint/eslintrc';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 import unusedImportsPlugin from 'eslint-plugin-unused-imports';
+import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
+import typescriptPlugin from '@typescript-eslint/eslint-plugin';
+import typescriptParser from '@typescript-eslint/parser';
 import js from '@eslint/js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -16,16 +20,24 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  { ignores: ['public/**'] }, // public 폴더 전체 무시
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  { ignores: ['public/**', '**/dist/**', '**/.next/**', '**/.turbo/**', '**/coverage/**'] }, // 빌드 결과물 및 캐시 무시
   eslintConfigPrettier,
 
   // 커스텀 규칙
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
+    },
     plugins: {
       'simple-import-sort': simpleImportSortPlugin,
       'unused-imports': unusedImportsPlugin,
+      'react': reactPlugin,
+      'react-hooks': reactHooksPlugin,
+      '@typescript-eslint': typescriptPlugin,
     },
     rules: {
       // 기본 스타일 규칙
@@ -92,6 +104,14 @@ const eslintConfig = [
       react: {
         version: 'detect', // React 자동 버전 감지
       },
+    },
+  },
+
+  // Storybook 파일 예외 - console.log 허용
+  {
+    files: ['**/*.stories.{ts,tsx}'],
+    rules: {
+      'no-console': 'off',
     },
   },
 ];

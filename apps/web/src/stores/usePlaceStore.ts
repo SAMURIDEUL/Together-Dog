@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 import { getPlaces } from '@/api/place';
-import { calculateDistance,DASHBOARD_SECTIONS } from '@/app/places/constants';
+import { DASHBOARD_SECTIONS } from '@/app/places/constants';
 import { PlaceItem } from '@/types/place';
 
 interface PlaceState {
@@ -19,7 +19,10 @@ interface PlaceState {
   setLocationStatus: (status: 'loading' | 'granted' | 'denied') => void;
   initLocation: () => void;
   fetchDashboardData: (location: { lat: number; lng: number }) => Promise<void>;
-  fetchCategoryData: (categoryId: number, location: { lat: number; lng: number }) => Promise<void>;
+  fetchCategoryData: (
+    categoryId: number,
+    location: { lat: number; lng: number },
+  ) => Promise<void>;
 }
 
 export const usePlaceStore = create<PlaceState>((set) => ({
@@ -39,16 +42,25 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const loc = { lat: position.coords.latitude, lng: position.coords.longitude };
+          const loc = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
           set({ userLocation: loc, locationStatus: 'granted' });
         },
         (error) => {
           console.warn('Location permission denied:', error);
-          set({ userLocation: { lat: 37.5665, lng: 126.978 }, locationStatus: 'denied' });
+          set({
+            userLocation: { lat: 37.5665, lng: 126.978 },
+            locationStatus: 'denied',
+          });
         },
       );
     } else {
-      set({ userLocation: { lat: 37.5665, lng: 126.978 }, locationStatus: 'denied' });
+      set({
+        userLocation: { lat: 37.5665, lng: 126.978 },
+        locationStatus: 'denied',
+      });
     }
   },
 
@@ -57,7 +69,11 @@ export const usePlaceStore = create<PlaceState>((set) => ({
     try {
       const results = await Promise.all(
         DASHBOARD_SECTIONS.map((section) =>
-          getPlaces(section.apiId, { size: 100, lat: location.lat, lon: location.lng }).then((res) => ({
+          getPlaces(section.apiId, {
+            size: 10,
+            lat: location.lat,
+            lon: location.lng,
+          }).then((res) => ({
             id: section.id,
             data: res.data.places,
           })),
@@ -68,15 +84,8 @@ export const usePlaceStore = create<PlaceState>((set) => ({
       let collectedPlaces: PlaceItem[] = [];
 
       results.forEach(({ id, data }) => {
-        const sortedData = data
-          .map((place) => ({
-            ...place,
-            distance: calculateDistance(location.lat, location.lng, place.placeInfo.lat, place.placeInfo.lon),
-          }))
-          .sort((a, b) => a.distance - b.distance)
-          .slice(0, 10);
-        sectionData[id] = sortedData;
-        collectedPlaces = [...collectedPlaces, ...sortedData];
+        sectionData[id] = data;
+        collectedPlaces = [...collectedPlaces, ...data];
       });
 
       set({ sectionData, allPlaces: collectedPlaces, loading: false });
@@ -88,7 +97,11 @@ export const usePlaceStore = create<PlaceState>((set) => ({
   fetchCategoryData: async (categoryId, location) => {
     set({ categoryLoading: true, error: null });
     try {
-      const res = await getPlaces(categoryId, { size: 50, lat: location.lat, lon: location.lng });
+      const res = await getPlaces(categoryId, {
+        size: 50,
+        lat: location.lat,
+        lon: location.lng,
+      });
       set({ categoryPlaces: res.data.places, categoryLoading: false });
     } catch {
       set({

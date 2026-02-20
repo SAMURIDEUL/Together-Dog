@@ -6,6 +6,7 @@ export * from './components/Button/Button';
 export * from './components/Icon/BrandIcons';
 export * from './components/Icon/Icon';
 export * from './components/Icon/NavigationIcons';
+export * from './components/Input/Input';
 export * from './components/LikeButton/LikeButton';
 export * from './components/Modal/Modal';
 export * from './components/Toast/Toast';

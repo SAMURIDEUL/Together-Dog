@@ -6,6 +6,7 @@ import { type ComponentProps } from 'react';
 
 import { PlaceInfoCard } from '@/components/shared/PlaceInfoCard';
 import { mapPlaceToCardProps } from '@/utils/petMapper';
+
 import { useRecommendPlaces } from './useRecommendPlaces';
 
 export const RecommendSection = ({
@@ -90,4 +91,3 @@ export const RecommendSection = ({
     </section>
   );
 };
-

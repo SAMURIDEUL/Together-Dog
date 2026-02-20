@@ -5,13 +5,16 @@ export interface User {
   id: number;
   email: string;
   nickname: string;
+  likedPlaceIds: number[];
   createdAt: string;
   updatedAt: string;
 }
 
 export interface MyInfo {
+  id?: number;
   email: string;
   nickname: string;
+  likedPlaceIds?: number[];
   createdAt: string;
   updatedAt: string;
 }
