@@ -1,9 +1,10 @@
 'use client';
 
+import { CONSTANTS } from '@shared/config/constants';
 import { useMutation } from '@tanstack/react-query';
 
-import { checkEmail, checkNickname, signup } from '@/api/auth';
-import { SignupRequest } from '@/types/auth';
+import { checkEmail, checkNickname, login, signup } from '@/api/auth';
+import { LoginRequest, SignupRequest } from '@/types/auth';
 
 interface UseSignupMutationProps {
   onSuccess?: () => void;
@@ -21,6 +22,42 @@ export const useSignupMutation = ({
     },
     onSuccess: () => {
       // 성공 시 콜백 실행 (예: 로그인 페이지 이동)
+      onSuccess?.();
+    },
+    onError: (error) => {
+      onError?.(error);
+    },
+  });
+};
+
+interface UseLoginMutationProps {
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
+}
+
+export const useLoginMutation = ({
+  onSuccess,
+  onError,
+}: UseLoginMutationProps = {}) => {
+  return useMutation({
+    mutationFn: async ({ email, password }: LoginRequest) => {
+      const response = await login({ email, password });
+      return response;
+    },
+    onSuccess: (response) => {
+      const data = response.data;
+      if (typeof window !== 'undefined' && data) {
+        localStorage.setItem(
+          CONSTANTS.STORAGE_KEYS.AUTH_TOKEN,
+          data.accessToken,
+        );
+        if (data.refreshToken) {
+          localStorage.setItem(
+            `${CONSTANTS.STORAGE_KEYS.AUTH_TOKEN}_refresh`,
+            data.refreshToken,
+          );
+        }
+      }
       onSuccess?.();
     },
     onError: (error) => {
