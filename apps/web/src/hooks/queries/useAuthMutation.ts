@@ -57,8 +57,12 @@ export const useLoginMutation = ({
             data.refreshToken,
           );
         }
-        onSuccess?.();
+      } else {
+        console.warn(
+          'Login successful but no accessToken received from server.',
+        );
       }
+      onSuccess?.();
     },
     onError: (error) => {
       onError?.(error);

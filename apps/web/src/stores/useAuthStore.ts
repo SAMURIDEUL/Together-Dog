@@ -62,12 +62,6 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
       }),
-      onRehydrateStorage: () => (state) => {
-        if (state && !state.isLoggedIn && typeof window !== 'undefined') {
-          localStorage.removeItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
-          localStorage.removeItem(CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN);
-        }
-      },
     },
   ),
 );
