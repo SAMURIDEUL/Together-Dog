@@ -1,3 +1,4 @@
+import { CONSTANTS } from '@shared/config/constants';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -45,7 +46,13 @@ export const useAuthStore = create<AuthState>()(
 
       // 상태 변경 액션들
       setLogin: (user: User) => set({ isLoggedIn: true, user }),
-      setLogout: () => set({ ...initialState }),
+      setLogout: () => {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
+          localStorage.removeItem(CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN);
+        }
+        set({ ...initialState });
+      },
       setIsLoading: (isLoading: boolean) => set({ isLoading }),
       setError: (error: string | null) => set({ error }),
     }),
@@ -55,6 +62,12 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state && !state.isLoggedIn && typeof window !== 'undefined') {
+          localStorage.removeItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
+          localStorage.removeItem(CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN);
+        }
+      },
     },
   ),
 );

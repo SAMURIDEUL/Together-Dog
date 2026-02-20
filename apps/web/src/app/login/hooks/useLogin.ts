@@ -45,7 +45,7 @@ export const useLogin = () => {
     e.preventDefault();
     setError(null);
 
-    if (!email || !password) {
+    if (!email.trim() || !password.trim()) {
       addToast('이메일과 비밀번호를 모두 입력해주세요.', 'error', 3000);
       return;
     }

@@ -46,14 +46,14 @@ export const useLoginMutation = ({
     },
     onSuccess: (response) => {
       const data = response.data;
-      if (typeof window !== 'undefined' && data) {
+      if (typeof window !== 'undefined' && data?.accessToken) {
         localStorage.setItem(
           CONSTANTS.STORAGE_KEYS.AUTH_TOKEN,
           data.accessToken,
         );
         if (data.refreshToken) {
           localStorage.setItem(
-            `${CONSTANTS.STORAGE_KEYS.AUTH_TOKEN}_refresh`,
+            CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN,
             data.refreshToken,
           );
         }
