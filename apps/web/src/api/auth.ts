@@ -10,7 +10,15 @@ import type {
 import { apiClient } from './client';
 
 export const login = async (data: LoginRequest): Promise<LoginApiResponse> => {
-  const response = await apiClient.post<LoginApiResponse>('/users/login', data);
+  const payload = {
+    email: data.email,
+    password: data.password,
+  };
+
+  const response = await apiClient.post<LoginApiResponse>(
+    '/users/login',
+    payload,
+  );
   return response.data;
 };
 

@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import { type ChangeEvent, type FormEvent, useState } from 'react';
 
 import { useSignupMutation } from '@/hooks/queries/useAuthMutation';
+import { useToastStore } from '@/stores/useToastStore';
 
 import { useAuthField } from './useAuthField';
 
 export const useSignup = () => {
   const router = useRouter();
+  const { addToast } = useToastStore();
 
   // 1. 개별 필드별 로직 분리 (Fields Logic)
   const emailField = useAuthField('email');
@@ -27,12 +29,16 @@ export const useSignup = () => {
   // 3. 회원가입 뮤테이션 (Mutation)
   const signupMutation = useSignupMutation({
     onSuccess: () => {
-      alert('회원가입이 완료되었습니다! 로그인해 주세요.');
+      addToast('회원가입이 완료되었습니다! 로그인해 주세요.', 'success', 3000);
       router.push('/login');
     },
     onError: (error) => {
       console.error('회원가입 실패:', error);
-      alert('회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
+      addToast(
+        '회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.',
+        'error',
+        3000,
+      );
     },
   });
 
@@ -41,7 +47,7 @@ export const useSignup = () => {
     e.preventDefault();
 
     if (!emailField.isChecked || !nicknameField.isChecked) {
-      alert('이메일과 닉네임 중복 확인을 해주세요.');
+      addToast('이메일과 닉네임 중복 확인을 해주세요.', 'error', 3000);
       return;
     }
 
@@ -51,7 +57,7 @@ export const useSignup = () => {
       !passwordField.isValid ||
       !nicknameField.isValid
     ) {
-      alert('입력 정보를 다시 확인해 주세요.');
+      addToast('입력 정보를 다시 확인해 주세요.', 'error', 3000);
       return;
     }
 
