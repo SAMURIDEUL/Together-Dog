@@ -76,7 +76,7 @@ export const AuthInput = ({
             {checkButtonLabel}
           </Button>
         </div>
-        {!errorMessage && successMessage && (
+        {isChecked && !error && !errorMessage && successMessage && (
           <p className='pl-1 text-xs text-blue-500'>{successMessage}</p>
         )}
       </div>
