@@ -107,7 +107,7 @@ export const useLikedPlacesQuery = () => {
   const { data: placeIds } = useLikedPlaceIdsQuery();
 
   return useQuery({
-    queryKey: [...userKeys.all, 'likedPlaces'] as const,
+    queryKey: [...userKeys.all, 'likedPlaces', placeIds] as const,
     queryFn: async () => {
       if (!placeIds || !placeIds.length) return [];
       const results = await Promise.all(
@@ -115,6 +115,7 @@ export const useLikedPlacesQuery = () => {
       );
       return results.filter(Boolean);
     },
+    enabled: !!placeIds, // placeIds가 로딩 완료된 후에만 실행
     staleTime: 1000 * 60 * 3,
   });
 };
