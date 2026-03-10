@@ -43,7 +43,7 @@ export default function PlaceDetailPage() {
     try {
       if (previousState) {
         await unlikePlace(data.placeInfo.id);
-        addToast('찜 목록에서 제외되었습니다.', 'success');
+        addToast('찜 목록에서 제외되었습니다.', 'default');
       } else {
         await likePlace(data.placeInfo.id);
         addToast('찜 목록에 추가되었습니다.', 'success');
