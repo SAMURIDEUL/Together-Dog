@@ -125,7 +125,7 @@ export const useLikedPlacesQuery = () => {
           }),
         ),
       );
-      return results.filter(Boolean);
+      return results.filter((r): r is NonNullable<typeof r> => r !== null);
     },
     enabled: !!placeIds, // placeIds가 로딩 완료된 후에만 실행
     staleTime: 1000 * 60 * 3,
