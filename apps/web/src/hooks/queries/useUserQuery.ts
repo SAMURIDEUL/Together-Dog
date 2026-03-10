@@ -8,6 +8,7 @@ import {
   changePassword,
   deleteUser,
   getMyInfo,
+  getMyLikedPlaceIds,
   updateMyInfo,
 } from '@/api/user';
 import { ChangePasswordRequest, UpdateUserRequest } from '@/types/user';
@@ -92,19 +93,19 @@ export const useMyReviewsQuery = (page = 0, size = 5) => {
   });
 };
 
-// ─── 찜 목록 조회 (likedPlaceIds 기반) ───
-export const useLikedPlacesQuery = (placeIds: number[]) => {
+// ─── 찜 목록 조회 (/users/likes → 장소 상세 조회) ───
+export const useLikedPlacesQuery = () => {
   return useQuery({
-    queryKey: [...userKeys.all, 'likedPlaces', placeIds] as const,
+    queryKey: [...userKeys.all, 'likedPlaces'] as const,
     queryFn: async () => {
+      const placeIds = await getMyLikedPlaceIds();
       if (!placeIds.length) return [];
       const results = await Promise.all(
         placeIds.map((id) => getPlaceDetail(id).catch(() => null)),
       );
       return results.filter(Boolean);
     },
-    enabled: placeIds.length > 0,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 3,
   });
 };
 

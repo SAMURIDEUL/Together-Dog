@@ -6,14 +6,8 @@ import Link from 'next/link';
 import { useLikedPlacesQuery } from '@/hooks/queries/useUserQuery';
 import { PlaceDetail } from '@/types/place';
 
-interface MyWishlistProps {
-  likedPlaceIds: number[];
-}
-
-export const MyWishlist = ({ likedPlaceIds }: MyWishlistProps) => {
-  const { data: places, isLoading } = useLikedPlacesQuery(likedPlaceIds);
-
-  const totalCount = likedPlaceIds.length;
+export const MyWishlist = () => {
+  const { data: places, isLoading } = useLikedPlacesQuery();
 
   if (isLoading) {
     return (
@@ -36,7 +30,7 @@ export const MyWishlist = ({ likedPlaceIds }: MyWishlistProps) => {
         <h2 className='text-lg font-bold text-gray-900'>
           My Wishlist (찜 목록)
         </h2>
-        <span className='text-sm text-gray-400'>총 {totalCount}개</span>
+        <span className='text-sm text-gray-400'>총 {likedPlaces.length}개</span>
       </div>
 
       {likedPlaces.length === 0 ? (
