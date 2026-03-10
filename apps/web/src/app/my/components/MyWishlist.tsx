@@ -5,6 +5,7 @@ import Link from 'next/link';
 
 import { useLikedPlacesQuery } from '@/hooks/queries/useUserQuery';
 import { PlaceDetail } from '@/types/place';
+import { resolveThumbnailPath } from '@/utils/petMapper';
 
 export const MyWishlist = () => {
   const { data: places, isLoading } = useLikedPlacesQuery();
@@ -57,9 +58,9 @@ export const MyWishlist = () => {
                   <Image
                     fill
                     alt={place.placeInfo.name}
-                    className='object-cover transition-transform group-hover:scale-105'
+                    className='object-contain transition-transform group-hover:scale-105'
                     sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                    src={place.top3photos[0]}
+                    src={resolveThumbnailPath(place.top3photos[0])}
                   />
                 ) : (
                   <div className='flex h-full items-center justify-center text-sm text-gray-300'>
