@@ -8,7 +8,7 @@ import { PlaceDetail } from '@/types/place';
 import { resolveThumbnailPath } from '@/utils/petMapper';
 
 export const MyWishlist = () => {
-  const { data: places, isLoading } = useLikedPlacesQuery();
+  const { data: places, isLoading, isError, refetch } = useLikedPlacesQuery();
 
   if (isLoading) {
     return (
@@ -18,6 +18,28 @@ export const MyWishlist = () => {
         </h2>
         <div className='flex items-center justify-center py-12'>
           <div className='h-6 w-6 animate-spin rounded-full border-2 border-orange-400 border-t-transparent' />
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8'>
+        <h2 className='mb-4 text-lg font-bold text-gray-900'>
+          My Wishlist (찜 목록)
+        </h2>
+        <div className='py-12 text-center'>
+          <p className='mb-4 text-red-500'>
+            찜 목록을 불러오는 중 오류가 발생했습니다.
+          </p>
+          <button
+            className='rounded-xl bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200'
+            type='button'
+            onClick={() => refetch()}
+          >
+            다시 시도
+          </button>
         </div>
       </section>
     );

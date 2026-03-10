@@ -17,7 +17,7 @@ export const usePlaceDetailQuery = (placeId: number) => {
   return useQuery({
     queryKey: placeKeys.detail(placeId),
     queryFn: () => getPlaceDetail(placeId),
-    enabled: !!placeId,
+    enabled: placeId > 0 && !Number.isNaN(placeId),
     staleTime: 1000 * 60 * 5, // 5분
   });
 };

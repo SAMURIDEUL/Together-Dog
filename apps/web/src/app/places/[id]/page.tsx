@@ -33,6 +33,19 @@ export default function PlaceDetailPage() {
   const queryClient = useQueryClient();
   const { addToast } = useToastStore();
 
+  if (Number.isNaN(placeId) || placeId <= 0) {
+    return (
+      <div className='flex h-full min-h-[50vh] flex-col items-center justify-center p-6'>
+        <p className='text-lg font-semibold text-gray-700'>
+          잘못된 접근입니다.
+        </p>
+        <p className='mt-2 text-sm text-gray-500'>
+          장소 정보를 찾을 수 없습니다.
+        </p>
+      </div>
+    );
+  }
+
   const handleLikeToggle = async () => {
     if (!data || !data.placeInfo) return;
 
