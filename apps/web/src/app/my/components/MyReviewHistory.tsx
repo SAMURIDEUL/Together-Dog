@@ -54,11 +54,19 @@ export const MyReviewHistory = () => {
 
   // 별점 렌더링
   const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, i) => (
-      <span key={i} className={i < rating ? 'text-amber-400' : 'text-gray-200'}>
-        ★
-      </span>
-    ));
+    return (
+      <div aria-label={`5점 만점에 ${rating}점`} role='img'>
+        {Array.from({ length: 5 }, (_, i) => (
+          <span
+            key={i}
+            aria-hidden='true'
+            className={i < rating ? 'text-amber-400' : 'text-gray-200'}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+    );
   };
 
   if (isLoading) {
@@ -112,13 +120,13 @@ export const MyReviewHistory = () => {
                   </p>
                 </div>
 
-                {/* 수정 / 삭제 */}
+                {/* 장소 보기 / 삭제 */}
                 <div className='ml-3 flex shrink-0 gap-1'>
                   <Link
                     className='rounded-lg px-2.5 py-1 text-xs text-gray-500 transition-colors hover:bg-gray-100'
-                    href={`/places/${review.placeId}`}
+                    href={`/places/${review.placeId}#review-${review.id}`}
                   >
-                    ✏️ 수정
+                    📍 장소 보기
                   </Link>
                   <button
                     className='rounded-lg px-2.5 py-1 text-xs text-red-400 transition-colors hover:bg-red-50'
