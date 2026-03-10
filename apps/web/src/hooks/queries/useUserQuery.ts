@@ -2,7 +2,6 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { logout } from '@/api/auth';
 import {
   changePassword,
   deleteUser,
@@ -58,20 +57,6 @@ export const useChangePasswordMutation = ({
 }: UseMutationCallbacks = {}) => {
   return useMutation({
     mutationFn: (data: ChangePasswordRequest) => changePassword(data),
-    onSuccess: () => {
-      onSuccess?.();
-    },
-    onError,
-  });
-};
-
-// ─── 로그아웃 ───
-export const useLogoutMutation = ({
-  onSuccess,
-  onError,
-}: UseMutationCallbacks = {}) => {
-  return useMutation({
-    mutationFn: logout,
     onSuccess: () => {
       onSuccess?.();
     },

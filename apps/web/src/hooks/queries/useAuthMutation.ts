@@ -3,7 +3,7 @@
 import { CONSTANTS } from '@shared/config/constants';
 import { useMutation } from '@tanstack/react-query';
 
-import { checkEmail, checkNickname, login, signup } from '@/api/auth';
+import { checkEmail, checkNickname, login, logout, signup } from '@/api/auth';
 import { LoginRequest, SignupRequest } from '@/types/auth';
 
 interface UseSignupMutationProps {
@@ -11,6 +11,7 @@ interface UseSignupMutationProps {
   onError?: (error: unknown) => void;
 }
 
+// ─── 회원가입 ───
 export const useSignupMutation = ({
   onSuccess,
   onError,
@@ -35,6 +36,7 @@ interface UseLoginMutationProps {
   onError?: (error: unknown) => void;
 }
 
+// ─── 로그인 ───
 export const useLoginMutation = ({
   onSuccess,
   onError,
@@ -70,14 +72,35 @@ export const useLoginMutation = ({
   });
 };
 
+// ─── 이메일 중복 확인 ───
 export const useCheckEmailMutation = () => {
   return useMutation({
     mutationFn: checkEmail,
   });
 };
 
+// ─── 닉네임 중복 확인 ───
 export const useCheckNicknameMutation = () => {
   return useMutation({
     mutationFn: checkNickname,
+  });
+};
+
+// ─── 로그아웃 ───
+interface UseLogoutMutationProps {
+  onSuccess?: () => void;
+  onError?: (error: unknown) => void;
+}
+
+export const useLogoutMutation = ({
+  onSuccess,
+  onError,
+}: UseLogoutMutationProps = {}) => {
+  return useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      onSuccess?.();
+    },
+    onError,
   });
 };
