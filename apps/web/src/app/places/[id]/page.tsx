@@ -1,5 +1,6 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -51,6 +52,8 @@ export default function PlaceDetailPage() {
     fetchDetail();
   }, [params.id]);
 
+  const queryClient = useQueryClient();
+
   const handleLikeToggle = async () => {
     if (!data) return;
 
@@ -64,6 +67,8 @@ export default function PlaceDetailPage() {
       } else {
         await likePlace(data.placeInfo.id);
       }
+      // 찜 목록 캐시 무효화 (마이페이지 찜 탭 최신화)
+      queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaces'] });
     } catch (error) {
       console.error('Failed to toggle like:', error);
       // Revert on error
