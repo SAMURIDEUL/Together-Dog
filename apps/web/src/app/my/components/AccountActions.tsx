@@ -20,9 +20,11 @@ export const AccountActions = () => {
       addToast('로그아웃 되었습니다.', 'success');
       router.push('/');
     },
-    onError: () => {
+    onError: (error) => {
       // 서버 에러여도 로컬 상태는 초기화
       setLogout();
+      addToast('로그아웃 중 오류가 발생했습니다.', 'error');
+      console.error('Logout error:', error);
       router.push('/');
     },
   });

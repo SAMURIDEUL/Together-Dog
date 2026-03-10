@@ -83,9 +83,15 @@ export const EditNicknameForm = ({
             {isPending ? '저장 중...' : '저장'}
           </Button>
           <button
-            className='h-11 shrink-0 rounded-xl px-3 text-sm text-gray-500 transition-colors hover:bg-gray-100'
+            className={`h-11 shrink-0 rounded-xl px-3 text-sm transition-colors ${
+              isPending
+                ? 'cursor-not-allowed text-gray-400 opacity-50'
+                : 'text-gray-500 hover:bg-gray-100'
+            }`}
+            disabled={isPending}
             type='button'
             onClick={() => {
+              if (isPending) return;
               setNickname(currentNickname);
               setIsEditing(false);
             }}
