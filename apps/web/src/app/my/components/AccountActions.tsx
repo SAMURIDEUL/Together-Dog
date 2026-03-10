@@ -2,10 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 
-import {
-  useDeleteAccountMutation,
-  useLogoutMutation,
-} from '@/hooks/queries/useUserQuery';
+import { useLogoutMutation } from '@/hooks/queries/useAuthMutation';
+import { useDeleteAccountMutation } from '@/hooks/queries/useUserQuery';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useModalStore } from '@/stores/useModalStore';
 import { useToastStore } from '@/stores/useToastStore';

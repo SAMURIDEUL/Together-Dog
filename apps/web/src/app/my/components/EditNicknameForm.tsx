@@ -34,48 +34,44 @@ export const EditNicknameForm = ({
     updateNickname({ nickname: trimmed });
   };
 
-  if (!isEditing) {
-    return (
-      <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-sm font-semibold text-gray-500'>닉네임</h3>
-            <p className='mt-1 text-base font-medium text-gray-900'>
-              {currentNickname}
-            </p>
+  return (
+    <div className='space-y-1.5'>
+      <label
+        className='text-sm font-semibold text-gray-500'
+        htmlFor='edit-nickname'
+      >
+        닉네임
+      </label>
+
+      {!isEditing ? (
+        <div className='flex gap-2'>
+          <div className='flex h-11 flex-1 items-center rounded-xl border border-gray-200 px-4 text-sm text-gray-900'>
+            {currentNickname}
           </div>
-          <Button
-            className='text-sm'
-            size='sm'
+          <button
+            className='h-11 shrink-0 rounded-xl border border-gray-200 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50'
             type='button'
             onClick={() => setIsEditing(true)}
           >
             수정
-          </Button>
+          </button>
         </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm'>
-      <h3 className='mb-3 text-sm font-semibold text-gray-500'>닉네임 수정</h3>
-      <form className='flex gap-2' onSubmit={handleSubmit}>
-        <div className='flex-1'>
-          <Input
-            className='h-11'
-            id='edit-nickname'
-            placeholder='새 닉네임 입력'
-            type='text'
-            value={nickname}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNickname(e.target.value)
-            }
-          />
-        </div>
-        <div className='flex gap-2'>
+      ) : (
+        <form className='flex gap-2' onSubmit={handleSubmit}>
+          <div className='flex-1'>
+            <Input
+              className='h-11'
+              id='edit-nickname'
+              placeholder='새 닉네임 입력'
+              type='text'
+              value={nickname}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setNickname(e.target.value)
+              }
+            />
+          </div>
           <Button
-            className='h-11 text-sm'
+            className='h-11 shrink-0 text-sm'
             isDisabled={
               isPending ||
               !nickname.trim() ||
@@ -87,7 +83,7 @@ export const EditNicknameForm = ({
             {isPending ? '저장 중...' : '저장'}
           </Button>
           <button
-            className='h-11 rounded-lg px-3 text-sm text-gray-500 transition-colors hover:bg-gray-100'
+            className='h-11 shrink-0 rounded-xl px-3 text-sm text-gray-500 transition-colors hover:bg-gray-100'
             type='button'
             onClick={() => {
               setNickname(currentNickname);
@@ -96,8 +92,8 @@ export const EditNicknameForm = ({
           >
             취소
           </button>
-        </div>
-      </form>
-    </section>
+        </form>
+      )}
+    </div>
   );
 };
