@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { getPlaceDetail, likePlace, unlikePlace } from '@/api/place';
-import { PlaceDetail } from '@/types/place';
+import { likePlace, unlikePlace } from '@/api/place';
+import { usePlaceDetailQuery } from '@/hooks/queries/usePlaceQuery';
 import { resolveThumbnailPath } from '@/utils/petMapper';
 
 import { PlaceDetailHeader } from './components/PlaceDetailHeader';
@@ -16,46 +16,25 @@ import { PlaceReviews } from './components/PlaceReviews';
 
 export default function PlaceDetailPage() {
   const params = useParams();
-  const [data, setData] = useState<PlaceDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const idString = Array.isArray(params.id) ? params.id[0] : params.id;
+  const placeId = parseInt(idString || '', 10);
+
+  const { data, isLoading: loading, error } = usePlaceDetailQuery(placeId);
+
+  // Optimistic UI update를 위한 로컬 상태 유지
   const [isLiked, setIsLiked] = useState(false);
 
+  // 데이터가 로드되거나 변경될 때마다 로컬 상태 동기화
   useEffect(() => {
-    const fetchDetail = async () => {
-      try {
-        const idString = Array.isArray(params.id) ? params.id[0] : params.id;
-        if (!idString) {
-          setError('잘못된 장소 ID입니다.');
-          setLoading(false);
-          return;
-        }
-
-        const placeId = parseInt(idString, 10);
-        if (isNaN(placeId)) throw new Error('Invalid Place ID');
-
-        const result = await getPlaceDetail(placeId);
-
-        if (!result || !result.placeInfo) {
-          throw new Error('No Data');
-        }
-
-        setData(result);
-        setIsLiked(!!result.placeInfo.isLiked);
-      } catch (err) {
-        console.error(err);
-        setError('장소 정보를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDetail();
-  }, [params.id]);
+    if (data?.placeInfo) {
+      setIsLiked(!!data.placeInfo.isLiked);
+    }
+  }, [data?.placeInfo?.isLiked, data?.placeInfo]);
 
   const queryClient = useQueryClient();
 
   const handleLikeToggle = async () => {
-    if (!data) return;
+    if (!data || !data.placeInfo) return;
 
     // Optimistic UI update
     const previousState = isLiked;
@@ -67,7 +46,11 @@ export default function PlaceDetailPage() {
       } else {
         await likePlace(data.placeInfo.id);
       }
-      // 찜 목록 캐시 무효화 (마이페이지 찜 탭 최신화)
+
+      // 장소 상세 정보 캐시 무효화 (해당 장소) 및 찜 목록 무효화
+      queryClient.invalidateQueries({
+        queryKey: ['places', 'detail', data.placeInfo.id],
+      });
       queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaces'] });
     } catch (error) {
       console.error('Failed to toggle like:', error);
@@ -84,10 +67,10 @@ export default function PlaceDetailPage() {
     );
   }
 
-  if (error || !data) {
+  if (error || !data || !data.placeInfo) {
     return (
       <div className='flex min-h-screen items-center justify-center text-gray-500'>
-        {error || '장소를 찾을 수 없습니다.'}
+        {error ? error.message : '장소를 찾을 수 없습니다.'}
       </div>
     );
   }
