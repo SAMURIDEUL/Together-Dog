@@ -107,11 +107,23 @@ export const useLikedPlacesQuery = () => {
   const { data: placeIds, isLoading: isIdsLoading } = useLikedPlaceIdsQuery();
 
   const query = useQuery({
-    queryKey: [...userKeys.all, 'likedPlaces', placeIds] as const,
+    queryKey: [
+      ...userKeys.all,
+      'likedPlaces',
+      placeIds ? [...placeIds].sort((a, b) => a - b).join(',') : '',
+    ] as const,
     queryFn: async () => {
       if (!placeIds || !placeIds.length) return [];
       const results = await Promise.all(
-        placeIds.map((id) => getPlaceDetail(id).catch(() => null)),
+        placeIds.map((id) =>
+          getPlaceDetail(id).catch((err) => {
+            console.error(
+              `Failed to fetch liked place detail (ID: ${id}):`,
+              err,
+            );
+            return null;
+          }),
+        ),
       );
       return results.filter(Boolean);
     },

@@ -99,6 +99,10 @@ export const useLogoutMutation = ({
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      // 로그아웃 성공 시 로컬스토리지의 토큰 제거
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('accessToken');
+      }
       onSuccess?.();
     },
     onError,
