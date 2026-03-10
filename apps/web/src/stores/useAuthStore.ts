@@ -58,7 +58,8 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => sessionStorage),
+      // sessionStorage는 탭별로 고립되므로 탭 간 상태 공유를 위해 localStorage 사용
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
       }),
