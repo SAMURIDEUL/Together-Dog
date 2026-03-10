@@ -169,9 +169,7 @@ export default function MyPage() {
 
           {activeTab === 'reviews' && <MyReviewHistory />}
 
-          {activeTab === 'wishlist' && (
-            <MyWishlist likedPlaceIds={myInfo.likedPlaceIds || []} />
-          )}
+          {activeTab === 'wishlist' && <MyWishlist />}
 
           {activeTab === 'settings' && (
             <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8'>
