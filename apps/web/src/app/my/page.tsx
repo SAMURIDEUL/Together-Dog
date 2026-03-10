@@ -18,15 +18,31 @@ export default function MyPage() {
   const { isLoggedIn } = useAuthStore();
   const { data: myInfo, isLoading, error } = useMyInfoQuery();
   const [activeTab, setActiveTab] = useState<TabType>('profile');
+  const [mounted, setMounted] = useState(false);
 
-  // 비로그인 시 로그인 페이지로 리다이렉트
+  // hydration 완료 대기 (Zustand persist가 sessionStorage에서 복원 후)
   useEffect(() => {
-    if (!isLoggedIn) {
+    setMounted(true);
+  }, []);
+
+  // hydration 완료 후 비로그인 시 리다이렉트
+  useEffect(() => {
+    if (mounted && !isLoggedIn) {
       router.replace('/login');
     }
-  }, [isLoggedIn, router]);
+  }, [mounted, isLoggedIn, router]);
 
-  if (!isLoggedIn) return null;
+  // hydration 전이거나 비로그인이면 로딩 표시
+  if (!mounted || !isLoggedIn) {
+    return (
+      <div className='mx-auto flex min-h-[60vh] max-w-5xl items-center justify-center'>
+        <div className='flex flex-col items-center gap-3'>
+          <div className='h-8 w-8 animate-spin rounded-full border-2 border-orange-400 border-t-transparent' />
+          <p className='text-sm text-gray-400'>불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
