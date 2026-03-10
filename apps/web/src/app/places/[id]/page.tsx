@@ -48,7 +48,15 @@ export default function PlaceDetailPage() {
         await likePlace(data.placeInfo.id);
         addToast('찜 목록에 추가되었습니다.', 'success');
       }
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+      // Revert on error
+      setOptimisticLiked(previousState);
+      addToast('요청에 실패했습니다. 다시 시도해주세요.', 'error');
+      return;
+    }
 
+    try {
       // 장소 상세 정보 캐시 무효화 (해당 장소) 및 찜 목록 아이디 캐시 무효화
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaceIds'] }),
@@ -57,14 +65,11 @@ export default function PlaceDetailPage() {
           queryKey: ['places', 'detail', data.placeInfo.id],
         }),
       ]);
-
-      // 실제 API 데이터 페칭 완료 후에 Optimistic 상태 해제 (Blink 방지)
+    } catch (refetchError) {
+      console.error('Failed to refetch queries:', refetchError);
+    } finally {
+      // 실제 API 데이터 페칭 완료(또는 에러) 후에 Optimistic 상태 해제 (Blink 방지)
       setOptimisticLiked(null);
-    } catch (error) {
-      console.error('Failed to toggle like:', error);
-      // Revert on error
-      setOptimisticLiked(previousState);
-      addToast('요청에 실패했습니다. 다시 시도해주세요.', 'error');
     }
   };
 
