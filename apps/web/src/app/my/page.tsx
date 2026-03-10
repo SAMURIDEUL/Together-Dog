@@ -10,8 +10,10 @@ import { AccountActions } from './components/AccountActions';
 import { ChangePasswordForm } from './components/ChangePasswordForm';
 import { EditNicknameForm } from './components/EditNicknameForm';
 import { MyPageProfile } from './components/MyPageProfile';
+import { MyReviewHistory } from './components/MyReviewHistory';
+import { MyWishlist } from './components/MyWishlist';
 
-type TabType = 'profile' | 'settings';
+type TabType = 'profile' | 'reviews' | 'wishlist' | 'settings';
 
 export default function MyPage() {
   const router = useRouter();
@@ -76,6 +78,8 @@ export default function MyPage() {
 
   const tabs: { key: TabType; label: string; icon: string }[] = [
     { key: 'profile', label: '프로필 관리', icon: '👤' },
+    { key: 'reviews', label: '리뷰 내역', icon: '✍️' },
+    { key: 'wishlist', label: '찜 목록', icon: '❤️' },
     { key: 'settings', label: '설정', icon: '⚙️' },
   ];
 
@@ -161,6 +165,12 @@ export default function MyPage() {
                 <ChangePasswordForm />
               </section>
             </div>
+          )}
+
+          {activeTab === 'reviews' && <MyReviewHistory />}
+
+          {activeTab === 'wishlist' && (
+            <MyWishlist likedPlaceIds={myInfo.likedPlaceIds || []} />
           )}
 
           {activeTab === 'settings' && (
