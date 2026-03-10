@@ -104,9 +104,9 @@ export const useLikedPlaceIdsQuery = () => {
 
 // ─── 찜 목록 조회 (/users/likes → 장소 상세 조회) ───
 export const useLikedPlacesQuery = () => {
-  const { data: placeIds } = useLikedPlaceIdsQuery();
+  const { data: placeIds, isLoading: isIdsLoading } = useLikedPlaceIdsQuery();
 
-  return useQuery({
+  const query = useQuery({
     queryKey: [...userKeys.all, 'likedPlaces', placeIds] as const,
     queryFn: async () => {
       if (!placeIds || !placeIds.length) return [];
@@ -118,6 +118,11 @@ export const useLikedPlacesQuery = () => {
     enabled: !!placeIds, // placeIds가 로딩 완료된 후에만 실행
     staleTime: 1000 * 60 * 3,
   });
+
+  return {
+    ...query,
+    isLoading: isIdsLoading || query.isLoading,
+  };
 };
 
 // ─── 리뷰 삭제 ───
