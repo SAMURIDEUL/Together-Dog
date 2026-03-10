@@ -62,7 +62,13 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
-        user: state.user,
+        // PII(개인정보) 유출 방지를 위해 민감한 정보(이메일 등)는 로컬 스토리지에서 마스킹/제거합니다.
+        user: state.user
+          ? {
+              ...state.user,
+              email: '',
+            }
+          : null,
       }),
     },
   ),
