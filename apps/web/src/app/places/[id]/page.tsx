@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { likePlace, unlikePlace } from '@/api/place';
 import { usePlaceDetailQuery } from '@/hooks/queries/usePlaceQuery';
 import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
+import { useToastStore } from '@/stores/useToastStore';
 import { resolveThumbnailPath } from '@/utils/petMapper';
 
 import { PlaceDetailHeader } from './components/PlaceDetailHeader';
@@ -30,6 +31,7 @@ export default function PlaceDetailPage() {
   const isLiked = optimisticLiked !== null ? optimisticLiked : isServerLiked;
 
   const queryClient = useQueryClient();
+  const { addToast } = useToastStore();
 
   const handleLikeToggle = async () => {
     if (!data || !data.placeInfo) return;
@@ -41,23 +43,28 @@ export default function PlaceDetailPage() {
     try {
       if (previousState) {
         await unlikePlace(data.placeInfo.id);
+        addToast('찜 목록에서 제외되었습니다.', 'success');
       } else {
         await likePlace(data.placeInfo.id);
+        addToast('찜 목록에 추가되었습니다.', 'success');
       }
 
       // 장소 상세 정보 캐시 무효화 (해당 장소) 및 찜 목록 아이디 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaceIds'] });
-      queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaces'] });
-      queryClient.invalidateQueries({
-        queryKey: ['places', 'detail', data.placeInfo.id],
-      });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaceIds'] }),
+        queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaces'] }),
+        queryClient.invalidateQueries({
+          queryKey: ['places', 'detail', data.placeInfo.id],
+        }),
+      ]);
 
-      // 실제 API 반영 완료되면 Optimistic 상태 해제 (서버 데이터 사용)
+      // 실제 API 데이터 페칭 완료 후에 Optimistic 상태 해제 (Blink 방지)
       setOptimisticLiked(null);
     } catch (error) {
       console.error('Failed to toggle like:', error);
       // Revert on error
       setOptimisticLiked(previousState);
+      addToast('요청에 실패했습니다. 다시 시도해주세요.', 'error');
     }
   };
 
