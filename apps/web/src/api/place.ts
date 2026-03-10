@@ -75,18 +75,10 @@ export const getPlaceReviews = async (
 
 // 장소 찜하기
 export const likePlace = async (placeId: number): Promise<void> => {
-  await apiClient.post(`/places/${placeId}/like`, null, {
-    headers: {
-      'Content-Type': false,
-    },
-  });
+  await apiClient.post(`/places/${placeId}/like`, null);
 };
 
 // 장소 찜 취소하기
 export const unlikePlace = async (placeId: number): Promise<void> => {
-  await apiClient.delete(`/places/${placeId}/like`, {
-    headers: {
-      'Content-Type': false,
-    },
-  });
+  await apiClient.delete(`/places/${placeId}/like`);
 };
