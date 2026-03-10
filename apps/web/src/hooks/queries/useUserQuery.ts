@@ -93,13 +93,23 @@ export const useMyReviewsQuery = (page = 0, size = 5) => {
   });
 };
 
+// ─── 찜한 장소 ID 목록만 단독 조회 ───
+export const useLikedPlaceIdsQuery = () => {
+  return useQuery({
+    queryKey: [...userKeys.all, 'likedPlaceIds'] as const,
+    queryFn: getMyLikedPlaceIds,
+    staleTime: 1000 * 60 * 3,
+  });
+};
+
 // ─── 찜 목록 조회 (/users/likes → 장소 상세 조회) ───
 export const useLikedPlacesQuery = () => {
+  const { data: placeIds } = useLikedPlaceIdsQuery();
+
   return useQuery({
     queryKey: [...userKeys.all, 'likedPlaces'] as const,
     queryFn: async () => {
-      const placeIds = await getMyLikedPlaceIds();
-      if (!placeIds.length) return [];
+      if (!placeIds || !placeIds.length) return [];
       const results = await Promise.all(
         placeIds.map((id) => getPlaceDetail(id).catch(() => null)),
       );

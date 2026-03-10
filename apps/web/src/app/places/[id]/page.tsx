@@ -3,10 +3,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { likePlace, unlikePlace } from '@/api/place';
 import { usePlaceDetailQuery } from '@/hooks/queries/usePlaceQuery';
+import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
 import { resolveThumbnailPath } from '@/utils/petMapper';
 
 import { PlaceDetailHeader } from './components/PlaceDetailHeader';
@@ -20,16 +21,13 @@ export default function PlaceDetailPage() {
   const placeId = parseInt(idString || '', 10);
 
   const { data, isLoading: loading, error } = usePlaceDetailQuery(placeId);
+  const { data: likedPlaceIds } = useLikedPlaceIdsQuery();
 
-  // Optimistic UI update를 위한 로컬 상태 유지
-  const [isLiked, setIsLiked] = useState(false);
+  // 서버 데이터 우선, 없으면 Optimistic UI 상태
+  const isServerLiked = likedPlaceIds?.includes(placeId) ?? false;
+  const [optimisticLiked, setOptimisticLiked] = useState<boolean | null>(null);
 
-  // 데이터가 로드되거나 변경될 때마다 로컬 상태 동기화
-  useEffect(() => {
-    if (data?.placeInfo) {
-      setIsLiked(!!data.placeInfo.isLiked);
-    }
-  }, [data?.placeInfo?.isLiked, data?.placeInfo]);
+  const isLiked = optimisticLiked !== null ? optimisticLiked : isServerLiked;
 
   const queryClient = useQueryClient();
 
@@ -38,7 +36,7 @@ export default function PlaceDetailPage() {
 
     // Optimistic UI update
     const previousState = isLiked;
-    setIsLiked(!previousState);
+    setOptimisticLiked(!previousState);
 
     try {
       if (previousState) {
@@ -47,15 +45,19 @@ export default function PlaceDetailPage() {
         await likePlace(data.placeInfo.id);
       }
 
-      // 장소 상세 정보 캐시 무효화 (해당 장소) 및 찜 목록 무효화
+      // 장소 상세 정보 캐시 무효화 (해당 장소) 및 찜 목록 아이디 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaceIds'] });
+      queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaces'] });
       queryClient.invalidateQueries({
         queryKey: ['places', 'detail', data.placeInfo.id],
       });
-      queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaces'] });
+
+      // 실제 API 반영 완료되면 Optimistic 상태 해제 (서버 데이터 사용)
+      setOptimisticLiked(null);
     } catch (error) {
       console.error('Failed to toggle like:', error);
       // Revert on error
-      setIsLiked(previousState);
+      setOptimisticLiked(previousState);
     }
   };
 
