@@ -76,19 +76,22 @@ export const MyWishlist = () => {
             >
               {/* 썸네일 */}
               <div className='relative aspect-[4/3] w-full overflow-hidden bg-gray-100'>
-                {place.top3photos?.[0] ? (
-                  <Image
-                    fill
-                    alt={place.placeInfo.name}
-                    className='object-contain transition-transform group-hover:scale-105'
-                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                    src={resolveThumbnailPath(place.top3photos[0])}
-                  />
-                ) : (
-                  <div className='flex h-full items-center justify-center text-sm text-gray-300'>
-                    이미지 없음
-                  </div>
-                )}
+                {(() => {
+                  const thumb = place.top3photos?.[0]?.trim();
+                  return thumb ? (
+                    <Image
+                      fill
+                      alt={place.placeInfo.name}
+                      className='object-contain transition-transform group-hover:scale-105'
+                      sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+                      src={resolveThumbnailPath(thumb)}
+                    />
+                  ) : (
+                    <div className='flex h-full items-center justify-center text-sm text-gray-300'>
+                      이미지 없음
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* 정보 */}
