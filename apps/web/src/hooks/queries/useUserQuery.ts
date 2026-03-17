@@ -20,7 +20,7 @@ export const userKeys = {
 };
 
 // ─── 내 정보 조회 ───
-export const useMyInfoQuery = () => {
+export const useMyInfoQuery = (enabled = true) => {
   return useQuery({
     queryKey: userKeys.myInfo(),
     queryFn: async () => {
@@ -28,6 +28,7 @@ export const useMyInfoQuery = () => {
       return response.data;
     },
     staleTime: 1000 * 60 * 5, // 5분
+    enabled,
   });
 };
 

@@ -18,9 +18,13 @@ type TabType = 'profile' | 'reviews' | 'wishlist' | 'settings';
 export default function MyPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
-  const { data: myInfo, isLoading, error } = useMyInfoQuery();
   const [activeTab, setActiveTab] = useState<TabType>('profile');
   const [mounted, setMounted] = useState(false);
+  const {
+    data: myInfo,
+    isLoading,
+    error,
+  } = useMyInfoQuery(mounted && isLoggedIn);
 
   // hydration 완료 대기 (Zustand persist가 sessionStorage에서 복원 후)
   useEffect(() => {
