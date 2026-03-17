@@ -58,9 +58,25 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => sessionStorage),
+      // sessionStorage는 탭별로 고립되므로 탭 간 상태 공유를 위해 localStorage 사용
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        if (typeof window !== 'undefined') {
+          const token = localStorage.getItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
+          if (!token && state) {
+            state.setLogout();
+          }
+        }
+      },
       partialize: (state) => ({
         isLoggedIn: state.isLoggedIn,
+        // PII(개인정보) 유출 방지를 위해 민감한 정보(이메일 등)는 로컬 스토리지에서 마스킹/제거합니다.
+        user: state.user
+          ? {
+              ...state.user,
+              email: '',
+            }
+          : null,
       }),
     },
   ),

@@ -40,3 +40,13 @@ export const changePassword = async (
 export const deleteUser = async (): Promise<void> => {
   await apiClient.delete('/users/delete');
 };
+
+// 찜한 장소 ID 목록 조회
+export const getMyLikedPlaceIds = async (): Promise<number[]> => {
+  const response = await apiClient.get<{
+    status: number;
+    message: string;
+    data: number[];
+  }>('/users/likes');
+  return response.data.data;
+};

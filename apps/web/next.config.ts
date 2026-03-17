@@ -1,7 +1,7 @@
+import withBundleAnalyzer from '@next/bundle-analyzer';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
   transpilePackages: ['@together-dog/ui'],
   images: {
     remotePatterns: [
@@ -15,10 +15,14 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.API_URL || 'http://localhost:8080'}/:path*`, // Proxy to Backend
+        destination: `${process.env.API_URL || 'http://localhost:8080'}/:path*`,
       },
     ];
   },
 };
 
-export default nextConfig;
+const analyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+});
+
+export default analyzer(nextConfig);

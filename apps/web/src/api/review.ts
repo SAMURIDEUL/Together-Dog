@@ -2,6 +2,7 @@ import type {
   CreateReviewApiResponse,
   CreateReviewRequest,
   MyReviewsApiResponse,
+  MyReviewsResponse,
   UpdateReviewApiResponse,
   UpdateReviewRequest,
 } from '@/types/review';
@@ -102,9 +103,9 @@ export const deleteReview = async (
 export const getMyReviews = async (
   page = 0,
   size = 10,
-): Promise<MyReviewsApiResponse> => {
+): Promise<MyReviewsResponse> => {
   const response = await apiClient.get<MyReviewsApiResponse>('/users/reviews', {
     params: { page, size },
   });
-  return response.data;
+  return response.data.data;
 };

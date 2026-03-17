@@ -75,7 +75,7 @@ export const getPlaceReviews = async (
 
 // 장소 찜하기
 export const likePlace = async (placeId: number): Promise<void> => {
-  await apiClient.post(`/places/${placeId}/like`);
+  await apiClient.post(`/places/${placeId}/like`, null);
 };
 
 // 장소 찜 취소하기

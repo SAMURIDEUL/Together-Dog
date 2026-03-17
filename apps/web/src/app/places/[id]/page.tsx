@@ -2,10 +2,14 @@
 
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { getPlaceDetail, likePlace, unlikePlace } from '@/api/place';
-import { PlaceDetail } from '@/types/place';
+import {
+  useLikeToggleMutation,
+  usePlaceDetailQuery,
+} from '@/hooks/queries/usePlaceQuery';
+import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
+import { useToastStore } from '@/stores/useToastStore';
 import { resolveThumbnailPath } from '@/utils/petMapper';
 
 import { PlaceDetailHeader } from './components/PlaceDetailHeader';
@@ -15,60 +19,60 @@ import { PlaceReviews } from './components/PlaceReviews';
 
 export default function PlaceDetailPage() {
   const params = useParams();
-  const [data, setData] = useState<PlaceDetail | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isLiked, setIsLiked] = useState(false);
+  const idString = Array.isArray(params.id) ? params.id[0] : params.id;
+  const placeId = parseInt(idString || '', 10);
 
-  useEffect(() => {
-    const fetchDetail = async () => {
-      try {
-        const idString = Array.isArray(params.id) ? params.id[0] : params.id;
-        if (!idString) {
-          setError('잘못된 장소 ID입니다.');
-          setLoading(false);
-          return;
-        }
+  const { data, isLoading: loading, error } = usePlaceDetailQuery(placeId);
+  const { data: likedPlaceIds } = useLikedPlaceIdsQuery();
+  const { addToast } = useToastStore();
 
-        const placeId = parseInt(idString, 10);
-        if (isNaN(placeId)) throw new Error('Invalid Place ID');
+  // 서버 데이터 우선, 없으면 Optimistic UI 상태
+  const isServerLiked = likedPlaceIds?.includes(placeId) ?? false;
+  const [optimisticLiked, setOptimisticLiked] = useState<boolean | null>(null);
+  const isLiked = optimisticLiked !== null ? optimisticLiked : isServerLiked;
 
-        const result = await getPlaceDetail(placeId);
+  const { mutate: toggleLike, isPending: isLikeToggling } =
+    useLikeToggleMutation();
 
-        if (!result || !result.placeInfo) {
-          throw new Error('No Data');
-        }
+  if (Number.isNaN(placeId) || placeId <= 0) {
+    return (
+      <div className='flex h-full min-h-[50vh] flex-col items-center justify-center p-6'>
+        <p className='text-lg font-semibold text-gray-700'>
+          잘못된 접근입니다.
+        </p>
+        <p className='mt-2 text-sm text-gray-500'>
+          장소 정보를 찾을 수 없습니다.
+        </p>
+      </div>
+    );
+  }
 
-        setData(result);
-        setIsLiked(!!result.placeInfo.isLiked);
-      } catch (err) {
-        console.error(err);
-        setError('장소 정보를 불러오는데 실패했습니다.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDetail();
-  }, [params.id]);
+  const handleLikeToggle = () => {
+    if (!data?.placeInfo || isLikeToggling) return;
 
-  const handleLikeToggle = async () => {
-    if (!data) return;
-
-    // Optimistic UI update
     const previousState = isLiked;
-    setIsLiked(!previousState);
+    setOptimisticLiked(!previousState);
 
-    try {
-      if (previousState) {
-        await unlikePlace(data.placeInfo.id);
-      } else {
-        await likePlace(data.placeInfo.id);
-      }
-    } catch (error) {
-      console.error('Failed to toggle like:', error);
-      // Revert on error
-      setIsLiked(previousState);
-    }
+    toggleLike(
+      { placeId: data.placeInfo.id, isCurrentlyLiked: previousState },
+      {
+        onSuccess: () => {
+          addToast(
+            previousState
+              ? '찜 목록에서 제외되었습니다.'
+              : '찜 목록에 추가되었습니다.',
+            previousState ? 'default' : 'success',
+          );
+        },
+        onError: () => {
+          setOptimisticLiked(previousState);
+          addToast('요청에 실패했습니다. 다시 시도해주세요.', 'error');
+        },
+        onSettled: () => {
+          setOptimisticLiked(null);
+        },
+      },
+    );
   };
 
   if (loading) {
@@ -79,10 +83,10 @@ export default function PlaceDetailPage() {
     );
   }
 
-  if (error || !data) {
+  if (error || !data || !data.placeInfo) {
     return (
       <div className='flex min-h-screen items-center justify-center text-gray-500'>
-        {error || '장소를 찾을 수 없습니다.'}
+        {error ? error.message : '장소를 찾을 수 없습니다.'}
       </div>
     );
   }
