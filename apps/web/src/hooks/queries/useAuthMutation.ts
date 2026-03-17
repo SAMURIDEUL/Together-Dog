@@ -101,6 +101,7 @@ export const useLogoutMutation = ({
     onSuccess: () => {
       // 로그아웃 성공 시 로컬스토리지의 토큰 제거
       if (typeof window !== 'undefined') {
+        localStorage.removeItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
         localStorage.removeItem('accessToken');
       }
       onSuccess?.();
