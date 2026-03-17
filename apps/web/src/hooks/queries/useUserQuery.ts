@@ -14,7 +14,7 @@ import {
 import { ChangePasswordRequest, UpdateUserRequest } from '@/types/user';
 
 // ─── Query Keys ───
-const userKeys = {
+export const userKeys = {
   all: ['user'] as const,
   myInfo: () => [...userKeys.all, 'myInfo'] as const,
 };

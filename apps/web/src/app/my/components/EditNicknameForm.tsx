@@ -1,9 +1,13 @@
 'use client';
 
 import { Button, Input } from '@together-dog/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 
-import { useUpdateNicknameMutation } from '@/hooks/queries/useUserQuery';
+import {
+  useUpdateNicknameMutation,
+  userKeys,
+} from '@/hooks/queries/useUserQuery';
 import { useToastStore } from '@/stores/useToastStore';
 
 interface EditNicknameFormProps {
@@ -16,9 +20,12 @@ export const EditNicknameForm = ({
   const [nickname, setNickname] = useState(currentNickname);
   const [isEditing, setIsEditing] = useState(false);
   const { addToast } = useToastStore();
+  const queryClient = useQueryClient();
 
   const { mutate: updateNickname, isPending } = useUpdateNicknameMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      // 캐시 갱신 완료 후 편집 모드 종료 (stale 닉네임 깜빡임 방지)
+      await queryClient.invalidateQueries({ queryKey: userKeys.myInfo() });
       addToast('닉네임이 변경되었습니다.', 'success');
       setIsEditing(false);
     },
