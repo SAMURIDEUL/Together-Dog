@@ -102,7 +102,13 @@ export const useLikedPlaceIdsQuery = () => {
 
 // ─── 찜 목록 조회 (/users/likes → 장소 상세 조회) ───
 export const useLikedPlacesQuery = () => {
-  const { data: placeIds, isLoading: isIdsLoading } = useLikedPlaceIdsQuery();
+  const {
+    data: placeIds,
+    isLoading: isIdsLoading,
+    isError: isIdsError,
+    error: idsError,
+    refetch: refetchIds,
+  } = useLikedPlaceIdsQuery();
 
   const query = useQuery({
     queryKey: [
@@ -125,13 +131,24 @@ export const useLikedPlacesQuery = () => {
       );
       return results.filter((r): r is NonNullable<typeof r> => r !== null);
     },
-    enabled: !!placeIds, // placeIds가 로딩 완료된 후에만 실행
+    enabled: !!placeIds && !isIdsError, // placeIds가 로딩 완료된 후에만 실행
     staleTime: 1000 * 60 * 3,
   });
 
   return {
     ...query,
     isLoading: isIdsLoading || query.isLoading,
+    isError: isIdsError || query.isError,
+    error: idsError || query.error,
+    refetch: async (options?: any) => {
+      if (isIdsError || !placeIds) {
+        const idResult = await refetchIds(options);
+        if (idResult.isError) {
+          return idResult as any;
+        }
+      }
+      return query.refetch(options);
+    },
   };
 };
 
