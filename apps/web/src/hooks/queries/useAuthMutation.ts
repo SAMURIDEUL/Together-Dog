@@ -99,14 +99,17 @@ export const useLogoutMutation = ({
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      // 로그아웃 성공 시 로컬스토리지의 토큰 제거
+      // API 성공 후 실행될 콜백
+      onSuccess?.();
+    },
+    onError,
+    onSettled: () => {
+      // API 요청의 성공/실패 여부와 관계없이 토큰 제거 처리
       if (typeof window !== 'undefined') {
         localStorage.removeItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
         localStorage.removeItem(CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN);
         localStorage.removeItem('accessToken');
       }
-      onSuccess?.();
     },
-    onError,
   });
 };
