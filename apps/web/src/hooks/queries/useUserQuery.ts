@@ -86,10 +86,7 @@ export const useDeleteAccountMutation = ({
 export const useMyReviewsQuery = (page = 0, size = 5) => {
   return useQuery({
     queryKey: [...userKeys.all, 'myReviews', page, size] as const,
-    queryFn: async () => {
-      const response = await getMyReviews(page, size);
-      return response.data;
-    },
+    queryFn: () => getMyReviews(page, size),
     staleTime: 1000 * 60 * 3, // 3분
   });
 };
