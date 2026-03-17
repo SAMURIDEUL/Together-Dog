@@ -55,7 +55,7 @@ export const MyReviewHistory = () => {
   // 별점 렌더링
   const renderStars = (rating: number) => {
     return (
-      <div aria-label={`5점 만점에 ${rating}점`} role='img'>
+      <span aria-label={`5점 만점에 ${rating}점`} role='img'>
         {Array.from({ length: 5 }, (_, i) => (
           <span
             key={i}
@@ -65,14 +65,16 @@ export const MyReviewHistory = () => {
             ★
           </span>
         ))}
-      </div>
+      </span>
     );
   };
 
   if (isLoading) {
     return (
       <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8'>
-        <h2 className='mb-4 text-lg font-bold text-gray-900'>My Review History</h2>
+        <h2 className='mb-4 text-lg font-bold text-gray-900'>
+          My Review History
+        </h2>
         <div className='flex items-center justify-center py-12'>
           <div className='h-6 w-6 animate-spin rounded-full border-2 border-orange-400 border-t-transparent' />
         </div>
@@ -83,7 +85,9 @@ export const MyReviewHistory = () => {
   if (isError) {
     return (
       <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8'>
-        <h2 className='mb-4 text-lg font-bold text-gray-900'>My Review History</h2>
+        <h2 className='mb-4 text-lg font-bold text-gray-900'>
+          My Review History
+        </h2>
         <div className='py-12 text-center'>
           <p className='text-gray-500'>리뷰를 불러오는 데 실패했습니다.</p>
           <button
