@@ -12,7 +12,7 @@ import { useToastStore } from '@/stores/useToastStore';
 
 export const MyReviewHistory = () => {
   const [page, setPage] = useState(0);
-  const { data, isLoading } = useMyReviewsQuery(page, 5);
+  const { data, isLoading, isError, refetch } = useMyReviewsQuery(page, 5);
   const { openModal, closeModal } = useModalStore();
   const { addToast } = useToastStore();
 
@@ -71,9 +71,30 @@ export const MyReviewHistory = () => {
 
   if (isLoading) {
     return (
-      <div className='flex items-center justify-center py-12'>
-        <div className='h-6 w-6 animate-spin rounded-full border-2 border-orange-400 border-t-transparent' />
-      </div>
+      <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8'>
+        <h2 className='mb-4 text-lg font-bold text-gray-900'>My Review History</h2>
+        <div className='flex items-center justify-center py-12'>
+          <div className='h-6 w-6 animate-spin rounded-full border-2 border-orange-400 border-t-transparent' />
+        </div>
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className='rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8'>
+        <h2 className='mb-4 text-lg font-bold text-gray-900'>My Review History</h2>
+        <div className='py-12 text-center'>
+          <p className='text-gray-500'>리뷰를 불러오는 데 실패했습니다.</p>
+          <button
+            className='mt-3 text-sm font-medium text-orange-500 hover:text-orange-600'
+            type='button'
+            onClick={() => refetch()}
+          >
+            다시 시도
+          </button>
+        </div>
+      </section>
     );
   }
 
