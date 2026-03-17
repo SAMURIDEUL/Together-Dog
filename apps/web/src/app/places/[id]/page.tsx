@@ -1,12 +1,13 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
-import { likePlace, unlikePlace } from '@/api/place';
-import { usePlaceDetailQuery } from '@/hooks/queries/usePlaceQuery';
+import {
+  useLikeToggleMutation,
+  usePlaceDetailQuery,
+} from '@/hooks/queries/usePlaceQuery';
 import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
 import { useToastStore } from '@/stores/useToastStore';
 import { resolveThumbnailPath } from '@/utils/petMapper';
@@ -23,15 +24,15 @@ export default function PlaceDetailPage() {
 
   const { data, isLoading: loading, error } = usePlaceDetailQuery(placeId);
   const { data: likedPlaceIds } = useLikedPlaceIdsQuery();
+  const { addToast } = useToastStore();
 
   // 서버 데이터 우선, 없으면 Optimistic UI 상태
   const isServerLiked = likedPlaceIds?.includes(placeId) ?? false;
   const [optimisticLiked, setOptimisticLiked] = useState<boolean | null>(null);
-
   const isLiked = optimisticLiked !== null ? optimisticLiked : isServerLiked;
 
-  const queryClient = useQueryClient();
-  const { addToast } = useToastStore();
+  const { mutate: toggleLike, isPending: isLikeToggling } =
+    useLikeToggleMutation();
 
   if (Number.isNaN(placeId) || placeId <= 0) {
     return (
@@ -46,44 +47,32 @@ export default function PlaceDetailPage() {
     );
   }
 
-  const handleLikeToggle = async () => {
-    if (!data || !data.placeInfo) return;
+  const handleLikeToggle = () => {
+    if (!data?.placeInfo || isLikeToggling) return;
 
-    // Optimistic UI update
     const previousState = isLiked;
     setOptimisticLiked(!previousState);
 
-    try {
-      if (previousState) {
-        await unlikePlace(data.placeInfo.id);
-        addToast('찜 목록에서 제외되었습니다.', 'default');
-      } else {
-        await likePlace(data.placeInfo.id);
-        addToast('찜 목록에 추가되었습니다.', 'success');
-      }
-    } catch (error) {
-      console.error('Failed to toggle like:', error);
-      // Revert on error
-      setOptimisticLiked(previousState);
-      addToast('요청에 실패했습니다. 다시 시도해주세요.', 'error');
-      return;
-    }
-
-    try {
-      // 장소 상세 정보 캐시 무효화 (해당 장소) 및 찜 목록 아이디 캐시 무효화
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaceIds'] }),
-        queryClient.invalidateQueries({ queryKey: ['user', 'likedPlaces'] }),
-        queryClient.invalidateQueries({
-          queryKey: ['places', 'detail', data.placeInfo.id],
-        }),
-      ]);
-    } catch (refetchError) {
-      console.error('Failed to refetch queries:', refetchError);
-    } finally {
-      // 실제 API 데이터 페칭 완료(또는 에러) 후에 Optimistic 상태 해제 (Blink 방지)
-      setOptimisticLiked(null);
-    }
+    toggleLike(
+      { placeId: data.placeInfo.id, isCurrentlyLiked: previousState },
+      {
+        onSuccess: () => {
+          addToast(
+            previousState
+              ? '찜 목록에서 제외되었습니다.'
+              : '찜 목록에 추가되었습니다.',
+            previousState ? 'default' : 'success',
+          );
+        },
+        onError: () => {
+          setOptimisticLiked(previousState);
+          addToast('요청에 실패했습니다. 다시 시도해주세요.', 'error');
+        },
+        onSettled: () => {
+          setOptimisticLiked(null);
+        },
+      },
+    );
   };
 
   if (loading) {
