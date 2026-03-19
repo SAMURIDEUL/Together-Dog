@@ -1,15 +1,25 @@
 'use client';
 
 import { useInfiniteQuery } from '@tanstack/react-query';
-import Image from 'next/image';
 
 import { getPlaceReviews } from '@/api/place';
+import { useDeletePlaceReviewMutation } from '@/hooks/queries/useReviewMutation';
+import { useMyInfoQuery } from '@/hooks/queries/useUserQuery';
+import { useModalStore } from '@/stores/useModalStore';
+import { useToastStore } from '@/stores/useToastStore';
+
+import { ReviewForm } from './ReviewForm';
+import { ReviewItem } from './ReviewItem';
 
 interface PlaceReviewsProps {
   placeId: number;
 }
 
 export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
+  const { data: myInfo } = useMyInfoQuery();
+  const { openModal, closeModal } = useModalStore();
+  const { addToast } = useToastStore();
+
   const {
     data,
     fetchNextPage,
@@ -25,6 +35,26 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
       lastPage.hasNext ? allPages.length : undefined,
   });
 
+  const { mutate: deleteReview } = useDeletePlaceReviewMutation(placeId, {
+    onSuccess: () => addToast('리뷰가 삭제되었습니다.', 'success'),
+    onError: () => addToast('리뷰 삭제에 실패했습니다.', 'error'),
+  });
+
+  const handleDelete = (reviewId: number) => {
+    openModal({
+      title: '리뷰 삭제',
+      content: '정말 이 리뷰를 삭제하시겠습니까?',
+      primaryAction: {
+        label: '삭제',
+        onClick: () => {
+          closeModal();
+          deleteReview(reviewId);
+        },
+      },
+      secondaryAction: { label: '취소', onClick: closeModal },
+    });
+  };
+
   const reviews = data?.pages.flatMap((page) => page.reviews) || [];
 
   if (status === 'pending') {
@@ -35,64 +65,33 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
     );
   }
 
-  if (status === 'success' && reviews.length === 0) {
-    return (
-      <div className='bg-white px-4 py-8 text-center text-gray-500'>
-        아직 작성된 리뷰가 없습니다.
-      </div>
-    );
-  }
-
   return (
     <div className='bg-white px-4 py-6'>
       <h2 className='mb-4 text-lg font-bold text-gray-900'>
         리뷰 <span className='text-orange-500'>{reviews.length}</span>
       </h2>
 
-      <div className='flex flex-col gap-6'>
-        {reviews.map((review) => (
-          <div
-            key={review.id}
-            className='border-b border-gray-100 pb-6 last:border-0 last:pb-0'
-          >
-            <div className='mb-2 flex items-center justify-between'>
-              <span className='font-medium text-gray-900'>
-                사용자 {review.userId}
-              </span>
-              <span className='text-xs text-gray-400'>
-                {review.createdAt.split('T')[0]}
-              </span>
-            </div>
-
-            <div className='mb-2 flex text-sm text-yellow-500'>
-              {'★'.repeat(review.rating)}
-              {'☆'.repeat(5 - review.rating)}
-            </div>
-
-            <p className='whitespace-pre-wrap text-sm text-gray-700'>
-              {review.content}
-            </p>
-
-            {review.photos && review.photos.length > 0 && (
-              <div className='mt-3 flex gap-2 overflow-x-auto'>
-                {review.photos.map((photo) => (
-                  <div
-                    key={photo}
-                    className='relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100'
-                  >
-                    <Image
-                      fill
-                      alt='Review photo'
-                      className='object-cover'
-                      src={photo}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+      {/* 리뷰 작성 폼 */}
+      <div className='mb-6'>
+        <ReviewForm placeId={placeId} />
       </div>
+
+      {reviews.length === 0 ? (
+        <p className='py-4 text-center text-sm text-gray-400'>
+          아직 작성된 리뷰가 없습니다.
+        </p>
+      ) : (
+        <div className='flex flex-col gap-6'>
+          {reviews.map((review) => (
+            <ReviewItem
+              key={review.id}
+              currentUserId={myInfo?.id}
+              review={review}
+              onDelete={handleDelete}
+            />
+          ))}
+        </div>
+      )}
 
       {hasNextPage && (
         <button
