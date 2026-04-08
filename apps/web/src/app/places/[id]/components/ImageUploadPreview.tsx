@@ -6,6 +6,7 @@ import { RefObject } from 'react';
 interface ImageUploadPreviewProps {
   images: File[];
   previews: string[];
+  totalCount?: number;
   fileInputRef: RefObject<HTMLInputElement | null>;
   onAdd: (files: File[]) => void;
   onRemove: (index: number) => void;
@@ -14,52 +15,59 @@ interface ImageUploadPreviewProps {
 export const ImageUploadPreview = ({
   images,
   previews,
+  totalCount,
   fileInputRef,
   onAdd,
   onRemove,
-}: ImageUploadPreviewProps) => (
-  <div className='mb-5'>
-    <p className='mb-1.5 text-sm font-medium text-gray-600'>
-      사진 ({images.length}/3)
-    </p>
-    <div className='flex gap-2'>
-      {previews.map((preview, idx) => (
-        <div
-          key={`preview-${images[idx]?.name || idx}`}
-          className='group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100'
-        >
-          <Image
-            fill
-            alt={`미리보기 ${idx + 1}`}
-            className='object-cover'
-            src={preview}
-          />
-          <button
-            className='absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100'
-            type='button'
-            onClick={() => onRemove(idx)}
+}: ImageUploadPreviewProps) => {
+  const displayCount = totalCount ?? images.length;
+  return (
+    <div className='mb-5'>
+      <p className='mb-1.5 text-sm font-medium text-gray-600'>
+        사진 ({displayCount}/3)
+      </p>
+      <div className='flex gap-2'>
+        {previews.map((preview, idx) => (
+          <div
+            key={`preview-${preview.substring(0, 50)}`}
+            className='group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100'
           >
-            ✕
+            <Image
+              fill
+              alt={`미리보기 ${idx + 1}`}
+              className='object-cover'
+              src={preview}
+              unoptimized={
+                preview.startsWith('/uploads') || preview.startsWith('http')
+              }
+            />
+            <button
+              className='absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100'
+              type='button'
+              onClick={() => onRemove(idx)}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+        {displayCount < 3 && (
+          <button
+            className='flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-gray-400 hover:border-orange-300 hover:text-orange-500'
+            type='button'
+            onClick={() => fileInputRef.current?.click()}
+          >
+            📷
           </button>
-        </div>
-      ))}
-      {images.length < 3 && (
-        <button
-          className='flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-gray-400 hover:border-orange-300 hover:text-orange-500'
-          type='button'
-          onClick={() => fileInputRef.current?.click()}
-        >
-          📷
-        </button>
-      )}
+        )}
+      </div>
+      <input
+        ref={fileInputRef}
+        multiple
+        accept='image/*'
+        className='hidden'
+        type='file'
+        onChange={(e) => onAdd(Array.from(e.target.files || []))}
+      />
     </div>
-    <input
-      ref={fileInputRef}
-      multiple
-      accept='image/*'
-      className='hidden'
-      type='file'
-      onChange={(e) => onAdd(Array.from(e.target.files || []))}
-    />
-  </div>
-);
+  );
+};

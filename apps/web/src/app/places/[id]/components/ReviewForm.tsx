@@ -10,14 +10,31 @@ import { StarRating } from './StarRating';
 
 interface ReviewFormProps {
   placeId: number;
+  initialData?: {
+    id: number;
+    rating: number;
+    content: string;
+    visitDate: string;
+    photos?: { id?: number; photoUrl: string }[];
+  };
+  onCancelEdit?: () => void;
 }
 
-export const ReviewForm = ({ placeId }: ReviewFormProps) => {
+export const ReviewForm = ({
+  placeId,
+  initialData,
+  onCancelEdit,
+}: ReviewFormProps) => {
   const { isLoggedIn } = useAuthStore();
-  const form = useReviewForm(placeId);
+  const form = useReviewForm(placeId, initialData, () => {
+    if (onCancelEdit) onCancelEdit();
+  });
 
   const handleOpenForm = () => form.setIsOpen(true);
-  const handleCloseForm = () => form.resetForm();
+  const handleCloseForm = () => {
+    form.resetForm();
+    if (onCancelEdit) onCancelEdit();
+  };
   const handleHoverStar = (star: number) => form.setHoverRating(star);
   const handleLeaveStar = () => form.setHoverRating(0);
   const handleRateStar = (star: number) => form.setRating(star);
@@ -47,7 +64,9 @@ export const ReviewForm = ({ placeId }: ReviewFormProps) => {
       }}
     >
       <div className='mb-4 flex items-center justify-between'>
-        <h3 className='text-base font-bold text-gray-900'>리뷰 작성</h3>
+        <h3 className='text-base font-bold text-gray-900'>
+          {initialData ? '리뷰 수정' : '리뷰 작성'}
+        </h3>
         <button
           className='text-sm text-gray-400 hover:text-gray-600'
           type='button'
@@ -108,6 +127,7 @@ export const ReviewForm = ({ placeId }: ReviewFormProps) => {
         fileInputRef={form.fileInputRef}
         images={form.images}
         previews={form.previews}
+        totalCount={form.totalPhotoCount}
         onAdd={handleAddImages}
         onRemove={handleRemoveImage}
       />
@@ -120,7 +140,8 @@ export const ReviewForm = ({ placeId }: ReviewFormProps) => {
         size='md'
         type='submit'
       >
-        {form.isPending ? '등록 중...' : '리뷰 등록'}
+        {form.isPending && '처리 중...'}
+        {!form.isPending && (initialData ? '리뷰 수정' : '리뷰 등록')}
       </Button>
     </form>
   );
