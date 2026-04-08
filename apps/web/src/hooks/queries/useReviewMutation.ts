@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createReview, deleteReview, updateReview } from '@/api/review';
+import { placeKeys } from '@/hooks/queries/usePlaceQuery';
 import { CreateReviewRequest, UpdateReviewRequest } from '@/types/review';
 
 interface UseMutationCallbacks {
@@ -21,6 +22,7 @@ export const useCreateReviewMutation = (
     mutationFn: (data: CreateReviewRequest) => createReview(placeId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews', placeId] });
+      queryClient.invalidateQueries({ queryKey: placeKeys.detail(placeId) });
       onSuccess?.();
     },
     onError,
@@ -40,6 +42,7 @@ export const useUpdateReviewMutation = (
       updateReview(placeId, reviewId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews', placeId] });
+      queryClient.invalidateQueries({ queryKey: placeKeys.detail(placeId) });
       onSuccess?.();
     },
     onError,
@@ -57,6 +60,7 @@ export const useDeletePlaceReviewMutation = (
     mutationFn: (reviewId: number) => deleteReview(placeId, reviewId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews', placeId] });
+      queryClient.invalidateQueries({ queryKey: placeKeys.detail(placeId) });
       // 마이페이지 리뷰 목록도 무효화
       queryClient.invalidateQueries({ queryKey: ['user', 'myReviews'] });
       onSuccess?.();
