@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: '**',
       },
     ],
   },
@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
       {
         source: '/api/:path*',
         destination: `${process.env.API_URL || 'http://localhost:8080'}/:path*`,
+      },
+      {
+        source: '/uploads/:path*',
+        destination: `${process.env.API_URL || 'http://localhost:8080'}/uploads/:path*`,
       },
     ];
   },
