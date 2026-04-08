@@ -27,12 +27,25 @@ export const apiClient = axios.create({
  */
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // localStorage에서 토큰 가져오기
+    // 만약 데이터가 FormData인 경우, 브라우저가 자동으로 boundary가 포함된 Content-Type을
+    // 설정하도록 기본 application/json Content-Type을 제거합니다.
+    if (config.data instanceof FormData) {
+      if (config.headers && typeof config.headers.delete === 'function') {
+        config.headers.delete('Content-Type');
+      } else if (config.headers) {
+        delete config.headers['Content-Type'];
+      }
+    }
+
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
 
       if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
+        if (typeof config.headers.set === 'function') {
+          config.headers.set('Authorization', `Bearer ${token}`);
+        } else {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
     }
 
@@ -67,7 +80,7 @@ apiClient.interceptors.response.use(
           if (typeof window !== 'undefined') {
             localStorage.removeItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
             localStorage.removeItem(CONSTANTS.STORAGE_KEYS.USER);
-            // window.location.href = '/login'; // 로그인 로직 필요 시 주석 해제
+            window.location.href = '/login'; // 좀비 로그인 상태 방지를 위해 리다이렉트 활성화
           }
           break;
         case 403:
@@ -80,7 +93,12 @@ apiClient.interceptors.response.use(
           break;
         case 500:
           // 서버 에러
-          if (isDev) console.error('서버 오류가 발생했습니다.');
+          if (isDev) {
+            console.error('서버 오류가 발생했습니다.');
+            if (error.response?.data) {
+              console.error('서버 에러 상세:', error.response.data);
+            }
+          }
           break;
         default:
           if (isDev) console.error('오류가 발생했습니다:', error.message);
