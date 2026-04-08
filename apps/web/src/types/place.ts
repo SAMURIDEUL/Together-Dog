@@ -61,6 +61,11 @@ export interface PlaceDetailResponse {
   timestamp: string;
 }
 
+export interface PlaceReviewPhoto {
+  id: number;
+  photoUrl: string;
+}
+
 export interface PlaceReview {
   id: number;
   placeId: number;
@@ -69,7 +74,8 @@ export interface PlaceReview {
   content: string;
   visitDate: string;
   createdAt: string;
-  photos: string[];
+  photos: PlaceReviewPhoto[] | string[];
+  nickname?: string;
 }
 
 export interface PlaceReviewResponse {
