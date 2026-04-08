@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 
+import { AuthorizedImage } from '@/components/shared/AuthorizedImage';
 import { resolveThumbnailPath } from '@/utils/petMapper';
 
 interface PhotoGalleryProps {
@@ -62,12 +62,14 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
           type='button'
           onClick={() => openModal(0)}
         >
-          <Image
+          <AuthorizedImage
             fill
             priority
             alt={placeName}
             className='object-contain'
+            sizes='(max-width: 768px) 100vw, 800px'
             src={resolved[0]}
+            unoptimized={resolved[0]?.startsWith('/uploads')}
           />
         </button>
       )}
@@ -81,12 +83,14 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
               type='button'
               onClick={() => openModal(i)}
             >
-              <Image
+              <AuthorizedImage
                 fill
                 alt={`${placeName} ${i + 1}`}
                 className='object-cover'
                 priority={i === 0}
+                sizes='(max-width: 768px) 50vw, 400px'
                 src={src}
+                unoptimized={src?.startsWith('/uploads')}
               />
             </button>
           ))}
@@ -101,26 +105,31 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
             type='button'
             onClick={() => openModal(0)}
           >
-            <Image
+            <AuthorizedImage
               fill
               priority
               alt={`${placeName} 1`}
               className='object-cover'
+              sizes='(max-width: 768px) 66vw, 600px'
               src={resolved[0]}
+              unoptimized={resolved[0]?.startsWith('/uploads')}
             />
           </button>
 
           {/* 오른쪽 상단 */}
           <button
             className='relative bg-gray-100'
-            type='button'
+            // eslint-disable-next-line react/jsx-sort-props
             onClick={() => openModal(1)}
+            type='button'
           >
-            <Image
+            <AuthorizedImage
               fill
               alt={`${placeName} 2`}
               className='object-cover'
+              sizes='(max-width: 768px) 33vw, 300px'
               src={resolved[1]}
+              unoptimized={resolved[1]?.startsWith('/uploads')}
             />
           </button>
 
@@ -130,11 +139,13 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
             type='button'
             onClick={() => openModal(2)}
           >
-            <Image
+            <AuthorizedImage
               fill
               alt={`${placeName} 3`}
               className='object-cover'
+              sizes='(max-width: 768px) 33vw, 300px'
               src={resolved[2]}
+              unoptimized={resolved[2]?.startsWith('/uploads')}
             />
             {count > 3 && (
               <div className='absolute inset-0 flex items-center justify-center bg-black/40 text-lg font-bold text-white'>
@@ -180,12 +191,13 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
             className='relative h-[80vh] w-[90vw] max-w-4xl'
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
+            <AuthorizedImage
               fill
               alt={`${placeName} ${activeIndex + 1}`}
               className='object-contain'
               sizes='90vw'
               src={resolved[activeIndex]}
+              unoptimized={resolved[activeIndex]?.startsWith('/uploads')}
             />
           </div>
 
