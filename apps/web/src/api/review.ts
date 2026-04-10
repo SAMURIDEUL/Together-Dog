@@ -38,11 +38,6 @@ export const createReview = async (
   const response = await apiClient.post<CreateReviewApiResponse>(
     `/places/${placeId}/reviews`,
     formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
   );
   return response.data;
 };
@@ -78,14 +73,9 @@ export const updateReview = async (
     data.newImages.forEach((file) => formData.append('newImages', file));
   }
 
-  const response = await apiClient.put<UpdateReviewApiResponse>(
+  const response = await apiClient.post<UpdateReviewApiResponse>(
     `/places/${placeId}/reviews/${reviewId}`,
     formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
   );
   return response.data;
 };
@@ -107,14 +97,25 @@ export const getMyReviews = async (
     params: { page, size },
   });
 
-  // 데이터가 없을 경우 기본 객체 반환으로 'Query data cannot be undefined' 유발 방지
-  return (
-    response.data.data || {
-      content: [],
+  // 백엔드 응답 형태가 { content: [] } 가 아니라 { reviews: [] } 이거나 단순 배열 일 수 있어 안전하게 처리
+  const resData = response.data.data as any;
+
+  if (Array.isArray(resData)) {
+    // 단순히 배열로 넘어올 경우
+    return {
+      content: resData,
       page: 0,
-      size: 10,
-      totalElements: 0,
-      totalPages: 0,
-    }
-  );
+      size: resData.length,
+      totalElements: resData.length,
+      totalPages: 1,
+    };
+  }
+
+  return {
+    content: resData?.content || resData?.reviews || [],
+    page: resData?.page || 0,
+    size: resData?.size || 10,
+    totalElements: resData?.totalElements || 0,
+    totalPages: resData?.totalPages || 0,
+  };
 };
