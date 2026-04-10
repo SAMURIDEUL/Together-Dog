@@ -29,7 +29,7 @@ export const ImageUploadPreview = ({
       <div className='flex gap-2'>
         {previews.map((preview, idx) => (
           <div
-            key={`preview-${preview.substring(0, 50)}`}
+            key={`preview-${idx}-${preview}`}
             className='group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100'
           >
             <Image
@@ -66,7 +66,10 @@ export const ImageUploadPreview = ({
         accept='image/*'
         className='hidden'
         type='file'
-        onChange={(e) => onAdd(Array.from(e.target.files || []))}
+        onChange={(e) => {
+          onAdd(Array.from(e.target.files || []));
+          e.target.value = '';
+        }}
       />
     </div>
   );
