@@ -135,7 +135,10 @@ export const ReviewForm = ({
       <Button
         className='w-full text-sm'
         isDisabled={
-          form.isPending || form.rating === 0 || form.content.trim().length < 10
+          form.isPending ||
+          form.rating === 0 ||
+          form.content.trim().length < 10 ||
+          !form.visitDate
         }
         size='md'
         type='submit'

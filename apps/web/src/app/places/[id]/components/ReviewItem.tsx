@@ -127,10 +127,18 @@ export const ReviewItem = ({
         </div>
       </div>
 
-      <div className='mb-2 flex text-sm text-yellow-500'>
-        {'★'.repeat(review.rating)}
-        {'☆'.repeat(5 - review.rating)}
-      </div>
+      {(() => {
+        const safeRating = Math.max(
+          0,
+          Math.min(5, Math.floor(review.rating || 0)),
+        );
+        return (
+          <div className='mb-2 flex text-sm text-yellow-500'>
+            {'★'.repeat(safeRating)}
+            {'☆'.repeat(5 - safeRating)}
+          </div>
+        );
+      })()}
 
       <p className='whitespace-pre-wrap text-sm text-gray-700'>
         {review.content}
@@ -140,7 +148,8 @@ export const ReviewItem = ({
         <div className='mt-3 flex gap-2 overflow-x-auto'>
           {reviewPhotos.map((photo: string, idx: number) => (
             <button
-              key={photo}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${idx}-${photo}`}
               className='relative h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg bg-gray-100 text-left disabled:cursor-auto'
               type='button'
               onClick={() => {

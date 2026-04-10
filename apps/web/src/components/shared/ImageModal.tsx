@@ -19,15 +19,20 @@ export const ImageModal = ({
   onClose,
   photos,
 }: ImageModalProps) => {
-  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [activeIndex, setActiveIndex] = useState(() =>
+    photos.length > 0
+      ? Math.max(0, Math.min(initialIndex, photos.length - 1))
+      : 0,
+  );
   const count = photos.length;
 
-  // 모달이 열릴 때마다 initialIndex로 초기화
+  // 모달이 열릴 때마다 initialIndex로 초기화 및 범위 검사
   useEffect(() => {
-    if (isOpen) {
-      setActiveIndex(initialIndex);
+    if (isOpen && count > 0) {
+      const safeIndex = Math.max(0, Math.min(initialIndex, count - 1));
+      setActiveIndex(safeIndex);
     }
-  }, [isOpen, initialIndex]);
+  }, [isOpen, initialIndex, count]);
 
   const goPrev = useCallback(
     () => setActiveIndex((i) => (i > 0 ? i - 1 : count - 1)),
@@ -67,12 +72,15 @@ export const ImageModal = ({
 
   return (
     <div
+      aria-label='이미지 확대 보기'
+      aria-modal='true'
       className='fixed inset-0 z-[100] flex items-center justify-center bg-black/90'
       role='dialog'
       onClick={onClose}
     >
       {/* 닫기 버튼 */}
       <button
+        aria-label='닫기'
         className='absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white backdrop-blur-sm transition-colors hover:bg-white/20'
         type='button'
         onClick={onClose}
@@ -83,6 +91,7 @@ export const ImageModal = ({
       {/* 이전 */}
       {count > 1 && (
         <button
+          aria-label='이전 이미지'
           className='absolute left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xl text-white backdrop-blur-sm transition-colors hover:bg-white/20'
           type='button'
           onClick={(e) => {
@@ -112,6 +121,7 @@ export const ImageModal = ({
       {/* 다음 */}
       {count > 1 && (
         <button
+          aria-label='다음 이미지'
           className='absolute right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xl text-white backdrop-blur-sm transition-colors hover:bg-white/20'
           type='button'
           onClick={(e) => {
@@ -128,7 +138,10 @@ export const ImageModal = ({
         <div className='absolute bottom-6 left-1/2 flex max-w-full -translate-x-1/2 gap-2 overflow-x-auto px-4'>
           {photos.map((src, i) => (
             <button
-              key={`indicator-${src}`}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`indicator-${i}-${src}`}
+              aria-current={i === activeIndex}
+              aria-label={`이미지 ${i + 1} 보기`}
               className={`h-2 shrink-0 rounded-full transition-all ${
                 i === activeIndex
                   ? 'w-6 bg-white'
