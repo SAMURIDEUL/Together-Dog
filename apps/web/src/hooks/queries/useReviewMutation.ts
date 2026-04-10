@@ -23,6 +23,7 @@ export const useCreateReviewMutation = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews', placeId] });
       queryClient.invalidateQueries({ queryKey: placeKeys.detail(placeId) });
+      queryClient.invalidateQueries({ queryKey: ['user', 'myReviews'] });
       onSuccess?.();
     },
     onError,
@@ -43,6 +44,7 @@ export const useUpdateReviewMutation = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['reviews', placeId] });
       queryClient.invalidateQueries({ queryKey: placeKeys.detail(placeId) });
+      queryClient.invalidateQueries({ queryKey: ['user', 'myReviews'] });
       onSuccess?.();
     },
     onError,

@@ -55,6 +55,7 @@ export const CategoryPin = ({
             <div className='relative h-[30px] w-[30px] overflow-hidden rounded-full bg-white'>
               <Image
                 fill
+                priority
                 alt={iconName}
                 className='object-contain p-0.5'
                 sizes='30px'
