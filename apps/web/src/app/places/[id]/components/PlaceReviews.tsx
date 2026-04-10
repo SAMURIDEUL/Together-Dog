@@ -85,11 +85,7 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
           {reviews.map((review) => (
             <ReviewItem
               key={review.id}
-              currentUserId={
-                myInfo?.id ||
-                (myInfo as any)?.userId ||
-                (myInfo as any)?.memberId
-              }
+              currentUserId={myInfo?.id}
               placeId={placeId}
               review={review}
               onDelete={handleDelete}

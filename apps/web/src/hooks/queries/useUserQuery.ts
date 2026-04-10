@@ -25,7 +25,12 @@ export const useMyInfoQuery = (enabled = true) => {
     queryKey: userKeys.myInfo(),
     queryFn: async () => {
       const response = await getMyInfo();
-      return response.data;
+      const rawData = response.data;
+      // 백엔드마다 다른 ID 필드명을 'id'로 단일화하여 정규화
+      return {
+        ...rawData,
+        id: rawData.id ?? rawData.userId ?? rawData.memberId,
+      };
     },
     staleTime: 1000 * 60 * 5, // 5분
     enabled,
