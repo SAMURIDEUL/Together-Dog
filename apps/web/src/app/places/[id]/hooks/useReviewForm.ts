@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
   useCreateReviewMutation,
   useUpdateReviewMutation,
 } from '@/hooks/queries/useReviewMutation';
 import { useToastStore } from '@/stores/useToastStore';
+import { compressImage } from '@/utils/imageCompressor';
 
 interface ExistingPhoto {
   id?: number; // 백엔드에서 내려온 사진 ID (있으면 keepImageIds에 사용)
@@ -54,6 +55,19 @@ export const useReviewForm = (
   // 전체 사진 수 = 기존 사진 + 새 사진
   const totalPhotoCount = existingPhotos.length + newImages.length;
 
+  // 언마운트 시 메모리 해제를 위한 Ref
+  const previewsRef = useRef<string[]>([]);
+  useEffect(() => {
+    previewsRef.current = newPreviews;
+  }, [newPreviews]);
+
+  useEffect(() => {
+    return () => {
+      // 컴포넌트가 언마운트(화면에서 사라짐)될 때 메모리에 남은 Blob URL 전체 해제
+      previewsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
   const resetForm = () => {
     setIsOpen(!!initialData);
     setRating(initialData?.rating || 0);
@@ -62,6 +76,7 @@ export const useReviewForm = (
       initialData?.visitDate || new Date().toISOString().split('T')[0],
     );
     setExistingPhotos(initialData?.photos || []);
+    newPreviews.forEach((url) => URL.revokeObjectURL(url)); // 폼 초기화 시 생성되었던 메모리 해제
     setNewImages([]);
     setNewPreviews([]);
   };
@@ -87,17 +102,56 @@ export const useReviewForm = (
 
   const isPending = isCreating || isUpdating;
 
-  const addImages = (files: File[]) => {
-    if (totalPhotoCount + files.length > 3) {
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+  const addImages = async (files: File[]) => {
+    // 1차 필터: 개수 제한 (기존 + 추가할 파일이 3장을 넘는지)
+    const remainingSlots = 3 - totalPhotoCount;
+    if (remainingSlots <= 0) {
       addToast('이미지는 최대 3장까지 첨부할 수 있습니다.', 'error');
       return;
     }
-    setNewImages((prev) => [...prev, ...files]);
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) =>
-        setNewPreviews((prev) => [...prev, e.target?.result as string]);
-      reader.readAsDataURL(file);
+
+    let targetFiles = files;
+    if (files.length > remainingSlots) {
+      addToast(
+        `이미지는 최대 3장까지 첨부할 수 있어 ${remainingSlots}장만 추가됩니다.`,
+        'error',
+      );
+      targetFiles = files.slice(0, remainingSlots);
+    }
+
+    // 프론트엔드 이미지 최적화(압축 및 리사이즈) 진행
+    const compressedFiles = await Promise.all(
+      targetFiles.map(async (file) => {
+        try {
+          return await compressImage(file);
+        } catch (error) {
+          console.error('Image compression failed:', error);
+          return file; // 에러 시 원본 반환
+        }
+      }),
+    );
+
+    // 2차 필터: 압축 후 용량 제한 (5MB)
+    const validFiles = compressedFiles.filter((file) => {
+      if (file.size > MAX_FILE_SIZE) {
+        addToast(
+          `'${file.name}'의 용량이 압축 후에도 5MB를 초과합니다.`,
+          'error',
+        );
+        return false;
+      }
+      return true;
+    });
+
+    if (validFiles.length === 0) return;
+
+    setNewImages((prev) => [...prev, ...validFiles]);
+    validFiles.forEach((file) => {
+      // Base64 문자열 대신 브라우저의 고유한 URL(blob:...)을 생성하여 미리보기로 사용합니다.
+      // 동일한 사진을 올려도 매번 다른 URL이 생성되므로 React key 중복 경고가 사라지며 렌더링도 훨씬 빠릅니다!
+      setNewPreviews((prev) => [...prev, URL.createObjectURL(file)]);
     });
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -111,6 +165,9 @@ export const useReviewForm = (
     } else {
       // 새로 추가한 사진 삭제
       const newIndex = index - existingCount;
+
+      URL.revokeObjectURL(newPreviews[newIndex]); // 삭제하는 특정 사진의 메모리 즉시 해제
+
       setNewImages((prev) => prev.filter((_, i) => i !== newIndex));
       setNewPreviews((prev) => prev.filter((_, i) => i !== newIndex));
     }
