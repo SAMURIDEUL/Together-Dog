@@ -2,7 +2,7 @@
 
 import { CONSTANTS } from '@shared/config/constants';
 import Image, { ImageProps } from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export interface AuthorizedImageProps extends Omit<ImageProps, 'src'> {
   src: string;
@@ -15,25 +15,29 @@ export const AuthorizedImage = ({
 }: AuthorizedImageProps) => {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
+  const objectUrlRef = useRef<string | null>(null);
+
+  // 환경 변수에서 백엔드 베이스 URL을 가져옵니다. (설정되지 않은 경우 로컬호스트를 기본값으로 사용)
+  const backendBaseUrl =
+    process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
   useEffect(() => {
-    // URL에 /uploads/ 혹은 review_images가 포함된 경우에만 토큰을 실어서 fetch
+    let isMounted = true;
+    setHasError(false);
+
     const isUploadPath =
       typeof src === 'string' &&
-      (src.includes('uploads') || src.includes('review_images'));
+      (src.includes('uploads') || src.includes('review_images')) &&
+      (src.startsWith(backendBaseUrl) ||
+        (!src.startsWith('http') && !src.startsWith('//')));
 
     if (isUploadPath) {
-      let isMounted = true;
-
       const fetchImage = async () => {
         try {
           const token = localStorage.getItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
-
-          // 백엔드 베이스 URL (MVP 기간 동안 지현님 요청으로 Railway 주소 강제 적용)
-          const backendBaseUrl = 'https://together-dog.up.railway.app';
-
           let fetchUrl = src;
-          if (!src.startsWith('http')) {
+
+          if (!src.startsWith('http') && !src.startsWith('//')) {
             const hasLeadingSlash = src.startsWith('/');
             fetchUrl = `${backendBaseUrl}${hasLeadingSlash ? '' : '/'}${src}`;
           }
@@ -42,14 +46,12 @@ export const AuthorizedImage = ({
             headers: token ? { Authorization: `Bearer ${token}` } : {},
           });
 
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
           const blob = await response.blob();
-
           if (isMounted) {
             const url = URL.createObjectURL(blob);
+            objectUrlRef.current = url;
             setObjectUrl(url);
           }
         } catch (error) {
@@ -59,19 +61,20 @@ export const AuthorizedImage = ({
       };
 
       fetchImage();
-
-      return () => {
-        isMounted = false;
-        if (objectUrl && objectUrl.startsWith('blob:')) {
-          URL.revokeObjectURL(objectUrl);
-        }
-      };
     } else {
-      // 일반 URL은 그대로 사용
       setObjectUrl(src);
+      objectUrlRef.current = src;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [src]);
+
+    return () => {
+      isMounted = false;
+      // Ref를 사용하여 최신 Blob URL을 안전하게 해제
+      if (objectUrlRef.current && objectUrlRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+    };
+  }, [src, backendBaseUrl]);
 
   if (hasError) {
     return (
@@ -89,15 +92,14 @@ export const AuthorizedImage = ({
     );
   }
 
-  // blob: URL인 경우 Next.js의 이미지 최적화(/_next/image)가 불가능하므로 unoptimized 강제
   const isBlob = objectUrl.startsWith('blob:');
 
   return (
     <Image
       alt={alt}
       src={objectUrl}
-      unoptimized={isBlob || props.unoptimized}
       {...props}
+      unoptimized={isBlob || props.unoptimized}
     />
   );
 };
