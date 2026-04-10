@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { AuthorizedImage } from '@/components/shared/AuthorizedImage';
+import { ImageModal } from '@/components/shared/ImageModal';
 import { resolveThumbnailPath } from '@/utils/petMapper';
 
 interface PhotoGalleryProps {
@@ -22,28 +23,7 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
     setModalOpen(true);
   };
 
-  const closeModal = useCallback(() => setModalOpen(false), []);
-
-  const goPrev = useCallback(
-    () => setActiveIndex((i) => (i > 0 ? i - 1 : count - 1)),
-    [count],
-  );
-  const goNext = useCallback(
-    () => setActiveIndex((i) => (i < count - 1 ? i + 1 : 0)),
-    [count],
-  );
-
-  // 키보드 네비게이션
-  useEffect(() => {
-    if (!modalOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal();
-      if (e.key === 'ArrowLeft') goPrev();
-      if (e.key === 'ArrowRight') goNext();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [modalOpen, closeModal, goPrev, goNext]);
+  const closeModal = () => setModalOpen(false);
 
   if (count === 0) {
     return (
@@ -157,86 +137,13 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
       )}
 
       {/* ───── 전체화면 모달 ───── */}
-      {modalOpen && (
-        <div
-          className='fixed inset-0 z-50 flex items-center justify-center bg-black/90'
-          role='dialog'
-          onClick={closeModal}
-        >
-          {/* 닫기 버튼 */}
-          <button
-            className='absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-2xl text-white backdrop-blur-sm transition-colors hover:bg-white/20'
-            type='button'
-            onClick={closeModal}
-          >
-            ✕
-          </button>
-
-          {/* 이전 */}
-          {count > 1 && (
-            <button
-              className='absolute left-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xl text-white backdrop-blur-sm transition-colors hover:bg-white/20'
-              type='button'
-              onClick={(e) => {
-                e.stopPropagation();
-                goPrev();
-              }}
-            >
-              ‹
-            </button>
-          )}
-
-          {/* 이미지 */}
-          <div
-            className='relative h-[80vh] w-[90vw] max-w-4xl'
-            onClick={(e) => e.stopPropagation()}
-          >
-            <AuthorizedImage
-              fill
-              alt={`${placeName} ${activeIndex + 1}`}
-              className='object-contain'
-              sizes='90vw'
-              src={resolved[activeIndex]}
-              unoptimized={resolved[activeIndex]?.startsWith('/uploads')}
-            />
-          </div>
-
-          {/* 다음 */}
-          {count > 1 && (
-            <button
-              className='absolute right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xl text-white backdrop-blur-sm transition-colors hover:bg-white/20'
-              type='button'
-              onClick={(e) => {
-                e.stopPropagation();
-                goNext();
-              }}
-            >
-              ›
-            </button>
-          )}
-
-          {/* 인디케이터 */}
-          {count > 1 && (
-            <div className='absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2'>
-              {resolved.map((src, i) => (
-                <button
-                  key={`indicator-${src}`}
-                  className={`h-2 rounded-full transition-all ${
-                    i === activeIndex
-                      ? 'w-6 bg-white'
-                      : 'w-2 bg-white/40 hover:bg-white/60'
-                  }`}
-                  type='button'
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setActiveIndex(i);
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      <ImageModal
+        altPrefix={placeName}
+        initialIndex={activeIndex}
+        isOpen={modalOpen}
+        photos={resolved}
+        onClose={closeModal}
+      />
     </>
   );
 };

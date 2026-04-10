@@ -3,6 +3,20 @@
 import { useState } from 'react';
 
 import { AuthorizedImage } from '@/components/shared/AuthorizedImage';
+import { ImageModal } from '@/components/shared/ImageModal';
+
+// "2025-03-15 00-00-00" 같은 비표준 포맷 → "YYYY-MM-DD" 로 정규화
+const normalizeDate = (dateStr?: string): string => {
+  if (!dateStr) return new Date().toISOString().split('T')[0];
+  const normalized = dateStr.replace(
+    /(\d{4}-\d{2}-\d{2})\s(\d{2})-(\d{2})-(\d{2})/,
+    '$1T$2:$3:$4',
+  );
+  const date = new Date(normalized);
+  if (!isNaN(date.getTime())) return date.toISOString().split('T')[0];
+  // 그냥 앞 10자리만 잘라서 반환 (T 기준 or 공백 기준)
+  return dateStr.split('T')[0].split(' ')[0];
+};
 
 import { ReviewForm } from './ReviewForm';
 
@@ -29,6 +43,8 @@ export const ReviewItem = ({
   review,
 }: ReviewItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
 
   if (isEditing) {
     // 사진 데이터를 {id?, photoUrl} 형태로 통일
@@ -46,10 +62,7 @@ export const ReviewItem = ({
             id: review.id,
             rating: review.rating,
             content: review.content,
-            visitDate:
-              review.visitDate ||
-              review.createdAt?.split('T')[0] ||
-              new Date().toISOString().split('T')[0],
+            visitDate: normalizeDate(review.visitDate || review.createdAt),
             photos: initialPhotos,
           }}
           placeId={placeId}
@@ -125,10 +138,15 @@ export const ReviewItem = ({
 
       {reviewPhotos.length > 0 && (
         <div className='mt-3 flex gap-2 overflow-x-auto'>
-          {reviewPhotos.map((photo: string) => (
-            <div
+          {reviewPhotos.map((photo: string, idx: number) => (
+            <button
               key={photo}
-              className='relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100'
+              className='relative h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg bg-gray-100 text-left disabled:cursor-auto'
+              type='button'
+              onClick={() => {
+                setViewerInitialIndex(idx);
+                setViewerOpen(true);
+              }}
             >
               <AuthorizedImage
                 fill
@@ -137,10 +155,19 @@ export const ReviewItem = ({
                 src={photo}
                 unoptimized={photo.startsWith('/uploads')}
               />
-            </div>
+            </button>
           ))}
         </div>
       )}
+
+      {/* 이미지 뷰어 모달 */}
+      <ImageModal
+        altPrefix='Review photo'
+        initialIndex={viewerInitialIndex}
+        isOpen={viewerOpen}
+        photos={reviewPhotos}
+        onClose={() => setViewerOpen(false)}
+      />
     </div>
   );
 };

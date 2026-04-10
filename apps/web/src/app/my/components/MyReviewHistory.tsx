@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { AuthorizedImage } from '@/components/shared/AuthorizedImage';
+import { ImageModal } from '@/components/shared/ImageModal';
 import {
   useDeleteReviewMutation,
   useMyReviewsQuery,
@@ -12,6 +14,10 @@ import { useToastStore } from '@/stores/useToastStore';
 
 export const MyReviewHistory = () => {
   const [page, setPage] = useState(0);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerPhotos, setViewerPhotos] = useState<string[]>([]);
+  const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
+
   const { data, isLoading, isError, refetch } = useMyReviewsQuery(page, 5);
   const { openModal, closeModal } = useModalStore();
   const { addToast } = useToastStore();
@@ -143,6 +149,32 @@ export const MyReviewHistory = () => {
                   <p className='mt-1.5 line-clamp-2 text-sm text-gray-700'>
                     {review.content}
                   </p>
+
+                  {/* 사진 표시 */}
+                  {review.photoUrls && review.photoUrls.length > 0 && (
+                    <div className='mt-3 flex gap-2 overflow-x-auto'>
+                      {review.photoUrls.map((photo: string, idx: number) => (
+                        <button
+                          key={photo}
+                          className='relative h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg bg-gray-100 text-left disabled:cursor-auto'
+                          type='button'
+                          onClick={() => {
+                            setViewerPhotos(review.photoUrls!);
+                            setViewerInitialIndex(idx);
+                            setViewerOpen(true);
+                          }}
+                        >
+                          <AuthorizedImage
+                            fill
+                            alt='Review photo'
+                            className='object-cover'
+                            src={photo}
+                            unoptimized={photo.startsWith('/uploads')}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* 장소 보기 / 삭제 */}
@@ -191,6 +223,15 @@ export const MyReviewHistory = () => {
           )}
         </div>
       )}
+
+      {/* 이미지 뷰어 모달 */}
+      <ImageModal
+        altPrefix='Review photo'
+        initialIndex={viewerInitialIndex}
+        isOpen={viewerOpen}
+        photos={viewerPhotos}
+        onClose={() => setViewerOpen(false)}
+      />
     </section>
   );
 };
