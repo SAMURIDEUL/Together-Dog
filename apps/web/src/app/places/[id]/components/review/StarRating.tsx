@@ -51,12 +51,12 @@ export const StarRating = ({
         {[1, 2, 3, 4, 5].map((star) => {
           const currentDisplayRating = hoverRating || rating;
           // 이 별이 얼마나 채워져야 하는지 계산 (0, 50, 100)
-          const fillPercentage =
-            currentDisplayRating >= star
-              ? 100
-              : currentDisplayRating >= star - 0.5
-                ? 50
-                : 0;
+          let fillPercentage = 0;
+          if (currentDisplayRating >= star) {
+            fillPercentage = 100;
+          } else if (currentDisplayRating >= star - 0.5) {
+            fillPercentage = 50;
+          }
 
           return (
             <button
