@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Map } from 'react-kakao-maps-sdk';
 
+import { CategoryPin } from '@/app/places/components/CategoryPin';
 import { Place } from '@/types/place';
-
-import { CategoryPin } from '../../components/CategoryPin';
 
 // Declare global window interface for kakao
 declare global {

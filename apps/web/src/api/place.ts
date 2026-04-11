@@ -73,7 +73,7 @@ export const getPlaceReviews = async (
       params: { page, size },
     },
   );
-  return response.data.data || { reviews: [], totalCount: 0 };
+  return response.data.data || { reviews: [], hasNext: false };
 };
 
 // 장소 찜하기

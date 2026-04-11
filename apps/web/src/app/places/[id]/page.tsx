@@ -10,11 +10,11 @@ import {
 import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
 import { useToastStore } from '@/stores/useToastStore';
 
-import { PhotoGallery } from './components/PhotoGallery';
-import { PlaceDetailHeader } from './components/PlaceDetailHeader';
-import { PlaceDetailInfo } from './components/PlaceDetailInfo';
-import { PlaceDetailMap } from './components/PlaceDetailMap';
-import { PlaceReviews } from './components/PlaceReviews';
+import { PhotoGallery } from './components/info/PhotoGallery';
+import { PlaceDetailHeader } from './components/info/PlaceDetailHeader';
+import { PlaceDetailInfo } from './components/info/PlaceDetailInfo';
+import { PlaceDetailMap } from './components/info/PlaceDetailMap';
+import { PlaceReviews } from './components/review/PlaceReviews';
 
 export default function PlaceDetailPage() {
   const params = useParams();

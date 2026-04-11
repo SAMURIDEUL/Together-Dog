@@ -58,7 +58,8 @@ export const PhotoGallery = ({ photos, placeName }: PhotoGalleryProps) => {
         <div className='grid aspect-[2/1] w-full grid-cols-2 gap-0.5'>
           {resolved.map((src, i) => (
             <button
-              key={src}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`${i}-${src}`}
               className='relative bg-gray-100'
               type='button'
               onClick={() => openModal(i)}

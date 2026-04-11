@@ -73,7 +73,7 @@ export const updateReview = async (
     data.newImages.forEach((file) => formData.append('newImages', file));
   }
 
-  const response = await apiClient.post<UpdateReviewApiResponse>(
+  const response = await apiClient.patch<UpdateReviewApiResponse>(
     `/places/${placeId}/reviews/${reviewId}`,
     formData,
   );
@@ -97,25 +97,42 @@ export const getMyReviews = async (
     params: { page, size },
   });
 
-  // 백엔드 응답 형태가 { content: [] } 가 아니라 { reviews: [] } 이거나 단순 배열 일 수 있어 안전하게 처리
-  const resData = response.data.data as any;
+  const resData = response.data.data;
 
   if (Array.isArray(resData)) {
-    // 단순히 배열로 넘어올 경우
     return {
-      content: resData,
-      page: 0,
-      size: resData.length,
+      content: resData as unknown as MyReviewsResponse['content'],
+      page,
+      size,
       totalElements: resData.length,
-      totalPages: 1,
+      totalPages: resData.length > 0 ? 1 : 0,
     };
   }
 
+  if (
+    !resData ||
+    (!Array.isArray(resData.content) &&
+      !Array.isArray((resData as unknown as { reviews?: unknown }).reviews))
+  ) {
+    throw new Error('내 리뷰 응답 형식이 올바르지 않습니다.');
+  }
+
+  let content: MyReviewsResponse['content'] = [];
+
+  if (Array.isArray(resData.content)) {
+    content = resData.content;
+  } else if (
+    Array.isArray((resData as unknown as { reviews?: unknown }).reviews)
+  ) {
+    content = (resData as unknown as { reviews: MyReviewsResponse['content'] })
+      .reviews;
+  }
+
   return {
-    content: resData?.content || resData?.reviews || [],
-    page: resData?.page || 0,
-    size: resData?.size || 10,
-    totalElements: resData?.totalElements || 0,
-    totalPages: resData?.totalPages || 0,
+    content,
+    page: resData.page ?? page,
+    size: resData.size ?? size,
+    totalElements: resData.totalElements ?? content.length,
+    totalPages: resData.totalPages ?? (content.length > 0 ? 1 : 0),
   };
 };

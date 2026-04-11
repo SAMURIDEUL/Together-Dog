@@ -8,8 +8,9 @@ import { useMyInfoQuery } from '@/hooks/queries/useUserQuery';
 import { useModalStore } from '@/stores/useModalStore';
 import { useToastStore } from '@/stores/useToastStore';
 
+import { PlaceReviewList } from './PlaceReviewList';
+import { PlaceReviewError, PlaceReviewPending } from './PlaceReviewStates';
 import { ReviewForm } from './ReviewForm';
-import { ReviewItem } from './ReviewItem';
 
 interface PlaceReviewsProps {
   placeId: number;
@@ -27,6 +28,7 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
     isFetching,
     isFetchingNextPage,
     status,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ['reviews', placeId],
     queryFn: ({ pageParam }) => getPlaceReviews(placeId, pageParam),
@@ -57,13 +59,8 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
 
   const reviews = data?.pages.flatMap((page) => page.reviews) || [];
 
-  if (status === 'pending') {
-    return (
-      <div className='bg-white px-4 py-8 text-center text-gray-500'>
-        리뷰를 불러오는 중...
-      </div>
-    );
-  }
+  if (status === 'pending') return <PlaceReviewPending />;
+  if (status === 'error') return <PlaceReviewError onRetry={() => refetch()} />;
 
   return (
     <div className='bg-white px-4 py-6'>
@@ -71,28 +68,16 @@ export const PlaceReviews = ({ placeId }: PlaceReviewsProps) => {
         리뷰 <span className='text-orange-500'>{reviews.length}</span>
       </h2>
 
-      {/* 리뷰 작성 폼 */}
       <div className='mb-6'>
         <ReviewForm placeId={placeId} />
       </div>
 
-      {reviews.length === 0 ? (
-        <p className='py-4 text-center text-sm text-gray-400'>
-          아직 작성된 리뷰가 없습니다.
-        </p>
-      ) : (
-        <div className='flex flex-col gap-6'>
-          {reviews.map((review) => (
-            <ReviewItem
-              key={review.id}
-              currentUserId={myInfo?.id}
-              placeId={placeId}
-              review={review}
-              onDelete={handleDelete}
-            />
-          ))}
-        </div>
-      )}
+      <PlaceReviewList
+        myInfo={myInfo}
+        placeId={placeId}
+        reviews={reviews}
+        onDelete={handleDelete}
+      />
 
       {hasNextPage && (
         <button

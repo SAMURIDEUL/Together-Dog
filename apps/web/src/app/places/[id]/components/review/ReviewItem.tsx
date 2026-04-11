@@ -4,19 +4,8 @@ import { useState } from 'react';
 
 import { AuthorizedImage } from '@/components/shared/AuthorizedImage';
 import { ImageModal } from '@/components/shared/ImageModal';
-
-// "2025-03-15 00-00-00" 같은 비표준 포맷 → "YYYY-MM-DD" 로 정규화
-const normalizeDate = (dateStr?: string): string => {
-  if (!dateStr) return new Date().toISOString().split('T')[0];
-  const normalized = dateStr.replace(
-    /(\d{4}-\d{2}-\d{2})\s(\d{2})-(\d{2})-(\d{2})/,
-    '$1T$2:$3:$4',
-  );
-  const date = new Date(normalized);
-  if (!isNaN(date.getTime())) return date.toISOString().split('T')[0];
-  // 그냥 앞 10자리만 잘라서 반환 (T 기준 or 공백 기준)
-  return dateStr.split('T')[0].split(' ')[0];
-};
+import { StarIcon } from '@/components/shared/StarIcon';
+import { formatDisplayDate, formatToLocalYYYYMMDD } from '@/utils/date';
 
 import { ReviewForm } from './ReviewForm';
 
@@ -62,7 +51,9 @@ export const ReviewItem = ({
             id: review.id,
             rating: review.rating,
             content: review.content,
-            visitDate: normalizeDate(review.visitDate || review.createdAt),
+            visitDate: formatToLocalYYYYMMDD(
+              review.visitDate || review.createdAt,
+            ),
             photos: initialPhotos,
           }}
           placeId={placeId}
@@ -92,7 +83,7 @@ export const ReviewItem = ({
         </span>
         <div className='flex items-center gap-2'>
           <span className='text-xs text-gray-400'>
-            {review.createdAt?.split('T')[0]}
+            방문일 {formatDisplayDate(review.visitDate || review.createdAt)}
           </span>
           {/* 본인 리뷰만 수정/삭제 가능 (방어 코드: 둘 다 undefined일 경우 true가 되는 버그 방지 및 백엔드 필드명 변경 대비) */}
           {(() => {
@@ -127,18 +118,21 @@ export const ReviewItem = ({
         </div>
       </div>
 
-      {(() => {
-        const safeRating = Math.max(
-          0,
-          Math.min(5, Math.floor(review.rating || 0)),
-        );
-        return (
-          <div className='mb-2 flex text-sm text-yellow-500'>
-            {'★'.repeat(safeRating)}
-            {'☆'.repeat(5 - safeRating)}
-          </div>
-        );
-      })()}
+      <div className='mb-2 flex gap-0.5 text-sm'>
+        {Array.from({ length: 5 }, (_, i) => {
+          const fillPercentage = Math.max(
+            0,
+            Math.min(100, (review.rating - i) * 100),
+          );
+          return (
+            <StarIcon
+              key={i}
+              className='h-3.5 w-3.5'
+              fillPercentage={fillPercentage}
+            />
+          );
+        })}
+      </div>
 
       <p className='whitespace-pre-wrap text-sm text-gray-700'>
         {review.content}

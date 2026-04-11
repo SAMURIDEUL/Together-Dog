@@ -7,6 +7,7 @@ import {
   useUpdateReviewMutation,
 } from '@/hooks/queries/useReviewMutation';
 import { useToastStore } from '@/stores/useToastStore';
+import { formatToLocalYYYYMMDD } from '@/utils/date';
 import { compressImage } from '@/utils/imageCompressor';
 
 interface ExistingPhoto {
@@ -35,7 +36,7 @@ export const useReviewForm = (
   const [hoverRating, setHoverRating] = useState(0);
   const [content, setContent] = useState(initialData?.content || '');
   const [visitDate, setVisitDate] = useState(
-    initialData?.visitDate || new Date().toISOString().split('T')[0],
+    initialData?.visitDate || formatToLocalYYYYMMDD(),
   );
 
   // 기존 사진 목록 (id + url, 삭제 추적용)
@@ -72,9 +73,7 @@ export const useReviewForm = (
     setIsOpen(!!initialData);
     setRating(initialData?.rating || 0);
     setContent(initialData?.content || '');
-    setVisitDate(
-      initialData?.visitDate || new Date().toISOString().split('T')[0],
-    );
+    setVisitDate(initialData?.visitDate || formatToLocalYYYYMMDD());
     setExistingPhotos(initialData?.photos || []);
     newPreviews.forEach((url) => URL.revokeObjectURL(url)); // 폼 초기화 시 생성되었던 메모리 해제
     setNewImages([]);

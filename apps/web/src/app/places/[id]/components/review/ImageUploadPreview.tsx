@@ -29,6 +29,7 @@ export const ImageUploadPreview = ({
       <div className='flex gap-2'>
         {previews.map((preview, idx) => (
           <div
+            // eslint-disable-next-line react/no-array-index-key
             key={`preview-${idx}-${preview}`}
             className='group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100'
           >
@@ -42,7 +43,7 @@ export const ImageUploadPreview = ({
               }
             />
             <button
-              className='absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100'
+              className='absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-xs text-white opacity-100 transition-opacity focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100'
               type='button'
               onClick={() => onRemove(idx)}
             >
