@@ -61,10 +61,13 @@ export const updateReview = async (
     new Blob([JSON.stringify(reviewDto)], { type: 'application/json' }),
   );
 
-  // 유지할 이미지 ID 목록 추가 (FormData 개별 값)
-  if (data.keepImageIds && data.keepImageIds.length > 0) {
-    data.keepImageIds.forEach((id) =>
-      formData.append('keepImageIds', id.toString()),
+  // 유지할 이미지 ID 목록 추가 (배열을 단일 JSON Blob으로 전달하여 415 에러 방지)
+  if (data.keepImageIds) {
+    formData.append(
+      'keepImageIds',
+      new Blob([JSON.stringify(data.keepImageIds)], {
+        type: 'application/json',
+      }),
     );
   }
 

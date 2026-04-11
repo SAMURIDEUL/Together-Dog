@@ -17,19 +17,16 @@ export const AuthorizedImage = ({
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const objectUrlRef = useRef<string | null>(null);
 
-  // 환경 변수에서 백엔드 베이스 URL을 가져옵니다. (설정되지 않은 경우 Next.js 프록시를 타도록 빈 문자열 사용)
-  const backendBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-
   const isUploadPath =
     typeof src === 'string' &&
     (src.includes('uploads') || src.includes('review_images')) &&
-    (src.startsWith(backendBaseUrl) ||
-      (!src.startsWith('http') && !src.startsWith('//')));
+    !src.startsWith('http') &&
+    !src.startsWith('//');
 
   let fetchUrl = src;
-  if (isUploadPath && !src.startsWith('http') && !src.startsWith('//')) {
-    const hasLeadingSlash = src.startsWith('/');
-    fetchUrl = `${backendBaseUrl}${hasLeadingSlash ? '' : '/'}${src}`;
+  if (isUploadPath) {
+    // Ensure the URL starts with a leading slash for relative routing
+    fetchUrl = src.startsWith('/') ? src : `/${src}`;
   }
 
   const { data: blob, isError } = useQuery({
