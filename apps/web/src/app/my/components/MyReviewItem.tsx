@@ -58,7 +58,7 @@ export const MyReviewItem = ({
         <div className='mt-3 flex gap-2 overflow-x-auto pb-1'>
           {review.photoUrls.map((photo: string, idx: number) => (
             <button
-              key={photo}
+              key={`${review.id}-${idx}-${photo}`}
               className='relative h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg bg-gray-100 text-left disabled:cursor-auto'
               type='button'
               onClick={() => onPhotoClick(review.photoUrls!, idx)}

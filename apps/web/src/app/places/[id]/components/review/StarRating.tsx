@@ -31,6 +31,13 @@ export const StarRating = ({
     e: React.MouseEvent<HTMLButtonElement>,
     star: number,
   ) => {
+    // 키보드 이벤트(Enter/Space)로 클릭이 발생한 경우 (clientX, clientY가 0)
+    // 혹은 터치/마우스 좌표가 없는 경우 정수 별점으로 처리
+    if (e.clientX === 0 && e.clientY === 0) {
+      onRate(star);
+      return;
+    }
+
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const isHalf = x < rect.width / 2;

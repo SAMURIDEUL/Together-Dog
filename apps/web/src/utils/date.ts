@@ -1,9 +1,26 @@
 /**
+ * 'YYYY-MM-DD' 형식의 문자열을 로컬 시간 기준의 Date 객체로 파싱합니다.
+ */
+const parseLocalYYYYMMDD = (dateStr: string): Date => {
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    const [, y, m, d] = match;
+    return new Date(Number(y), Number(m) - 1, Number(d));
+  }
+  return new Date(dateStr);
+};
+
+/**
  * Date 객체나 날짜 문자열을 받아서 로컬 시간 기준 'YYYY-MM-DD' 형식으로 반환합니다.
  * 주로 <input type="date">의 value 값으로 사용하기 위해 쓰입니다.
  */
-export const formatToLocalYYYYMMDD = (dateInput?: Date | string) => {
-  const date = dateInput ? new Date(dateInput) : new Date();
+export const formatToLocalYYYYMMDD = (dateInput?: Date | string): string => {
+  if (!dateInput) return formatToLocalYYYYMMDD(new Date());
+
+  const date =
+    typeof dateInput === 'string'
+      ? parseLocalYYYYMMDD(dateInput)
+      : new Date(dateInput);
 
   // 날짜가 유효하지 않으면 빈 문자열 반환
   if (isNaN(date.getTime())) return '';
@@ -28,7 +45,7 @@ export const formatDisplayDate = (dateStr?: string) => {
     '$1T$2:$3:$4',
   );
 
-  const date = new Date(normalizedStr);
+  const date = parseLocalYYYYMMDD(normalizedStr);
   if (isNaN(date.getTime())) return dateStr;
 
   return date

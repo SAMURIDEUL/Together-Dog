@@ -39,10 +39,13 @@ export const ImageUploadPreview = ({
               className='object-cover'
               src={preview}
               unoptimized={
-                preview.startsWith('/uploads') || preview.startsWith('http')
+                preview.startsWith('/uploads') ||
+                preview.startsWith('http') ||
+                preview.startsWith('blob:')
               }
             />
             <button
+              aria-label={`사진 ${idx + 1} 삭제`}
               className='absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/50 text-xs text-white opacity-100 transition-opacity focus-visible:opacity-100 md:opacity-0 md:group-hover:opacity-100'
               type='button'
               onClick={() => onRemove(idx)}
@@ -53,6 +56,7 @@ export const ImageUploadPreview = ({
         ))}
         {displayCount < 3 && (
           <button
+            aria-label='사진 추가'
             className='flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-gray-200 text-gray-400 hover:border-orange-300 hover:text-orange-500'
             type='button'
             onClick={() => fileInputRef.current?.click()}

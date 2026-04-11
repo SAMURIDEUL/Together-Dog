@@ -1,7 +1,7 @@
 'use client';
 
 import { CONSTANTS } from '@shared/config/constants';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { checkEmail, checkNickname, login, logout, signup } from '@/api/auth';
 import { LoginRequest, SignupRequest } from '@/types/auth';
@@ -96,6 +96,8 @@ export const useLogoutMutation = ({
   onSuccess,
   onError,
 }: UseLogoutMutationProps = {}) => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
@@ -109,6 +111,9 @@ export const useLogoutMutation = ({
         localStorage.removeItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
         localStorage.removeItem(CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN);
         localStorage.removeItem('accessToken');
+
+        // 이미지 캐시 전체 무효화 (보안용)
+        queryClient.invalidateQueries({ queryKey: ['authorized-image'] });
       }
     },
   });

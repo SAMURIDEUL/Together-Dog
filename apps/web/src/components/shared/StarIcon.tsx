@@ -13,12 +13,13 @@ export const StarIcon = ({
   const gradientId = useId();
 
   // 0%면 회색, 100%면 금색, 그 사이면 그라디언트
-  const fillColor =
-    fillPercentage >= 100
-      ? '#fbbf24'
-      : fillPercentage <= 0
-        ? '#e5e7eb'
-        : `url(#${gradientId})`;
+  const getFillColor = () => {
+    if (fillPercentage >= 100) return '#fbbf24';
+    if (fillPercentage <= 0) return '#e5e7eb';
+    return `url(#${gradientId})`;
+  };
+
+  const fillColor = getFillColor();
 
   return (
     <svg

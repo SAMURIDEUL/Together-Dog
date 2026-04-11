@@ -29,10 +29,14 @@ export const AuthorizedImage = ({
     fetchUrl = src.startsWith('/') ? src : `/${src}`;
   }
 
+  const token =
+    typeof window !== 'undefined'
+      ? localStorage.getItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN)
+      : null;
+
   const { data: blob, isError } = useQuery({
-    queryKey: ['authorized-image', fetchUrl],
+    queryKey: ['authorized-image', fetchUrl, token],
     queryFn: async () => {
-      const token = localStorage.getItem(CONSTANTS.STORAGE_KEYS.AUTH_TOKEN);
       const response = await fetch(fetchUrl, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
