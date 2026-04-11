@@ -128,8 +128,10 @@ export const getPetSizeBadge = (
 export const getAmenityBadges = (
   indoorFlag?: boolean,
   outdoorFlag?: boolean,
+  parkingAvailable?: boolean,
 ): PlaceInfoCardProps['badges'] => {
   const badges: PlaceInfoCardProps['badges'] = [];
+
   if (indoorFlag) {
     badges.push({
       group: 'restriction',
@@ -146,6 +148,17 @@ export const getAmenityBadges = (
       variant: 'default',
     });
   }
+
+  // 주차 정보 추가 (불리언 필드 기반)
+  if (parkingAvailable) {
+    badges.push({
+      group: 'restriction',
+      name: 'warning',
+      text: '주차 가능',
+      variant: 'positive',
+    });
+  }
+
   return badges;
 };
 

@@ -21,6 +21,7 @@ export interface PlaceInfoCardProps {
   onLikeClick?: (e: React.MouseEvent) => void;
   className?: string;
   disabled?: boolean;
+  priority?: boolean;
 }
 
 export const PlaceInfoCard = ({
@@ -34,6 +35,7 @@ export const PlaceInfoCard = ({
   onLikeClick,
   className,
   disabled = false,
+  priority = false,
 }: PlaceInfoCardProps) => {
   return (
     <div
@@ -42,11 +44,12 @@ export const PlaceInfoCard = ({
       }`}
     >
       {/* 이미지 영역 */}
-      <div className='relative aspect-video w-full overflow-hidden bg-gray-50'>
+      <div className='relative aspect-[4/3] w-full overflow-hidden bg-gray-50'>
         <Image
           fill
           alt={name || 'Place Image'}
-          className='object-contain p-2 transition-transform duration-300 group-hover:scale-110'
+          className='object-cover transition-transform duration-300 group-hover:scale-110'
+          priority={priority}
           sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
           src={imageSrc}
         />
