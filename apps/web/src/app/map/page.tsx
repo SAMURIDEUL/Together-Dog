@@ -1,8 +1,9 @@
 'use client';
 
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { CustomOverlayMap, Map, MapMarker } from 'react-kakao-maps-sdk';
+import { CustomOverlayMap, Map } from 'react-kakao-maps-sdk';
 
 import { usePlaceStore } from '@/stores/usePlaceStore';
 import { PlaceItem } from '@/types/place';
@@ -13,6 +14,7 @@ import { SearchOverlay } from './components/SearchOverlay';
 import { useMapSearch } from './hooks/useMapSearch';
 
 export default function MapPage() {
+  const router = useRouter();
   const { userLocation, initLocation } = usePlaceStore();
   const {
     keyword,
@@ -77,20 +79,25 @@ export default function MapPage() {
           onCreate={(m) => setMap(m)}
           onDragEnd={handleSearchAtCurrentLocation}
         >
-          {/* 내 위치 마커 */}
-          <MapMarker
+          {/* 내 위치 마커 (커스텀 오버레이로 변경하여 기본 말풍선 제거) */}
+          <CustomOverlayMap
             position={{ lat: userLocation.lat, lng: userLocation.lng }}
+            yAnchor={2.2}
           >
-            <div className='rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-md'>
-              내 위치
+            <div className='flex flex-col items-center gap-1'>
+              <div className='rounded-full bg-blue-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-md'>
+                내 위치
+              </div>
+              <div className='h-3 w-3 rounded-full border-2 border-white bg-blue-500 shadow-lg' />
             </div>
-          </MapMarker>
+          </CustomOverlayMap>
 
           {/* 검색 결과 마커들 (커스텀 오버레이로 구현) */}
           {filteredPlaces.map((item) => (
             <CustomOverlayMap
               key={item.placeInfo.id}
               position={{ lat: item.placeInfo.lat, lng: item.placeInfo.lon }}
+              yAnchor={1}
             >
               <div
                 aria-label={`${item.placeInfo.name} 상세보기`}
@@ -105,18 +112,26 @@ export default function MapPage() {
               >
                 <div
                   className={clsx(
-                    'flex h-8 w-8 items-center justify-center rounded-full border-2 p-1.5 shadow-lg transition-colors',
+                    'flex h-8 w-8 items-center justify-center rounded-full border-2 p-1.5 shadow-lg transition-all',
                     selectedPlace?.placeInfo.id === item.placeInfo.id
-                      ? 'border-white bg-orange-500 text-white'
-                      : 'border-orange-500 bg-white text-orange-500 hover:bg-orange-50',
+                      ? 'z-30 scale-125 border-4 border-orange-600 bg-white'
+                      : 'border-orange-500 bg-white hover:bg-orange-50',
                   )}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPlace(item);
+                    setMapCenter({
+                      lat: item.placeInfo.lat,
+                      lng: item.placeInfo.lon,
+                    });
+                  }}
                 >
                   <img
                     alt='카테고리 아이콘'
                     className={clsx(
-                      'h-full w-full object-contain',
+                      'h-full w-full object-contain transition-transform',
                       selectedPlace?.placeInfo.id === item.placeInfo.id &&
-                        'brightness-0 invert',
+                        'scale-110',
                     )}
                     src={`/images/category/${getCategoryKey(item.placeInfo.categoryId)}.png`}
                     onError={(e) => {
@@ -124,10 +139,21 @@ export default function MapPage() {
                     }}
                   />
                 </div>
-                {/* 선택된 상태에서만 이름 표시 (선택 사항) */}
+                {/* 선택된 상태에서만 이름 표시 */}
                 {selectedPlace?.placeInfo.id === item.placeInfo.id && (
-                  <div className='animate-in fade-in zoom-in-50 whitespace-nowrap rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-md'>
-                    {item.placeInfo.name}
+                  <div
+                    className='animate-in fade-in slide-in-from-top-1 zoom-in-50 absolute left-1/2 top-full mt-1.5 -translate-x-1/2'
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/places/${item.placeInfo.id}`);
+                    }}
+                  >
+                    <div className='flex cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full bg-orange-500 px-3 py-1.5 text-[11px] font-bold text-white shadow-xl ring-2 ring-white hover:bg-orange-600 active:scale-95'>
+                      {item.placeInfo.name}
+                      <span className='rounded-sm bg-white/20 px-1 py-0.5 text-[9px] font-medium'>
+                        상세보기 ›
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -153,6 +179,7 @@ export default function MapPage() {
         loading={loading}
         places={filteredPlaces}
         sortBy={sortBy}
+        onNavigate={(item) => router.push(`/places/${item.placeInfo.id}`)}
         onPlaceClick={(item) => {
           setSelectedPlace(item);
           setMapCenter({ lat: item.placeInfo.lat, lng: item.placeInfo.lon });

@@ -16,6 +16,7 @@ interface PlaceResultViewProps {
   getCategoryKey: (id: number) => any;
   sortBy: SortOrder;
   onSortChange: (sort: SortOrder) => void;
+  onNavigate: (place: PlaceItem) => void;
 }
 
 export const PlaceResultView = ({
@@ -25,6 +26,7 @@ export const PlaceResultView = ({
   getCategoryKey,
   sortBy,
   onSortChange,
+  onNavigate,
 }: PlaceResultViewProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -93,6 +95,10 @@ export const PlaceResultView = ({
           imageSrc={item.thumbnail || '/images/logo.png'}
           name={item.placeInfo.name}
           priority={index === 0}
+          onDetailClick={(e) => {
+            e.stopPropagation();
+            onNavigate(item);
+          }}
         />
       </div>
     ));

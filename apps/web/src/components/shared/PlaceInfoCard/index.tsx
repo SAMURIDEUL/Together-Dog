@@ -22,6 +22,7 @@ export interface PlaceInfoCardProps {
   className?: string;
   disabled?: boolean;
   priority?: boolean;
+  onDetailClick?: (e: React.MouseEvent) => void;
 }
 
 export const PlaceInfoCard = ({
@@ -36,6 +37,7 @@ export const PlaceInfoCard = ({
   className,
   disabled = false,
   priority = false,
+  onDetailClick,
 }: PlaceInfoCardProps) => {
   return (
     <div
@@ -70,9 +72,22 @@ export const PlaceInfoCard = ({
 
       {/* 정보 영역 */}
       <div className='flex flex-col gap-3 p-4'>
-        <div>
-          <h3 className='text-lg font-bold text-gray-900'>{name}</h3>
-          <p className='mt-1 line-clamp-1 text-sm text-gray-500'>{address}</p>
+        <div className='flex items-end justify-between'>
+          <div>
+            <h3 className='text-lg font-bold text-gray-900'>{name}</h3>
+            <p className='mt-1 line-clamp-1 text-sm text-gray-500'>{address}</p>
+          </div>
+          {onDetailClick && (
+            <button
+              className='mb-1 whitespace-nowrap text-xs font-bold text-orange-500 hover:text-orange-600 hover:underline'
+              onClick={(e) => {
+                e.stopPropagation();
+                onDetailClick(e);
+              }}
+            >
+              상세보기 ›
+            </button>
+          )}
         </div>
 
         {/* 뱃지 영역 (가로 스크롤 가능) */}
