@@ -95,13 +95,21 @@ export const useReviewImages = (initialPhotos: ExistingPhoto[] = []) => {
 
   const removeImage = (index: number) => {
     const existingCount = existingPhotos.length;
+    if (index < 0) return;
+
     if (index < existingCount) {
       setExistingPhotos((prev) => prev.filter((_, i) => i !== index));
     } else {
       const newIndex = index - existingCount;
-      URL.revokeObjectURL(newPreviews[newIndex]);
-      setNewImages((prev) => prev.filter((_, i) => i !== newIndex));
-      setNewPreviews((prev) => prev.filter((_, i) => i !== newIndex));
+      // 새 이미지 목록 범위 내에 있는지 확인
+      if (newIndex >= 0 && newIndex < newPreviews.length) {
+        const urlToRevoke = newPreviews[newIndex];
+        if (urlToRevoke) {
+          URL.revokeObjectURL(urlToRevoke);
+        }
+        setNewImages((prev) => prev.filter((_, i) => i !== newIndex));
+        setNewPreviews((prev) => prev.filter((_, i) => i !== newIndex));
+      }
     }
   };
 
