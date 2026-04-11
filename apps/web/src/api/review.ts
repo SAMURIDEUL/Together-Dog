@@ -16,9 +16,8 @@ export const createReview = async (
 ): Promise<CreateReviewApiResponse> => {
   const formData = new FormData();
 
-  // JSON 데이터 추가
+  // JSON 데이터 구성 (일부 백엔드는 URL의 placeId와 중복되면 오류가 날 수 있어 제거)
   const reviewDto = {
-    placeId,
     rating: data.rating,
     content: data.content,
     visitDate: data.visitDate,
@@ -30,20 +29,15 @@ export const createReview = async (
   );
 
   // 이미지 파일 추가
-  if (data.images) {
+  if (data.images && data.images.length > 0) {
     data.images.forEach((file) => {
       formData.append('images', file);
     });
   }
 
   const response = await apiClient.post<CreateReviewApiResponse>(
-    `/place/${placeId}/reviews`,
+    `/places/${placeId}/reviews`,
     formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
   );
   return response.data;
 };
@@ -67,10 +61,13 @@ export const updateReview = async (
     new Blob([JSON.stringify(reviewDto)], { type: 'application/json' }),
   );
 
-  // 유지할 이미지 ID 목록 추가
+  // 유지할 이미지 ID 목록 추가 (배열을 단일 JSON Blob으로 전달하여 415 에러 방지)
   if (data.keepImageIds) {
-    data.keepImageIds.forEach((id) =>
-      formData.append('keepImageIds', id.toString()),
+    formData.append(
+      'keepImageIds',
+      new Blob([JSON.stringify(data.keepImageIds)], {
+        type: 'application/json',
+      }),
     );
   }
 
@@ -79,14 +76,9 @@ export const updateReview = async (
     data.newImages.forEach((file) => formData.append('newImages', file));
   }
 
-  const response = await apiClient.put<UpdateReviewApiResponse>(
-    `/place/${placeId}/reviews/${reviewId}`,
+  const response = await apiClient.patch<UpdateReviewApiResponse>(
+    `/places/${placeId}/reviews/${reviewId}`,
     formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
   );
   return response.data;
 };
@@ -96,7 +88,7 @@ export const deleteReview = async (
   placeId: number,
   reviewId: number,
 ): Promise<void> => {
-  await apiClient.delete(`/place/${placeId}/reviews/${reviewId}`);
+  await apiClient.delete(`/places/${placeId}/reviews/${reviewId}`);
 };
 
 // 내 리뷰 목록 조회
@@ -107,5 +99,43 @@ export const getMyReviews = async (
   const response = await apiClient.get<MyReviewsApiResponse>('/users/reviews', {
     params: { page, size },
   });
-  return response.data.data;
+
+  const resData = response.data.data;
+
+  if (Array.isArray(resData)) {
+    return {
+      content: resData as unknown as MyReviewsResponse['content'],
+      page,
+      size,
+      totalElements: resData.length,
+      totalPages: resData.length > 0 ? 1 : 0,
+    };
+  }
+
+  if (
+    !resData ||
+    (!Array.isArray(resData.content) &&
+      !Array.isArray((resData as unknown as { reviews?: unknown }).reviews))
+  ) {
+    throw new Error('내 리뷰 응답 형식이 올바르지 않습니다.');
+  }
+
+  let content: MyReviewsResponse['content'] = [];
+
+  if (Array.isArray(resData.content)) {
+    content = resData.content;
+  } else if (
+    Array.isArray((resData as unknown as { reviews?: unknown }).reviews)
+  ) {
+    content = (resData as unknown as { reviews: MyReviewsResponse['content'] })
+      .reviews;
+  }
+
+  return {
+    content,
+    page: resData.page ?? page,
+    size: resData.size ?? size,
+    totalElements: resData.totalElements ?? content.length,
+    totalPages: resData.totalPages ?? (content.length > 0 ? 1 : 0),
+  };
 };

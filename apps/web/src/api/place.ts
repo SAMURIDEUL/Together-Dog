@@ -47,7 +47,7 @@ export const getPlaces = async (
 // 랜덤 장소 추천 (메인 페이지용)
 export const getRandomPlaces = async (): Promise<PlaceItem[]> => {
   const response = await apiClient.get<RandomPlaceResponse>('/places/random');
-  return response.data.data;
+  return response.data.data || [];
 };
 
 // 장소 상세 정보 조회
@@ -55,6 +55,9 @@ export const getPlaceDetail = async (placeId: number): Promise<PlaceDetail> => {
   const response = await apiClient.get<PlaceDetailResponse>(
     `/places/${placeId}`,
   );
+  if (!response.data.data) {
+    throw new Error('장소 상세 정보를 찾을 수 없습니다.');
+  }
   return response.data.data;
 };
 
@@ -70,7 +73,7 @@ export const getPlaceReviews = async (
       params: { page, size },
     },
   );
-  return response.data.data;
+  return response.data.data || { reviews: [], hasNext: false };
 };
 
 // 장소 찜하기

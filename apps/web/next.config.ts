@@ -7,8 +7,21 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'together-dog.up.railway.app',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      ...(process.env.NODE_ENV === 'development'
+        ? [
+            {
+              protocol: 'http' as const,
+              hostname: 'localhost',
+              port: '3000',
+            },
+          ]
+        : []),
     ],
   },
   async rewrites() {
@@ -16,6 +29,10 @@ const nextConfig: NextConfig = {
       {
         source: '/api/:path*',
         destination: `${process.env.API_URL || 'http://localhost:8080'}/:path*`,
+      },
+      {
+        source: '/uploads/:path*',
+        destination: `${process.env.API_URL || 'http://localhost:8080'}/uploads/:path*`,
       },
     ];
   },

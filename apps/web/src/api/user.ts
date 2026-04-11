@@ -48,5 +48,5 @@ export const getMyLikedPlaceIds = async (): Promise<number[]> => {
     message: string;
     data: number[];
   }>('/users/likes');
-  return response.data.data;
+  return response.data.data || [];
 };

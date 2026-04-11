@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
@@ -10,12 +9,12 @@ import {
 } from '@/hooks/queries/usePlaceQuery';
 import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
 import { useToastStore } from '@/stores/useToastStore';
-import { resolveThumbnailPath } from '@/utils/petMapper';
 
-import { PlaceDetailHeader } from './components/PlaceDetailHeader';
-import { PlaceDetailInfo } from './components/PlaceDetailInfo';
-import { PlaceDetailMap } from './components/PlaceDetailMap';
-import { PlaceReviews } from './components/PlaceReviews';
+import { PhotoGallery } from './components/info/PhotoGallery';
+import { PlaceDetailHeader } from './components/info/PlaceDetailHeader';
+import { PlaceDetailInfo } from './components/info/PlaceDetailInfo';
+import { PlaceDetailMap } from './components/info/PlaceDetailMap';
+import { PlaceReviews } from './components/review/PlaceReviews';
 
 export default function PlaceDetailPage() {
   const params = useParams();
@@ -95,22 +94,8 @@ export default function PlaceDetailPage() {
 
   return (
     <div className='pb-safe min-h-screen bg-gray-50'>
-      {/* Hero / Gallery */}
-      {top3photos && top3photos.length > 0 ? (
-        <div className='relative aspect-video w-full bg-gray-50'>
-          <Image
-            fill
-            priority
-            alt={placeInfo.name}
-            className='object-contain'
-            src={resolveThumbnailPath(top3photos[0])}
-          />
-        </div>
-      ) : (
-        <div className='relative flex aspect-video w-full items-center justify-center bg-gray-200 text-gray-400'>
-          이미지 없음
-        </div>
-      )}
+      {/* 포토 갤러리 */}
+      <PhotoGallery photos={top3photos || []} placeName={placeInfo.name} />
 
       <PlaceDetailHeader
         isLiked={isLiked}

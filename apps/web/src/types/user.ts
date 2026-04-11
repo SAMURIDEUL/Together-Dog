@@ -12,6 +12,8 @@ export interface User {
 
 export interface MyInfo {
   id?: number;
+  userId?: number; // 백엔드 필드 파편화 대응용
+  memberId?: number; // 백엔드 필드 파편화 대응용
   email: string;
   nickname: string;
   likedPlaceIds?: number[];

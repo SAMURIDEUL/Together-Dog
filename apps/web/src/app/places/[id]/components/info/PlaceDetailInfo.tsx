@@ -46,6 +46,7 @@ export const PlaceDetailInfo = ({ place }: PlaceDetailInfoProps) => {
             {sizeBadge && <PlaceInfoBadge {...sizeBadge} />}
             {amenityBadges.map((badge, index) => (
               <PlaceInfoBadge
+                // eslint-disable-next-line react/no-array-index-key
                 key={`amenity-${badge.name}-${index}`}
                 {...badge}
               />
@@ -68,6 +69,7 @@ export const PlaceDetailInfo = ({ place }: PlaceDetailInfoProps) => {
             <div className='mb-2 flex flex-wrap gap-2'>
               {restrictionBadges.map((badge, index) => (
                 <PlaceInfoBadge
+                  // eslint-disable-next-line react/no-array-index-key
                   key={`rest-${badge.name}-${index}`}
                   {...badge}
                 />
