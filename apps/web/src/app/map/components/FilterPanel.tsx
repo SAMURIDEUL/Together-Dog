@@ -1,9 +1,10 @@
 'use client';
 
-import { clsx } from 'clsx';
+import clsx from 'clsx';
+import { useMemo } from 'react';
 
 export interface MapFilters {
-  sizeLimit: string[]; // ['소형', '중형', '대형']
+  sizeLimit: string[];
   isIndoor: boolean | null;
   isOutdoor: boolean | null;
   minRating: number | null;
@@ -14,191 +15,201 @@ export interface MapFilters {
 interface FilterPanelProps {
   filters: MapFilters;
   onFilterChange: (filters: MapFilters) => void;
+  onFilterClick: () => void;
 }
 
-const ESSENTIAL_POLICIES = [
-  { id: '리드줄', label: '리드줄 착용' },
-  { id: '접종', label: '접종 필수' },
-  { id: '예약', label: '사전 예약' },
-  { id: '이동장', label: '이동장/케이지 필수' },
-  { id: '매너벨트', label: '매너벨트 필수' },
-  { id: '배변봉투', label: '배변봉투 상시 지참' },
-  { id: '입마개', label: '입마개 필수' },
+export const ESSENTIAL_POLICIES = [
+  { id: '리드줄', label: '리드줄' },
+  { id: '접종', label: '접종' },
+  { id: '예약', label: '예약' },
+  { id: '이동장', label: '이동장' },
+  { id: '매너벨트', label: '매너벨트' },
+  { id: '배변봉투', label: '배변봉투' },
+  { id: '입마개', label: '입마개' },
   { id: '노키즈존', label: '노키즈존' },
 ];
 
-export const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
-  const toggleSize = (size: string) => {
-    const newSizes = filters.sizeLimit.includes(size)
-      ? filters.sizeLimit.filter((s) => s !== size)
-      : [...filters.sizeLimit, size];
-    onFilterChange({ ...filters, sizeLimit: newSizes });
-  };
+export const FilterPanel = ({
+  filters,
+  onFilterChange,
+  onFilterClick,
+}: FilterPanelProps) => {
+  const activeChips = useMemo(() => {
+    const chips: { id: string; label: string; handleRemove: () => void }[] = [];
 
-  const togglePolicy = (policy: string) => {
-    const newPolicies = filters.essentialPolicies.includes(policy)
-      ? filters.essentialPolicies.filter((p) => p !== policy)
-      : [...filters.essentialPolicies, policy];
-    onFilterChange({ ...filters, essentialPolicies: newPolicies });
-  };
-
-  const toggleIndoor = () => {
-    onFilterChange({ ...filters, isIndoor: filters.isIndoor ? null : true });
-  };
-
-  const toggleOutdoor = () => {
-    onFilterChange({ ...filters, isOutdoor: filters.isOutdoor ? null : true });
-  };
-
-  const toggleParking = () => {
-    onFilterChange({
-      ...filters,
-      hasParking: filters.hasParking ? null : true,
+    if (filters.minRating === 4) {
+      chips.push({
+        id: 'rating',
+        label: '★ 4.0+',
+        handleRemove: () => onFilterChange({ ...filters, minRating: null }),
+      });
+    }
+    if (filters.hasParking) {
+      chips.push({
+        id: 'parking',
+        label: '🚗 주차',
+        handleRemove: () => onFilterChange({ ...filters, hasParking: null }),
+      });
+    }
+    filters.sizeLimit.forEach((size) => {
+      chips.push({
+        id: `size-${size}`,
+        label: size,
+        handleRemove: () =>
+          onFilterChange({
+            ...filters,
+            sizeLimit: filters.sizeLimit.filter((s) => s !== size),
+          }),
+      });
     });
-  };
-
-  const toggleRating = () => {
-    onFilterChange({
-      ...filters,
-      minRating: filters.minRating === 4 ? null : 4,
+    if (filters.isIndoor) {
+      chips.push({
+        id: 'indoor',
+        label: '실내',
+        handleRemove: () => onFilterChange({ ...filters, isIndoor: null }),
+      });
+    }
+    if (filters.isOutdoor) {
+      chips.push({
+        id: 'outdoor',
+        label: '야외',
+        handleRemove: () => onFilterChange({ ...filters, isOutdoor: null }),
+      });
+    }
+    filters.essentialPolicies.forEach((policy) => {
+      chips.push({
+        id: `policy-${policy}`,
+        label: policy,
+        handleRemove: () =>
+          onFilterChange({
+            ...filters,
+            essentialPolicies: filters.essentialPolicies.filter(
+              (p) => p !== policy,
+            ),
+          }),
+      });
     });
-  };
+
+    return chips;
+  }, [filters, onFilterChange]);
 
   return (
-    <div className='absolute left-4 top-48 z-10 flex flex-col gap-2 md:top-36'>
-      <div className='no-scrollbar flex max-h-[calc(100vh-250px)] w-[220px] flex-col gap-3 overflow-y-auto rounded-2xl bg-white p-3 shadow-xl ring-1 ring-black/5'>
-        {/* 평점 및 주차 필터 */}
-        <div>
-          <span className='mb-2 block text-[10px] font-bold text-gray-400'>
-            조건
-          </span>
-          <div className='flex flex-col gap-1'>
-            <button
-              aria-label='평점 4.0 이상만 보기'
-              aria-pressed={filters.minRating === 4}
-              className={clsx(
-                'flex w-full items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
-                filters.minRating === 4
-                  ? 'bg-orange-100 text-orange-600 ring-1 ring-orange-500'
-                  : 'bg-gray-50 text-gray-500 hover:bg-gray-100',
-              )}
-              onClick={toggleRating}
+    <>
+      {/* 1. Mobile Active Filter Chips */}
+      <div className='no-scrollbar absolute inset-x-0 top-[148px] z-20 flex gap-2 overflow-x-auto px-4 py-2 md:hidden'>
+        {activeChips.map((chip) => (
+          <button
+            key={chip.id}
+            className='flex shrink-0 items-center gap-1 rounded-full bg-orange-50 px-3 py-1.5 text-[11px] font-bold text-orange-600 shadow-sm ring-1 ring-orange-200 transition-all active:scale-95'
+            onClick={chip.handleRemove}
+          >
+            {chip.label}
+            <svg
+              className='h-3 w-3'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
             >
-              <span className='text-orange-500'>★</span> 평점 4.0+
-            </button>
+              <path
+                d='M6 18L18 6M6 6l12 12'
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+              />
+            </svg>
+          </button>
+        ))}
+        <button
+          className='flex shrink-0 items-center gap-1 rounded-full bg-gray-100 px-3 py-1.5 text-[11px] font-bold text-gray-500 shadow-sm ring-1 ring-gray-200'
+          onClick={() =>
+            onFilterChange({
+              sizeLimit: [],
+              isIndoor: null,
+              isOutdoor: null,
+              minRating: null,
+              essentialPolicies: [],
+              hasParking: null,
+            })
+          }
+        >
+          초기화
+        </button>
+      </div>
+
+      {/* 2. Desktop Filter UI (Naver Style: Horizontal & Compact) */}
+      <div className='absolute left-4 top-36 z-10 hidden items-center gap-2 md:flex'>
+        <button
+          className={clsx(
+            'flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold shadow-md transition-all active:scale-95',
+            activeChips.length > 0
+              ? 'bg-orange-500 text-white'
+              : 'bg-white text-gray-700 ring-1 ring-black/5 hover:bg-gray-50',
+          )}
+          onClick={onFilterClick}
+        >
+          <svg
+            className='h-3.5 w-3.5'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+          >
+            <path
+              d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
+            />
+          </svg>
+          상세 필터
+          {activeChips.length > 0 && (
+            <span className='ml-1 text-[10px] opacity-80'>
+              {activeChips.length}
+            </span>
+          )}
+        </button>
+
+        <div className='flex items-center gap-1.5'>
+          {activeChips.map((chip) => (
             <button
-              aria-label='주차 가능 장소만 보기'
-              aria-pressed={!!filters.hasParking}
-              className={clsx(
-                'flex w-full items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
-                filters.hasParking
-                  ? 'bg-blue-100 text-blue-600 ring-1 ring-blue-500'
-                  : 'bg-gray-50 text-gray-500 hover:bg-gray-100',
-              )}
-              onClick={toggleParking}
+              key={chip.id}
+              className='flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold text-gray-600 shadow-sm ring-1 ring-black/5 transition-all hover:bg-gray-50'
+              onClick={chip.handleRemove}
             >
-              🚗 주차 가능
+              {chip.label}
+              <svg
+                className='h-3 w-3 text-gray-400'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+              >
+                <path
+                  d='M6 18L18 6M6 6l12 12'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                />
+              </svg>
             </button>
-          </div>
-        </div>
-
-        <div className='h-[1px] bg-gray-100' />
-
-        {/* 견종 크기 필터 */}
-        <div>
-          <span className='mb-2 block text-[10px] font-bold text-gray-400'>
-            견종 크기
-          </span>
-          <div className='flex flex-wrap gap-1'>
-            {['소형', '중형', '대형'].map((size) => {
-              const isActive = filters.sizeLimit.includes(size);
-              return (
-                <button
-                  key={size}
-                  aria-label={`${size}형견 필터`}
-                  aria-pressed={isActive}
-                  className={clsx(
-                    'flex-1 rounded-lg px-2 py-1.5 text-center text-[11px] font-medium transition-all',
-                    isActive
-                      ? 'bg-orange-100 text-orange-600 ring-1 ring-orange-500'
-                      : 'bg-gray-50 text-gray-500 hover:bg-gray-100',
-                  )}
-                  onClick={() => toggleSize(size)}
-                >
-                  {size}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className='h-[1px] bg-gray-100' />
-
-        {/* 장소 환경 필터 */}
-        <div>
-          <span className='mb-2 block text-[10px] font-bold text-gray-400'>
-            장소 환경
-          </span>
-          <div className='flex gap-1'>
+          ))}
+          {activeChips.length > 0 && (
             <button
-              aria-label='실내 가능 장소만 보기'
-              aria-pressed={!!filters.isIndoor}
-              className={clsx(
-                'flex-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-all',
-                filters.isIndoor
-                  ? 'bg-blue-100 text-blue-600 ring-1 ring-blue-500'
-                  : 'bg-gray-50 text-gray-500 hover:bg-gray-100',
-              )}
-              onClick={toggleIndoor}
+              className='text-[11px] font-bold text-gray-400 hover:text-gray-600'
+              onClick={() =>
+                onFilterChange({
+                  sizeLimit: [],
+                  isIndoor: null,
+                  isOutdoor: null,
+                  minRating: null,
+                  essentialPolicies: [],
+                  hasParking: null,
+                })
+              }
             >
-              실내 가능
+              초기화
             </button>
-            <button
-              aria-label='야외 가능 장소만 보기'
-              aria-pressed={!!filters.isOutdoor}
-              className={clsx(
-                'flex-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition-all',
-                filters.isOutdoor
-                  ? 'bg-green-100 text-green-600 ring-1 ring-green-500'
-                  : 'bg-gray-50 text-gray-500 hover:bg-gray-100',
-              )}
-              onClick={toggleOutdoor}
-            >
-              야외 가능
-            </button>
-          </div>
-        </div>
-
-        <div className='h-[1px] bg-gray-100' />
-
-        {/* 상세 정책 필터 */}
-        <div>
-          <span className='mb-2 block text-[10px] font-bold text-gray-400'>
-            반려견 정책 (추천)
-          </span>
-          <div className='grid grid-cols-2 gap-1'>
-            {ESSENTIAL_POLICIES.map((policy) => {
-              const isActive = filters.essentialPolicies.includes(policy.id);
-              return (
-                <button
-                  key={policy.id}
-                  aria-label={policy.label}
-                  aria-pressed={isActive}
-                  className={clsx(
-                    'flex h-10 items-center justify-center rounded-lg px-2 py-2 text-center text-[10px] font-medium leading-tight transition-all',
-                    isActive
-                      ? 'bg-orange-100 text-orange-600 ring-1 ring-orange-500'
-                      : 'bg-gray-50 text-gray-500 hover:bg-gray-100',
-                  )}
-                  onClick={() => togglePolicy(policy.id)}
-                >
-                  {policy.id}
-                </button>
-              );
-            })}
-          </div>
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
