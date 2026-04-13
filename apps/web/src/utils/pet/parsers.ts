@@ -136,7 +136,7 @@ export const getAmenityBadges = (
     badges.push({
       group: 'restriction',
       name: 'floor',
-      text: '실내 이용 가능',
+      text: '실내',
       variant: 'default',
     });
   }
@@ -144,7 +144,7 @@ export const getAmenityBadges = (
     badges.push({
       group: 'restriction',
       name: 'terrace',
-      text: '야외 이용 가능',
+      text: '야외',
       variant: 'default',
     });
   }
@@ -154,7 +154,7 @@ export const getAmenityBadges = (
     badges.push({
       group: 'restriction',
       name: 'warning',
-      text: '주차 가능',
+      text: '주차',
       variant: 'positive',
     });
   }
