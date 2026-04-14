@@ -16,6 +16,10 @@ export const BasicInfoSection = ({ place }: BasicInfoSectionProps) => {
     alert('주소가 복사되었습니다.');
   };
 
+  let parkingStatus = '정보 없음';
+  if (place.parkingAvailable === true) parkingStatus = '가능';
+  else if (place.parkingAvailable === false) parkingStatus = '불가';
+
   return (
     <>
       <h2 className='mb-4 text-lg font-bold text-gray-900'>장소 정보</h2>
@@ -44,9 +48,7 @@ export const BasicInfoSection = ({ place }: BasicInfoSectionProps) => {
 
         <div className='flex items-center gap-3'>
           <span className='w-16 shrink-0 text-gray-500'>주차</span>
-          <span className='text-gray-900'>
-            {place.parkingAvailable ? '가능' : '불가'}
-          </span>
+          <span className='text-gray-900'>{parkingStatus}</span>
         </div>
       </div>
     </>

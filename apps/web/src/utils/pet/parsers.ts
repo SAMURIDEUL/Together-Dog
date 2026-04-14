@@ -152,8 +152,8 @@ export const getAmenityBadges = (
   // 주차 정보 추가 (불리언 필드 기반)
   if (parkingAvailable) {
     badges.push({
-      group: 'restriction',
-      name: 'warning',
+      group: 'general',
+      name: 'parking',
       text: '주차',
       variant: 'positive',
     });

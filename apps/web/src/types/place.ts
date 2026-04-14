@@ -43,7 +43,7 @@ export interface Place {
   lon: number;
   updatedAt: string;
   categoryId: number;
-  parkingAvailable: boolean;
+  parkingAvailable?: boolean;
   petPolicy: PetPolicy;
   averageRating?: number;
   isLiked?: boolean;
