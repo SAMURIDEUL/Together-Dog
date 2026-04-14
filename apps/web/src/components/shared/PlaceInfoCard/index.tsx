@@ -120,6 +120,7 @@ export const PlaceInfoCard = ({
                 'whitespace-nowrap font-bold text-orange-500 hover:text-orange-600 hover:underline',
                 isHorizontal ? 'text-[11px]' : 'mb-1 text-xs',
               )}
+              type='button'
               onClick={(e) => {
                 e.stopPropagation();
                 onDetailClick(e);

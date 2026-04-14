@@ -140,6 +140,7 @@ export const SearchOverlay = ({
             {activeChips.map((chip) => (
               <button
                 key={chip.id}
+                aria-label={`${chip.label} 필터 제거`}
                 className='flex shrink-0 items-center gap-1 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-bold text-gray-600 shadow-sm ring-1 ring-black/5 backdrop-blur-sm transition-all hover:bg-white'
                 onClick={chip.handleRemove}
               >
