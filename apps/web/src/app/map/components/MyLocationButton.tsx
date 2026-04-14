@@ -18,6 +18,7 @@ export const MyLocationButton = ({
         'flex h-12 w-12 items-center justify-center rounded-full bg-white shadow-xl ring-1 ring-black/5 transition-all hover:bg-gray-50 active:scale-90',
         className,
       )}
+      type='button'
       onClick={onClick}
     >
       <svg

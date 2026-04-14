@@ -14,7 +14,7 @@ export const MapFloatingButtons = ({
   hasSidebar = true,
 }: MapFloatingButtonsProps) => {
   return (
-    <div className='absolute bottom-10'>
+    <div className='absolute inset-x-0 bottom-10 px-4'>
       {/* 이 위치에서 재검색 버튼 */}
       <div className='absolute left-1/2 z-10 -translate-x-1/2 transition-all'>
         <button
