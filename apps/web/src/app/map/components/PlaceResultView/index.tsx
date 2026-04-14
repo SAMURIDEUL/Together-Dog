@@ -7,8 +7,8 @@ import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import { PlaceItem } from '@/types/place';
+import { SortOrder } from '@/utils/map/filterUtils';
 
-import { SortOrder } from '../../hooks/useMapSearch';
 import { DesktopSidebar } from './DesktopSidebar';
 import { MobileBottomSheet } from './MobileBottomSheet';
 import { PlaceList } from './PlaceList';
@@ -35,11 +35,11 @@ export const PlaceResultView = ({
 }: PlaceResultViewProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [pendingLikeIds, setPendingLikeIds] = useState<Set<number>>(new Set());
 
   const { isLoggedIn } = useAuthStore();
   const { data: likedPlaceIds } = useLikedPlaceIdsQuery(isLoggedIn);
-  const { mutate: toggleLike, isPending: isLikeToggling } =
-    useLikeToggleMutation();
+  const { mutate: toggleLike } = useLikeToggleMutation();
   const { addToast } = useToastStore();
 
   const handleLikeClick = (e: React.MouseEvent, item: PlaceItem) => {
@@ -50,9 +50,12 @@ export const PlaceResultView = ({
       return;
     }
 
+    if (pendingLikeIds.has(item.placeInfo.id)) return;
+
     const isCurrentlyLiked =
       likedPlaceIds?.includes(item.placeInfo.id) ?? false;
-    if (isLikeToggling) return;
+
+    setPendingLikeIds((prev) => new Set(prev).add(item.placeInfo.id));
 
     toggleLike(
       { placeId: item.placeInfo.id, isCurrentlyLiked },
@@ -67,6 +70,13 @@ export const PlaceResultView = ({
         },
         onError: () =>
           addToast('요청에 실패했습니다. 다시 시도해 주세요.', 'error'),
+        onSettled: () => {
+          setPendingLikeIds((prev) => {
+            const next = new Set(prev);
+            next.delete(item.placeInfo.id);
+            return next;
+          });
+        },
       },
     );
   };

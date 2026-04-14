@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 
-import { SortOrder } from '../../hooks/useMapSearch';
+import { SortOrder } from '@/utils/map/filterUtils';
 
 interface SortOptionsProps {
   sortBy: SortOrder;
@@ -36,6 +36,19 @@ export const SortOptions = ({ sortBy, onSortChange }: SortOptionsProps) => {
         onClick={() => onSortChange('latest')}
       >
         최신순
+      </button>
+      <div className='h-3 w-[1px] self-center bg-gray-200' />
+      <button
+        aria-label={`정렬: 거리순${sortBy === 'distance' ? ' 선택됨' : ''}`}
+        aria-pressed={sortBy === 'distance'}
+        className={clsx(
+          'rounded-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2',
+          sortBy === 'distance' ? 'text-orange-500' : 'text-gray-400',
+        )}
+        type='button'
+        onClick={() => onSortChange('distance')}
+      >
+        거리순
       </button>
     </div>
   );
