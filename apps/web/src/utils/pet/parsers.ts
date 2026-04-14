@@ -128,13 +128,15 @@ export const getPetSizeBadge = (
 export const getAmenityBadges = (
   indoorFlag?: boolean,
   outdoorFlag?: boolean,
+  parkingAvailable?: boolean,
 ): PlaceInfoCardProps['badges'] => {
   const badges: PlaceInfoCardProps['badges'] = [];
+
   if (indoorFlag) {
     badges.push({
       group: 'restriction',
       name: 'floor',
-      text: '실내 이용 가능',
+      text: '실내',
       variant: 'default',
     });
   }
@@ -142,10 +144,21 @@ export const getAmenityBadges = (
     badges.push({
       group: 'restriction',
       name: 'terrace',
-      text: '야외 이용 가능',
+      text: '야외',
       variant: 'default',
     });
   }
+
+  // 주차 정보 추가 (불리언 필드 기반)
+  if (parkingAvailable) {
+    badges.push({
+      group: 'general',
+      name: 'parking',
+      text: '주차',
+      variant: 'positive',
+    });
+  }
+
   return badges;
 };
 

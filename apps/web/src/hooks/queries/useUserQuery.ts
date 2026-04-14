@@ -97,11 +97,12 @@ export const useMyReviewsQuery = (page = 0, size = 5) => {
 };
 
 // ─── 찜한 장소 ID 목록만 단독 조회 ───
-export const useLikedPlaceIdsQuery = () => {
+export const useLikedPlaceIdsQuery = (enabled = true) => {
   return useQuery({
     queryKey: [...userKeys.all, 'likedPlaceIds'] as const,
     queryFn: getMyLikedPlaceIds,
     staleTime: 1000 * 60 * 3,
+    enabled,
   });
 };
 

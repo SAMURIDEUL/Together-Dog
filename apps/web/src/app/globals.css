@@ -28,7 +28,12 @@ button:hover {
 }
 
 @layer utilities {
+  .thin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
+  }
   .thin-scrollbar::-webkit-scrollbar {
+    width: 4px;
     height: 4px;
   }
   .thin-scrollbar::-webkit-scrollbar-track {

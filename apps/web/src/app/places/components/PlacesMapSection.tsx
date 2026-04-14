@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 
+import { RegionSelector } from '@/components/shared/RegionSelector';
 import { PlaceItem } from '@/types/place';
 
 import { PlacesMap } from './PlacesMap';
-import { RegionSelector } from './RegionSelector';
 
 interface PlacesMapSectionProps {
   userLocation: { lat: number; lng: number } | null;
