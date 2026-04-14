@@ -41,6 +41,7 @@ export const RegionSelector = ({
         <div className='flex items-center justify-between border-b px-6 py-4'>
           <h3 className='text-xl font-bold text-gray-900'>지역 검색</h3>
           <button
+            aria-label='닫기'
             className='text-gray-400 hover:text-gray-600'
             onClick={onClose}
           >
