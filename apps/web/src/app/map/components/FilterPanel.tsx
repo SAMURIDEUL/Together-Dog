@@ -12,6 +12,15 @@ export interface MapFilters {
   hasParking: boolean | null;
 }
 
+export const DEFAULT_FILTERS: MapFilters = {
+  sizeLimit: [],
+  isIndoor: null,
+  isOutdoor: null,
+  minRating: null,
+  essentialPolicies: [],
+  hasParking: null,
+};
+
 interface FilterPanelProps {
   filters: MapFilters;
   onFilterChange: (filters: MapFilters) => void;
@@ -119,21 +128,14 @@ export const FilterPanel = ({
             </svg>
           </button>
         ))}
-        <button
-          className='flex shrink-0 items-center gap-1 rounded-full bg-gray-100 px-3 py-1.5 text-[11px] font-bold text-gray-500 shadow-sm ring-1 ring-gray-200'
-          onClick={() =>
-            onFilterChange({
-              sizeLimit: [],
-              isIndoor: null,
-              isOutdoor: null,
-              minRating: null,
-              essentialPolicies: [],
-              hasParking: null,
-            })
-          }
-        >
-          초기화
-        </button>
+        {activeChips.length > 0 && (
+          <button
+            className='flex shrink-0 items-center gap-1 rounded-full bg-gray-100 px-3 py-1.5 text-[11px] font-bold text-gray-500 shadow-sm ring-1 ring-gray-200'
+            onClick={() => onFilterChange(DEFAULT_FILTERS)}
+          >
+            초기화
+          </button>
+        )}
       </div>
 
       {/* 2. Desktop Filter UI (Naver Style: Horizontal & Compact) */}
@@ -194,16 +196,7 @@ export const FilterPanel = ({
           {activeChips.length > 0 && (
             <button
               className='text-[11px] font-bold text-gray-400 hover:text-gray-600'
-              onClick={() =>
-                onFilterChange({
-                  sizeLimit: [],
-                  isIndoor: null,
-                  isOutdoor: null,
-                  minRating: null,
-                  essentialPolicies: [],
-                  hasParking: null,
-                })
-              }
+              onClick={() => onFilterChange(DEFAULT_FILTERS)}
             >
               초기화
             </button>

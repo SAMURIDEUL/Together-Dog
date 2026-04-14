@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 
-import { ESSENTIAL_POLICIES, MapFilters } from './FilterPanel';
+import { DEFAULT_FILTERS, ESSENTIAL_POLICIES, MapFilters } from './FilterPanel';
 
 interface FilterSidebarProps {
   currentRegion: string;
@@ -38,7 +38,7 @@ export const FilterSidebar = ({
   if (!isOpen) return null;
 
   return (
-    <div className='absolute left-4 top-[152px] z-[20] w-[calc(100vw-32px)] md:w-[400px]'>
+    <div className='absolute left-4 top-[140px] z-[60] w-[calc(100vw-32px)] md:w-[400px]'>
       {/* Backdrop for Mobile */}
       <div
         className='fixed inset-0 bg-transparent md:hidden'
@@ -52,20 +52,12 @@ export const FilterSidebar = ({
           <div className='flex items-center gap-3'>
             <button
               className='text-xs font-bold text-gray-400 hover:text-gray-600'
-              onClick={() =>
-                onFilterChange({
-                  essentialPolicies: [],
-                  hasParking: null,
-                  isIndoor: null,
-                  isOutdoor: null,
-                  minRating: null,
-                  sizeLimit: [],
-                })
-              }
+              onClick={() => onFilterChange(DEFAULT_FILTERS)}
             >
               초기화
             </button>
             <button
+              aria-label='필터 닫기'
               className='rounded-full bg-gray-100 p-1 text-gray-400 hover:bg-gray-200'
               onClick={onClose}
             >
