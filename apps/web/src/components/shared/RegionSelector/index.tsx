@@ -35,7 +35,7 @@ export const RegionSelector = ({
   };
 
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm'>
+    <div className='fixed inset-0 z-[70] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm'>
       <div className='relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl transition-all'>
         {/* 헤더 */}
         <div className='flex items-center justify-between border-b px-6 py-4'>
