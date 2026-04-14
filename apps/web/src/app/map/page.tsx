@@ -8,6 +8,7 @@ import { RegionSelector } from '@/components/shared/RegionSelector';
 import { usePlaceStore } from '@/stores/usePlaceStore';
 import { PlaceItem } from '@/types/place';
 
+import { DEFAULT_FILTERS } from './components/FilterPanel';
 import { FilterSidebar } from './components/FilterSidebar';
 import { MapFloatingButtons } from './components/MapFloatingButtons';
 import { MapMarkers } from './components/MapMarkers';
@@ -53,7 +54,8 @@ export default function MapPage() {
     if (searchTarget) {
       search(searchTarget);
     }
-  }, [userLocation, mapCenter, search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userLocation, search]);
 
   // 지역 좌표 검색 및 지도 이동
   const moveToRegion = (regionName: string) => {
@@ -131,9 +133,9 @@ export default function MapPage() {
             })
           }
           onCreate={setMap}
-          onDragEnd={() => {
-            const c = map?.getCenter();
-            if (c) search({ lat: c.getLat(), lng: c.getLng() });
+          onDragEnd={(m) => {
+            const c = m.getCenter();
+            search({ lat: c.getLat(), lng: c.getLng() });
           }}
         >
           <CustomOverlayMap
@@ -164,16 +166,7 @@ export default function MapPage() {
         selectedCategories={selectedCategories}
         onCategoryToggle={toggleCategory}
         onFilterClick={() => setIsFilterDrawerOpen(true)}
-        onFilterReset={() =>
-          setFilters({
-            essentialPolicies: [],
-            hasParking: null,
-            isIndoor: null,
-            isOutdoor: null,
-            minRating: null,
-            sizeLimit: [],
-          })
-        }
+        onFilterReset={() => setFilters(DEFAULT_FILTERS)}
         onKeywordChange={setKeyword}
         onRegionClick={() => setIsRegionSelectorOpen(true)}
         onSearch={() => mapCenter && search(mapCenter)}

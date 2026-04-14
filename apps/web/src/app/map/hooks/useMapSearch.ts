@@ -6,7 +6,7 @@ import { getPlaces } from '@/api/place';
 import { PlaceItem } from '@/types/place';
 import { resolveThumbnailPath } from '@/utils/pet/resolvers';
 
-import { MapFilters } from '../components/FilterPanel';
+import { DEFAULT_FILTERS, MapFilters } from '../components/FilterPanel';
 
 export type SortOrder = 'rating' | 'latest' | 'distance';
 
@@ -30,18 +30,16 @@ const CATEGORY_MAP: Record<number, string> = {
 export const useMapSearch = () => {
   const [keyword, setKeyword] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<number[]>([3]); // 기본값: 카페
-  const [filters, setFilters] = useState<MapFilters>({
-    hasParking: false,
-    sizeLimit: [],
-    isIndoor: null,
-    isOutdoor: null,
-    minRating: null,
-    essentialPolicies: [],
-  });
+  const [filters, setFilters] = useState<MapFilters>(DEFAULT_FILTERS);
   const [sortBy, setSortBy] = useState<SortOrder>('rating');
 
   const [allFetchedPlaces, setAllFetchedPlaces] = useState<PlaceItem[]>([]);
+  const [referenceLocation, setReferenceLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // 1. 데이터 가져오기 (각 카테고리별 병렬 호출)
   const fetchPlaces = useCallback(
@@ -52,6 +50,7 @@ export const useMapSearch = () => {
       }
 
       setLoading(true);
+      setError(null);
       try {
         const results = await Promise.all(
           selectedCategories.map((catId) =>
@@ -63,6 +62,8 @@ export const useMapSearch = () => {
             }).then((res) => res.data.places),
           ),
         );
+
+        if (location) setReferenceLocation(location);
 
         // 병합 및 중복 제거
         const merged = results.flat();
@@ -79,6 +80,7 @@ export const useMapSearch = () => {
         setAllFetchedPlaces(unique);
       } catch (error) {
         console.error('Failed to fetch places:', error);
+        setError('장소 정보를 불러오는 데 실패했습니다.');
       } finally {
         setLoading(false);
       }
@@ -147,16 +149,26 @@ export const useMapSearch = () => {
         return ratingB - ratingA;
       }
       if (sortBy === 'latest') {
-        return (
-          new Date(b.placeInfo.updatedAt).getTime() -
-          new Date(a.placeInfo.updatedAt).getTime()
-        );
+        const getTime = (dateStr?: string) => {
+          if (!dateStr) return 0;
+          const time = new Date(dateStr).getTime();
+          return isNaN(time) ? 0 : time;
+        };
+        return getTime(b.placeInfo.updatedAt) - getTime(a.placeInfo.updatedAt);
       }
-      return 0; // distance 정렬은 추후 구현 필요
+      if (sortBy === 'distance' && referenceLocation) {
+        const getDistanceSq = (p: PlaceItem) => {
+          const dLat = p.placeInfo.lat - referenceLocation.lat;
+          const dLon = p.placeInfo.lon - referenceLocation.lng;
+          return dLat * dLat + dLon * dLon;
+        };
+        return getDistanceSq(a) - getDistanceSq(b);
+      }
+      return 0;
     });
 
     return sorted;
-  }, [allFetchedPlaces, filters, sortBy]);
+  }, [allFetchedPlaces, filters, sortBy, referenceLocation]);
 
   const toggleCategory = (id: number) => {
     setSelectedCategories((prev) =>
@@ -175,6 +187,7 @@ export const useMapSearch = () => {
     setSortBy,
     filteredPlaces,
     loading,
+    error,
     search: fetchPlaces,
     getCategoryKey: (id: number) => (CATEGORY_MAP[id] as any) || 'cafe',
   };
