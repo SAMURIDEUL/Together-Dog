@@ -8,6 +8,7 @@ import {
   usePlaceDetailQuery,
 } from '@/hooks/queries/usePlaceQuery';
 import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 
 import { PhotoGallery } from './components/info/PhotoGallery';
@@ -21,8 +22,9 @@ export default function PlaceDetailPage() {
   const idString = Array.isArray(params.id) ? params.id[0] : params.id;
   const placeId = parseInt(idString || '', 10);
 
+  const { isLoggedIn } = useAuthStore();
   const { data, isLoading: loading, error } = usePlaceDetailQuery(placeId);
-  const { data: likedPlaceIds } = useLikedPlaceIdsQuery();
+  const { data: likedPlaceIds } = useLikedPlaceIdsQuery(isLoggedIn);
   const { addToast } = useToastStore();
 
   // 서버 데이터 우선, 없으면 Optimistic UI 상태
@@ -48,6 +50,11 @@ export default function PlaceDetailPage() {
 
   const handleLikeToggle = () => {
     if (!data?.placeInfo || isLikeToggling) return;
+
+    if (!isLoggedIn) {
+      addToast('로그인이 필요한 서비스입니다.', 'default');
+      return;
+    }
 
     const previousState = isLiked;
     setOptimisticLiked(!previousState);

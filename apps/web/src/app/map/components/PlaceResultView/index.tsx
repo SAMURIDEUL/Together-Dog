@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { useLikeToggleMutation } from '@/hooks/queries/usePlaceQuery';
 import { useLikedPlaceIdsQuery } from '@/hooks/queries/useUserQuery';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { useToastStore } from '@/stores/useToastStore';
 import { PlaceItem } from '@/types/place';
 
@@ -35,13 +36,20 @@ export const PlaceResultView = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
-  const { data: likedPlaceIds } = useLikedPlaceIdsQuery();
+  const { isLoggedIn } = useAuthStore();
+  const { data: likedPlaceIds } = useLikedPlaceIdsQuery(isLoggedIn);
   const { mutate: toggleLike, isPending: isLikeToggling } =
     useLikeToggleMutation();
   const { addToast } = useToastStore();
 
   const handleLikeClick = (e: React.MouseEvent, item: PlaceItem) => {
     e.stopPropagation();
+
+    if (!isLoggedIn) {
+      addToast('로그인이 필요한 서비스입니다.', 'default');
+      return;
+    }
+
     const isCurrentlyLiked =
       likedPlaceIds?.includes(item.placeInfo.id) ?? false;
     if (isLikeToggling) return;
