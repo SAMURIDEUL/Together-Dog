@@ -48,7 +48,12 @@ export const PlaceList = ({
       role='button'
       tabIndex={0}
       onClick={() => onPlaceClick(item)}
-      onKeyDown={(e) => e.key === 'Enter' && onPlaceClick(item)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onPlaceClick(item);
+        }
+      }}
     >
       <PlaceInfoCard
         address={item.placeInfo.roadAddress}

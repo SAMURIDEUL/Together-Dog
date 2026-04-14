@@ -32,9 +32,16 @@ export const MobileBottomSheet = ({
       {/* Handle */}
       <div
         aria-label={isExpanded ? '목록 닫기' : '목록 열기'}
-        className='flex w-full shrink-0 cursor-pointer justify-center py-4'
+        className='flex w-full shrink-0 cursor-pointer justify-center py-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gray-200'
         role='button'
+        tabIndex={0}
         onClick={() => setIsExpanded(!isExpanded)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsExpanded(!isExpanded);
+          }
+        }}
       >
         <div className='h-1.5 w-12 rounded-full bg-gray-200' />
       </div>

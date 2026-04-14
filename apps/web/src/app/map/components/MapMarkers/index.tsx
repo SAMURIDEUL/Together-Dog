@@ -44,13 +44,20 @@ export const MapMarkers = ({
             <div
               aria-label={`${item.placeInfo.name} 상세보기`}
               className={clsx(
-                'flex cursor-pointer flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95',
+                'flex cursor-pointer flex-col items-center gap-1 outline-none transition-transform hover:scale-110 focus-visible:scale-110 active:scale-95',
                 selectedPlace?.placeInfo.id === item.placeInfo.id
                   ? 'z-20'
                   : 'z-10',
               )}
               role='button'
+              tabIndex={0}
               onClick={() => onSelectPlace(item)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectPlace(item);
+                }
+              }}
             >
               <div
                 className={clsx(
