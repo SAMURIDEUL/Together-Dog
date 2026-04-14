@@ -19,6 +19,7 @@ export const MapFloatingButtons = ({
       <div className='absolute left-1/2 z-10 -translate-x-1/2 transition-all'>
         <button
           className='flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.12)] ring-1 ring-black/5 transition-all hover:bg-gray-50 active:scale-95'
+          type='button'
           onClick={onSearchAtCurrentLocation}
         >
           <span className='h-2 w-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.6)]' />

@@ -64,8 +64,11 @@ export const MobileBottomSheet = ({
         )}
       </div>
 
-      <div className='thin-scrollbar flex flex-1 flex-col gap-4 overflow-y-auto px-6 pb-20'>
-        {children}
+      <div
+        aria-hidden={!isExpanded}
+        className='thin-scrollbar flex flex-1 flex-col gap-4 overflow-y-auto px-6 pb-20'
+      >
+        {isExpanded && children}
       </div>
     </div>
   );

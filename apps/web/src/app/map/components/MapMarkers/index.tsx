@@ -86,11 +86,20 @@ export const MapMarkers = ({
               </div>
 
               {selectedPlace?.placeInfo.id === item.placeInfo.id && (
-                <div
+                <button
+                  aria-label={`${item.placeInfo.name} 상세 정보 보기`}
                   className='animate-in fade-in slide-in-from-top-1 zoom-in-50 absolute left-1/2 top-full mt-1 -translate-x-1/2'
+                  type='button'
                   onClick={(e) => {
                     e.stopPropagation();
                     onPlaceClick(item);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      onPlaceClick(item);
+                    }
                   }}
                 >
                   <div className='flex flex-col gap-1.5 whitespace-nowrap rounded-2xl bg-orange-500 px-4 py-2.5 text-white shadow-xl ring-2 ring-white hover:bg-orange-600 active:scale-95'>
@@ -118,7 +127,7 @@ export const MapMarkers = ({
                       )}
                     </div>
                   </div>
-                </div>
+                </button>
               )}
             </div>
           </CustomOverlayMap>
