@@ -25,14 +25,15 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
+    const backendUrl = process.env.API_URL || 'http://localhost:8080';
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.API_URL || 'http://localhost:8080'}/:path*`,
+        destination: `${backendUrl}/:path*`,
       },
       {
         source: '/uploads/:path*',
-        destination: `${process.env.API_URL || 'http://localhost:8080'}/uploads/:path*`,
+        destination: `${backendUrl}/uploads/:path*`,
       },
     ];
   },
